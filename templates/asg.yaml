@@ -1,0 +1,502 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CFT to create an Auto Scaling Group with Life cycle hooks.
+Parameters:
+  ScaleUpThreshold:
+    Type: Number
+  ScaleDownThreshold:
+    Type: Number
+  ScalingParameter:
+    Type: String
+    AllowedValues:
+    - CPUUtilization
+    - MemoryUtilization
+    - ConcurrentSessions
+    - SessionSetupRate
+  ScalingPeriod:
+    Type: Number
+  ASGroupMaxSize:
+    Type: Number
+  ASGroupMinSize:
+    Type: Number
+  ASGroupCoolDown:
+    Type: Number
+  SNSNotificationEndpoint:
+    Type: String
+  SNSEndpointProtocol:
+    Type: String
+    AllowedValues:
+    - http
+    - https
+  CIDRForFGTAccess:
+    Type: String
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+  FortiGateEC2Type:
+    Type: String
+    AllowedValues:
+    - m3.medium
+    - m3.large
+    - m3.xlarge
+    - m3.2xlarge
+    - c4.large
+    - c4.xlarge
+    - c4.2xlarge
+    - c3.large
+    - c3.xlarge
+    - c3.2xlarge
+  FortiGateKeyPair:
+    Type: AWS::EC2::KeyPair::KeyName
+  S3ConfigBucket:
+    Type: String
+  S3ConfigObject:
+    Type: String
+  ListenerPort:
+    Type: Number
+  HealthCheckPort:
+    Type: Number
+  VPCID:
+    Type: String
+  AZForFirewall1:
+    Type: AWS::EC2::AvailabilityZone::Name
+  AZForFirewall2:
+    Type: AWS::EC2::AvailabilityZone::Name
+  Public1Subnet:
+    Type: String
+  Public2Subnet:
+    Type: String
+  Private1Subnet:
+    Type: String
+  Private2Subnet:
+    Type: String
+Mappings:
+  DefaultScalingupDownMap:
+    CPUUtilization:
+      ScaleUp: '80'
+      ScaleDown: '70'
+    MemoryUtilization:
+      ScaleUp: '80'
+      ScaleDown: '70'
+    ConcurrentSessions:
+      ScaleUp: '8000'
+      ScaleDown: '6000'
+    SessionSetupRate:
+      ScaleUp: '450000'
+      ScaleDown: '400000'
+  RegionMap:
+    us-east-1:
+      fgtodami: ami-48400137
+    us-east-2:
+      fgtodami: ami-340a3451
+    us-west-1:
+      fgtodami: ami-05de3a66
+    us-west-2:
+      fgtodami: ami-b6befdce
+    ca-central-1:
+      fgtodami: ami-25028141
+    eu-central-1:
+      fgtodami: ami-6a85b581
+    eu-west-1:
+      fgtodami: ami-3da3ae44
+    eu-west-2:
+      fgtodami: ami-878d63e0
+    eu-west-3:
+      fgtodami: ami-ae2e9fd3
+    ap-southeast-1:
+      fgtodami: ami-5f6a6d23
+    ap-southeast-2:
+      fgtodami: ami-6eaa750c
+    ap-northeast-1:
+      fgtodami: ami-2865a957
+    ap-northeast-2:
+      fgtodami: ami-dc9b31b2
+    ap-south-1:
+      fgtodami: ami-bb88a0d4
+    sa-east-1:
+      fgtodami: ami-03461d6f
+Conditions:
+  CPUSelection:
+    Fn::Equals:
+    - Ref: ScalingParameter
+    - CPUUtilization
+  MemorySelection:
+    Fn::Equals:
+    - Ref: ScalingParameter
+    - MemoryUtilization
+  ConcurrentSessionsSelection:
+    Fn::Equals:
+    - Ref: ScalingParameter
+    - ConcurrentSessions
+  SessionSetupRateSelection:
+    Fn::Equals:
+    - Ref: ScalingParameter
+    - SessionSetupRate
+Resources:
+  FgtScEvt:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+      - Endpoint:
+          Ref: SNSNotificationEndpoint
+        Protocol:
+          Ref: SNSEndpointProtocol
+      TopicName:
+        Fn::Join:
+        - ''
+        - - Ref: AWS::StackName
+          - "-FgtScEvt"
+  SNSRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: autoscaling.amazonaws.com
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - sqs:SendMessage
+            - sqs:GetQueueUrl
+            - sns:Publish
+            Resource: "*"
+  ScaleInPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName:
+        Ref: ASG1
+      ScalingAdjustment: "-1"
+  ScaleOutPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName:
+        Ref: ASG1
+      ScalingAdjustment: '1'
+  CPUAlarmHigh:
+    Type: AWS::CloudWatch::Alarm
+    Condition: CPUSelection
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold:
+        Ref: ScaleUpThreshold
+      AlarmDescription: Alarm if CPU too high or metric disappears indicating instance
+        is down
+      Period:
+        Ref: ScalingPeriod
+      AlarmActions:
+      - Ref: ScaleOutPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+      - Name: AutoScalingGroupName
+        Value:
+          Ref: ASG1
+      ComparisonOperator: GreaterThanThreshold
+      MetricName: CPUUtilization
+  CPUAlarmLow:
+    Type: AWS::CloudWatch::Alarm
+    Condition: CPUSelection
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold:
+        Ref: ScaleDownThreshold
+      AlarmDescription: Alarm if CPU too low or metric disappears indicating instance
+        is down
+      Period:
+        Ref: ScalingPeriod
+      AlarmActions:
+      - Ref: ScaleInPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+      - Name: AutoScalingGroupName
+        Value:
+          Ref: ASG1
+      ComparisonOperator: LessThanThreshold
+      MetricName: CPUUtilization
+  MemoryAlarmHigh:
+    Type: AWS::CloudWatch::Alarm
+    Condition: MemorySelection
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold:
+        Ref: ScaleUpThreshold
+      AlarmDescription: Alarm if CPU too high or metric disappears indicating instance
+        is down
+      Period:
+        Ref: ScalingPeriod
+      AlarmActions:
+      - Ref: ScaleOutPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+      - Name: AutoScalingGroupName
+        Value:
+          Ref: ASG1
+      ComparisonOperator: GreaterThanThreshold
+      MetricName: MemoryUtilization
+  MemoryAlarmLow:
+    Type: AWS::CloudWatch::Alarm
+    Condition: MemorySelection
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold:
+        Ref: ScaleDownThreshold
+      AlarmDescription: Alarm if CPU too low or metric disappears indicating instance
+        is down
+      Period:
+        Ref: ScalingPeriod
+      AlarmActions:
+      - Ref: ScaleInPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+      - Name: AutoScalingGroupName
+        Value:
+          Ref: ASG1
+      ComparisonOperator: LessThanThreshold
+      MetricName: MemoryUtilization
+  ConcurrentAlarmHigh:
+    Type: AWS::CloudWatch::Alarm
+    Condition: ConcurrentSessionsSelection
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold:
+        Ref: ScaleUpThreshold
+      AlarmDescription: Alarm if CPU too high or metric disappears indicating instance
+        is down
+      Period:
+        Ref: ScalingPeriod
+      AlarmActions:
+      - Ref: ScaleOutPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+      - Name: AutoScalingGroupName
+        Value:
+          Ref: ASG1
+      ComparisonOperator: GreaterThanThreshold
+      MetricName: ConcurrentSessions
+  ConcurrentAlarmLow:
+    Type: AWS::CloudWatch::Alarm
+    Condition: ConcurrentSessionsSelection
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold:
+        Ref: ScaleDownThreshold
+      AlarmDescription: Alarm if CPU too low or metric disappears indicating instance
+        is down
+      Period:
+        Ref: ScalingPeriod
+      AlarmActions:
+      - Ref: ScaleInPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+      - Name: AutoScalingGroupName
+        Value:
+          Ref: ASG1
+      ComparisonOperator: LessThanThreshold
+      MetricName: ConcurrentSessions
+  SessionSetupRateAlarmHigh:
+    Type: AWS::CloudWatch::Alarm
+    Condition: SessionSetupRateSelection
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold:
+        Ref: ScaleUpThreshold
+      AlarmDescription: Alarm if CPU too high or metric disappears indicating instance
+        is down
+      Period:
+        Ref: ScalingPeriod
+      AlarmActions:
+      - Ref: ScaleOutPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+      - Name: AutoScalingGroupName
+        Value:
+          Ref: ASG1
+      ComparisonOperator: GreaterThanThreshold
+      MetricName: SessionSetupRate
+  SessionSetupRateAlarmLow:
+    Type: AWS::CloudWatch::Alarm
+    Condition: SessionSetupRateSelection
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold:
+        Ref: ScaleDownThreshold
+      AlarmDescription: Alarm if CPU too low or metric disappears indicating instance
+        is down
+      Period:
+        Ref: ScalingPeriod
+      AlarmActions:
+      - Ref: ScaleInPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+      - Name: AutoScalingGroupName
+        Value:
+          Ref: ASG1
+      ComparisonOperator: LessThanThreshold
+      MetricName: SessionSetupRate
+  ASGSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName:
+        Fn::Join:
+          - ''
+          - - Ref: AWS::StackName
+            - "-Autoscale-SG"
+      VpcId:
+        Ref: VPCID
+      GroupDescription: Allow All Traffic
+      SecurityGroupIngress:
+      - IpProtocol: "-1"
+        CidrIp:
+          Ref: CIDRForFGTAccess
+  ASLaunchConfig:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId:
+        Fn::FindInMap:
+        - RegionMap
+        - Ref: AWS::Region
+        - fgtodami
+      SecurityGroups:
+      - Ref: ASGSecurityGroup
+      InstanceType:
+        Ref: FortiGateEC2Type
+      KeyName:
+        Ref: FortiGateKeyPair
+      AssociatePublicIpAddress: 'true'
+  ASG1:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName:
+        Fn::Join:
+          - ''
+          - - Ref: AWS::StackName
+            - "-FgtScEvt"
+      Cooldown:
+        Ref: ASGroupCoolDown
+      DesiredCapacity: '2'
+      LaunchConfigurationName:
+        Ref: ASLaunchConfig
+      MaxSize:
+        Ref: ASGroupMaxSize
+      MinSize: '2'
+      NotificationConfigurations:
+      - TopicARN:
+          Ref: FgtScEvt
+        NotificationTypes:
+        - autoscaling:EC2_INSTANCE_LAUNCH
+        - autoscaling:EC2_INSTANCE_LAUNCH_ERROR
+        - autoscaling:EC2_INSTANCE_TERMINATE
+        - autoscaling:EC2_INSTANCE_TERMINATE_ERROR
+      TerminationPolicies:
+      - NewestInstance
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ''
+          - - Ref: AWS::StackName
+            - "-Fortigate"
+        PropagateAtLaunch: 'true'
+      - Key: s3-config-path
+        Value: "s3://mdw-lambda-config/current.conf"
+        PropagateAtLaunch: 'true'
+      VPCZoneIdentifier:
+      - Ref: Public1Subnet
+      - Ref: Public2Subnet
+  ASLifecycleTerminateHook:
+    Type: AWS::AutoScaling::LifecycleHook
+    Properties:
+      AutoScalingGroupName:
+        Ref: ASG1
+      LifecycleTransition: "autoscaling:EC2_INSTANCE_TERMINATING"
+      NotificationTargetARN:
+        Ref: FgtScEvt
+      DefaultResult: ABANDON
+      RoleARN:
+        Fn::GetAtt:
+        - SNSRole
+        - Arn
+  ASLifecycleLaunchHook:
+    Type: AWS::AutoScaling::LifecycleHook
+    Properties:
+      AutoScalingGroupName:
+        Ref: ASG1
+      LifecycleTransition: "autoscaling:EC2_INSTANCE_LAUNCHING"
+      NotificationTargetARN:
+        Ref: FgtScEvt
+      DefaultResult: ABANDON
+      RoleARN:
+        Fn::GetAtt:
+        - SNSRole
+        - Arn
+      NotificationMetadata:
+          Fn::Join:
+            - ''
+            - - Ref: Public1Subnet
+              - ":"
+              - Ref: Private1Subnet
+              - ":"
+              - Ref: Public2Subnet
+              - ":"
+              - Ref: Private2Subnet
+  PublicElasticLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name:
+        Fn::Join:
+        - ''
+        - - Ref: AWS::StackName
+          - '-FgtScEvt'
+      Scheme: internet-facing
+      Subnets:
+      - Ref: Public1Subnet
+      - Ref: Public2Subnet
+      Type: network
+  PublicTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name:
+        Fn::Join:
+          - ''
+          - - Ref: AWS::StackName
+            - "-FgtScEvt"
+      Port: 80
+      Protocol: TCP
+      HealthCheckProtocol: TCP
+      HealthCheckPort: '22'
+      TargetType: instance
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ''
+          - - Ref: AWS::StackName
+            - "-PublicTargetGroup"
+      VpcId:
+        Ref: VPCID
+  PublicListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      - Type: forward
+        TargetGroupArn:
+          Ref: PublicTargetGroup
+      LoadBalancerArn:
+        Ref: PublicElasticLoadBalancer
+      Port: '80'
+      Protocol: TCP

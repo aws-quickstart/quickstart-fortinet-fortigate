@@ -1,0 +1,233 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CFT to create a VPC, Lambda function and an AutoScale Group.
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: VPC Configuration
+      Parameters:
+      - VPCCIDR
+      - AZForSubnet1
+      - AZForSubnet2
+      - Public1Subnet
+      - Private1Subnet
+      - Public2Subnet
+      - Private2Subnet
+    - Label:
+        default: Lambda and Api-Gateway Configuration
+      Parameters:
+      - ApiGateway
+      - ApiStageName
+      - LambdaFunctionName
+      - S3BucketName
+      - S3KeyName
+    - Label:
+        default: Auto Scaling Configuration
+      Parameters:
+      - ScalingParameter
+      - ScaleUpThreshold
+      - ScaleDownThreshold
+      - ScalingPeriod
+      - ASGroupMaxSize
+      - ASGroupMinSize
+      - ASGroupCoolDown
+      - HealthCheckPort
+      - ListenerPort
+    - Label:
+        default: FortiGate Instance Configuration
+      Parameters:
+      - FortiGateEC2Type
+      - CIDRForFGTAccess
+      - FortiGateKeyPair
+Parameters:
+  VPCCIDR:
+    Type: String
+    Description: Enter the VPC CIDR that you want to use
+    Default: '10.0.0.0/16'
+  AZForSubnet1:
+    Type: AWS::EC2::AvailabilityZone::Name
+    Description: Enter the AZ for the primary subnets
+  AZForSubnet2:
+    Type: AWS::EC2::AvailabilityZone::Name
+    Description: Enter the AZ for the secondary subnets
+  Public1Subnet:
+    Type: String
+    Description: Enter the value of the Public1 subnet
+    Default: '10.0.0.0/24'
+  Public2Subnet:
+    Type: String
+    Description: Enter the value of the Public2 subnet
+    Default: '10.0.2.0/24'
+  Private1Subnet:
+    Type: String
+    Description: Enter the value of the Private1 subnet
+    Default: '10.0.1.0/24'
+  Private2Subnet:
+    Type: String
+    Description: Enter the value of the Public1 subnet
+    Default: '10.0.3.0/24'
+  S3BucketName:
+    Type: String
+    Default: cft-test-repo
+    Description: Region Specific S3 Bucket for Lambda uploads
+  S3KeyName:
+    Type: String
+    Default: deploy-lamdba-v2-92f5a1aa-0b30-4c4f-9285-a83fa7b46b52.zip
+    Description: Name of lambda file
+  ScaleUpThreshold:
+    Type: Number
+    Description: Enter the value at which a Scaleup event would take place
+    Default: '80'
+  ScaleDownThreshold:
+    Type: Number
+    Description: Enter the value at which a Scaledown event would take place
+    Default: '40'
+  ScalingParameter:
+    Type: String
+    Default: CPUUtilization
+    AllowedValues:
+    - CPUUtilization
+    - MemoryUtilization
+    - ConcurrentSessions
+    - SessionSetupRate
+    Description: Please refer the url https://s3.amazonaws.com/fortinet-autoscaling/Fortinet+Auto+Scaling+in+AWS_Guidelines_Q1+2016.pdf
+      for recommended values for ScaleUp and ScaleDown
+  ScalingPeriod:
+    Type: Number
+    Description: Enter the number of seconds for the CloudWatchAlarm to trigger the
+      ScaleinPolicy
+    Default: '300'
+  ASGroupMaxSize:
+    Type: Number
+    Description: Maximum Instances in the ASG
+    Default: '4'
+  ASGroupMinSize:
+    Type: Number
+    Description: Minimum Instances in the ASG
+    Default: '2'
+  ASGroupCoolDown:
+    Type: Number
+    Default: '500'
+    Description: Minimum Instances in the ASG
+  ApiGateway:
+    Type: String
+    Default: 'lambda-Api-Gateway'
+  ApiStageName:
+    Type: String
+    AllowedPattern: '^[a-z0-9]+$'
+    Default: 'dev'
+  LambdaFunctionName:
+    Type: String
+    AllowedPattern: '^[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+$'
+    Default: 'lambda-func-v1'
+  SNSEndpointProtocol:
+    Type: String
+    Description: Enter the protocol for the SNS Endpoint
+    Default: https
+    AllowedValues:
+    - http
+    - https
+  CIDRForFGTAccess:
+    Type: String
+    Description: Enter the CIDR from which AS instance needs to be accessed
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    Default: '0.0.0.0/0'
+  FortiGateEC2Type:
+    Type: String
+    Default: c4.large
+    AllowedValues:
+    - m3.medium
+    - m3.large
+    - m3.xlarge
+    - m3.2xlarge
+    - c4.large
+    - c4.xlarge
+    - c4.2xlarge
+    - c3.large
+    - c3.xlarge
+    - c3.2xlarge
+    Description: Enter the instance type and size that you want for the AutoScaled
+      FortiGates
+  FortiGateKeyPair:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Enter the keypair that you want to associate with the launch of the FortiGates
+  S3ConfigBucket:
+    Type: String
+    Default: accelerate-config
+    Description: S3 Bucket for Fortigate Config Object
+  S3ConfigObject:
+    Type: String
+    Default: current.conf
+    Description: Fortigate Configuration Object File
+  ListenerPort:
+    Type: Number
+    Default: '80'
+    Description: Enter the Listener port for the external ELB
+  HealthCheckPort:
+    Type: Number
+    Default: '541'
+    Description: Enter the Health Check port used port for the external ELB
+Resources:
+  VPC:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        VPCCIDR: !Ref VPCCIDR
+        AZForSubnet1: !Ref AZForSubnet1
+        AZForSubnet2: !Ref AZForSubnet2
+        Public1Subnet: !Ref Public1Subnet
+        Public2Subnet: !Ref Public2Subnet
+        Private1Subnet: !Ref Private1Subnet
+        Private2Subnet: !Ref Private2Subnet
+      TemplateURL: https://s3.amazonaws.com/fortidev-cloudformation/vpc.yaml
+      TimeoutInMinutes: '5'
+  Lambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/fortidev-cloudformation/lambda-apigateway.yaml
+      TimeoutInMinutes: '20'
+      Parameters:
+        ApiName: !Ref ApiGateway
+        ApiStageName: !Ref ApiStageName
+        LambdaFunctionName: !Ref LambdaFunctionName
+        S3BucketName: !Ref S3BucketName
+        S3KeyName: !Ref S3KeyName
+    DependsOn: VPC
+  ASG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/fortidev-cloudformation/asg.yaml
+      TimeoutInMinutes: '20'
+      Parameters:
+        ScalingParameter: !Ref ScalingParameter
+        ScaleUpThreshold: !Ref ScaleUpThreshold
+        ScaleDownThreshold: !Ref ScaleDownThreshold
+        ScalingPeriod: !Ref ScalingPeriod
+        ASGroupMaxSize: !Ref ASGroupMaxSize
+        ASGroupMinSize: !Ref ASGroupMinSize
+        ASGroupCoolDown: !Ref ASGroupCoolDown
+        SNSNotificationEndpoint: !Sub ${Lambda.Outputs.SNSEndPoint}
+        SNSEndpointProtocol: !Ref SNSEndpointProtocol
+        VPCID: !Sub ${VPC.Outputs.VPCID}
+        Public1Subnet: !Sub ${VPC.Outputs.SubnetID1}
+        Public2Subnet: !Sub ${VPC.Outputs.SubnetID3}
+        Private1Subnet: !Sub ${VPC.Outputs.SubnetID2}
+        Private2Subnet: !Sub ${VPC.Outputs.SubnetID4}
+        AZForFirewall1: !Sub ${VPC.Outputs.AZ1}
+        AZForFirewall2: !Sub ${VPC.Outputs.AZ2}
+        FortiGateEC2Type: !Ref FortiGateEC2Type
+        CIDRForFGTAccess: !Ref CIDRForFGTAccess
+        FortiGateKeyPair: !Ref FortiGateKeyPair
+        S3ConfigBucket: !Ref S3ConfigBucket
+        S3ConfigObject: !Ref S3ConfigObject
+        ListenerPort: !Ref ListenerPort
+        HealthCheckPort: !Ref HealthCheckPort
+    DependsOn: Lambda
+Outputs:
+  VPCID:
+    Value: !Sub ${VPC.Outputs.VPCID}
+    Description: VPC ID
+  SNSNotificationEndpoint:
+    Value: !Sub ${Lambda.Outputs.SNSEndPoint}
+    Description: SNS Endpoint
