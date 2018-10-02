@@ -1,0 +1,216 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This template deploys a Lambda function and an
+  API gateway as part of the stack.**WARNING** This template
+  creates AWS resources. You will be billed for the AWS
+  resources used if you create a stack from this template.
+Parameters:
+  ApiName:
+    Type: String
+  ApiStageName:
+    Type: String
+    AllowedPattern: '^[a-z0-9]+$'
+  LambdaFunctionName:
+    Type: String
+    AllowedPattern: '^[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+$'
+  S3Bucket:
+    Type: String
+  S3Key:
+    Type: String
+Resources:
+  LambdaPolicy:
+    Properties:
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action:
+          - autoscaling:CompleteLifecycleAction
+          - ec2:AttachNetworkInterface
+          - ec2:DescribeInstances
+          - ec2:DetachNetworkInterface
+          - ec2:ResetNetworkInterfaceAttribute
+          - ec2:ModifyNetworkInterfaceAttribute
+          - ec2:DeleteNetworkInterface
+          - ec2:CreateNetworkInterface
+          - ec2:DescribeNetworkInterfaces
+          - ec2:DescribeRouteTables
+          - ec2:ReplaceRoute
+          - ec2:TerminateInstances
+          - ec2:CreateTags
+          - elasticloadbalancing:DescribeTargetGroups
+          - elasticloadbalancing:RegisterTargets
+          Resource: '*'
+        - Effect: Allow
+          Action:
+          - s3:PutObject
+          Resource: '*'
+        - Effect: Allow
+          Action:
+          - dynamodb:CreateTable
+          - dynamodb:DeleteItem
+          - dynamodb:DeleteTable
+          - dynamodb:DescribeTable
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:UpdateItem
+          - dynamodb:UpdateTable
+          - dynamodb:BatchGetItem
+          - dynamodb:BatchWriteItem
+          - dynamodb:DescribeStream
+          - dynamodb:GetRecords
+          Resource: "*"
+      PolicyName: LambdaPolicy
+      Roles:
+      - Ref: LambdaRole
+    Type: AWS::IAM::Policy
+  LambdaRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+        Version: '2012-10-17'
+      Path: /
+      RoleName:
+        Fn::Join:
+        - ''
+        - - LambdaRole-
+          - Ref: AWS::Region
+    Type: AWS::IAM::Role
+  APIPolicy:
+    Properties:
+      PolicyDocument:
+        Statement:
+        - Action:
+          - sns:Publish
+          Effect: Allow
+          Resource: '*'
+        - Action: lambda:InvokeFunction
+          Effect: Allow
+          Resource: '*'
+      PolicyName: APIPolicy
+      Roles:
+      - Ref: APIRole
+    Type: AWS::IAM::Policy
+  APIRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - apigateway.amazonaws.com
+        Version: '2012-10-17'
+      Path: /
+      RoleName:
+        Fn::Join:
+        - ''
+        - - APIRole-
+          - Ref: AWS::Region
+    Type: AWS::IAM::Role
+  ANY0:
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: ANY
+      Integration:
+        CacheKeyParameters: []
+        CacheNamespace: none
+        Credentials:
+          Fn::GetAtt:
+          - APIRole
+          - Arn
+        IntegrationHttpMethod: POST
+        IntegrationResponses: []
+        PassthroughBehavior: NEVER
+        Type: AWS_PROXY
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
+          - lambdaArn: !GetAtt 'LambdaFunction.Arn'
+      MethodResponses: []
+      ResourceId: !GetAtt
+        - Api
+        - RootResourceId
+      RestApiId: !Ref Api
+    Type: 'AWS::ApiGateway::Method'
+  ANY1:
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: ANY
+      Integration:
+        CacheKeyParameters: []
+        CacheNamespace: none
+        Credentials:
+          Fn::GetAtt:
+          - APIRole
+          - Arn
+        IntegrationHttpMethod: POST
+        IntegrationResponses: []
+        PassthroughBehavior: NEVER
+        Type: AWS_PROXY
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations'
+          - lambdaArn: !GetAtt 'LambdaFunction.Arn'
+      MethodResponses: []
+      ResourceId: !Ref ResourceAnyPathSlashed
+      RestApiId: !Ref Api
+    Type: 'AWS::ApiGateway::Method'
+  Api:
+    Properties:
+      Description: API Gateway for AutoScale Group
+      Name: !Ref 'ApiName'
+    Type: 'AWS::ApiGateway::RestApi'
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - 'ANY0'
+    Properties:
+      RestApiId: !Ref 'Api'
+      StageName: !Ref 'ApiStageName'
+  ResourceAnyPathSlashed:
+    Properties:
+      ParentId: !GetAtt
+        - Api
+        - RootResourceId
+      PathPart: '{proxy+}'
+      RestApiId: !Ref Api
+    Type: 'AWS::ApiGateway::Resource'
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref S3Bucket
+        S3Key: !Ref S3Key
+      Description: 'Function for AutoScale Group'
+      FunctionName: !Ref 'LambdaFunctionName'
+      Handler: 'handler.lambda_handler'
+      Role:
+        Fn::GetAtt:
+        - LambdaRole
+        - Arn
+      Runtime: 'python2.7'
+      Timeout: 300
+      MemorySize: 512
+  lambdaApiGatewayInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !GetAtt 'LambdaFunction.Arn'
+      Principal: 'apigateway.amazonaws.com'
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/POST/'
+Outputs:
+  ApiURL:
+    Value: !Sub 'https://${Api}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}'
+  SNSEndPoint:
+    Value: !Sub 'https://${Api}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}/sns'
+  LambdaArn:
+    Value: !GetAtt 'LambdaFunction.Arn'
