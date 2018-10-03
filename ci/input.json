@@ -1,0 +1,90 @@
+[
+    {
+        "ParameterKey": "ApiGateway",
+        "ParameterValue": "lambda-Api-Gateway"
+    },
+    {
+        "ParameterKey": "ApiStage",
+        "ParameterValue": "dev"
+    },
+    {
+        "ParameterKey": "ASGroupCoolDown",
+        "ParameterValue": 300
+    },
+    {
+        "ParameterKey": "ASGroupMaxSize",
+        "ParameterValue": 4
+    },
+    {
+        "ParameterKey": "ASGroupMinSize",
+        "ParameterValue": 2
+    },
+    {
+        "ParameterKey": "CIDRForFGTAccess",
+        "ParameterValue": "10.0.0.0/16"
+    },
+    {
+        "ParameterKey": "FortiGateEC2Type",
+        "ParameterValue": "c4.large"
+    },
+    {
+        "ParameterKey": "KeyPair",
+        "ParameterValue": "key"
+    },
+    {
+        "ParameterKey": "LambdaFunction",
+        "ParameterValue": "lambda-func-v2"
+    },
+    {
+        "ParameterKey": "Private1Subnet",
+        "ParameterValue": "10.0.1.0/24"
+    },
+    {
+        "ParameterKey": "Private2Subnet",
+        "ParameterValue": "10.0.3.0/24"
+    },
+    {
+        "ParameterKey": "Public1Subnet",
+        "ParameterValue": "10.0.0.0/24"
+    },
+    {
+        "ParameterKey": "Public2Subnet",
+        "ParameterValue": "10.0.2.0/24"
+    },
+    {
+        "ParameterKey": "QSS3BucketName",
+        "ParameterValue": "aws-qsg-fortinet"
+    },
+    {
+        "ParameterKey": "QSS3KeyPrefix",
+        "ParameterValue": "quickstart-fortinet-fortigate/"
+    },
+    {
+        "ParameterKey": "ScaleDownThreshold",
+        "ParameterValue": 70
+    },
+    {
+        "ParameterKey": "ScaleUpThreshold",
+        "ParameterValue": 80
+    },
+    {
+        "ParameterKey": "ScalingParameter",
+        "ParameterValue": "CPUUtilization"
+    },
+    {
+        "ParameterKey": "ScalingPeriod",
+        "ParameterValue": 300
+    },
+    {
+        "ParameterKey": "SNSEndpointProtocol",
+        "ParameterValue": "https"
+    },
+    {
+        "ParameterKey": "AvailabilityZones",
+        "ParameterValue": "$[taskcat_genaz_2]"
+    },
+    {
+        "ParameterKey": "VPCCIDR",
+        "ParameterValue": "10.0.0.0/16"
+    }
+]

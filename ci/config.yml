@@ -1,6 +1,6 @@
 global:
   marketplace-ami: false
-  owner: quickstart-eng@amazon.com
+  owner: quickstart@amazon.com
   qsname: quickstart-fortinet-fortigate
   regions:
     - ap-northeast-1
@@ -19,9 +19,6 @@ global:
   reporting: true
  
 tests:
-  quickstart-fortinet-fortigatet1:
-    parameter_input: quickstart-fortinet-fortigate-example-params1.json
-    template_file: quickstart-fortinet-fortigate-example1.template
-  quickstart-fortinet-fortigatet2:
-    parameter_input: quickstart-fortinet-fortigate-example-params2.json
-    template_file: quickstart-fortinet-fortigate-example2.template
+  quickstart-fortigate-test:
+    parameter_input: input.json
+    template_file: fortigate-workload-master.template

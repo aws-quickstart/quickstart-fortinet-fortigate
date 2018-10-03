@@ -107,37 +107,37 @@ Mappings:
       ScaleDown: '6000'
   RegionMap:
     AMI:
-      fgtodami: FortiGate-VM64-AWSONDEMAND build0131 (6.0.2) GA-3124a694-441c-4ff1-8bf7-4d153be424a6-ami-0edea6b5399e4d985.4
+      FGTODAMI: FortiGate-VM64-AWSONDEMAND build0131 (6.0.2) GA-3124a694-441c-4ff1-8bf7-4d153be424a6-ami-0edea6b5399e4d985.4
     us-east-1:
-      fgtodami: ami-0426217b
+      FGTODAMI: ami-0426217b
     us-east-2:
-      fgtodami: ami-340a3451
+      FGTODAMI: ami-340a3451
     us-west-1:
-      fgtodami: ami-05de3a66
+      FGTODAMI: ami-05de3a66
     us-west-2:
-      fgtodami: ami-b6befdce
+      FGTODAMI: ami-b6befdce
     ca-central-1:
-      fgtodami: ami-25028141
+      FGTODAMI: ami-25028141
     eu-central-1:
-      fgtodami: ami-6a85b581
+      FGTODAMI: ami-6a85b581
     eu-west-1:
-      fgtodami: ami-3da3ae44
+      FGTODAMI: ami-3da3ae44
     eu-west-2:
-      fgtodami: ami-878d63e0
+      FGTODAMI: ami-878d63e0
     eu-west-3:
-      fgtodami: ami-ae2e9fd3
+      FGTODAMI: ami-ae2e9fd3
     ap-southeast-1:
-      fgtodami: ami-5f6a6d23
+      FGTODAMI: ami-5f6a6d23
     ap-southeast-2:
-      fgtodami: ami-6eaa750c
+      FGTODAMI: ami-6eaa750c
     ap-northeast-1:
-      fgtodami: ami-2865a957
+      FGTODAMI: ami-2865a957
     ap-northeast-2:
-      fgtodami: ami-dc9b31b2
+      FGTODAMI: ami-dc9b31b2
     ap-south-1:
-      fgtodami: ami-bb88a0d4
+      FGTODAMI: ami-bb88a0d4
     sa-east-1:
-      fgtodami: ami-03461d6f
+      FGTODAMI: ami-03461d6f
 Conditions:
   CPUSelection:
     Fn::Equals:
@@ -395,7 +395,7 @@ Resources:
         Fn::FindInMap:
         - RegionMap
         - Ref: AWS::Region
-        - fgtodami
+        - FGTODAMI
       SecurityGroups:
       - Ref: ASGSecurityGroup
       InstanceType:
