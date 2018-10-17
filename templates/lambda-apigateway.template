@@ -24,6 +24,9 @@ Resources:
         Statement:
         - Effect: Allow
           Action:
+          - autoscaling:DescribeAutoScalingInstances
+          - autoscaling:DescribeAutoScalingGroups
+          - autoscaling:UpdateAutoScalingGroup
           - autoscaling:CompleteLifecycleAction
           - ec2:AttachNetworkInterface
           - ec2:DescribeInstances
@@ -39,11 +42,35 @@ Resources:
           - ec2:CreateTags
           - elasticloadbalancing:DescribeTargetGroups
           - elasticloadbalancing:RegisterTargets
-          Resource: '*'
+          Resource: "*"
+        - Effect: Allow
+          Action:
+          - logs:CreateLogGroup
+          - logs:CreateLogStream
+          - logs:PutLogEvents
+          Resource: "*"
         - Effect: Allow
           Action:
           - s3:PutObject
-          Resource: '*'
+          Resource: "*"
+        - Effect: Allow
+          Action:
+          - events:DeleteRule
+          - events:DescribeEventBus
+          - events:DescribeRule
+          - events:DisableRule
+          - events:EnableRule
+          - events:ListRuleNamesByTarget
+          - events:ListRules
+          - events:ListTargetsByRule
+          - events:PutEvents
+          - events:PutPermission
+          - events:PutRule
+          - events:PutTargets
+          - events:RemovePermission
+          - events:RemoveTargets
+          - events:TestEventPattern
+          Resource: arn:aws:events:*:*:*
         - Effect: Allow
           Action:
           - dynamodb:CreateTable
@@ -60,6 +87,7 @@ Resources:
           - dynamodb:BatchWriteItem
           - dynamodb:DescribeStream
           - dynamodb:GetRecords
+          - dynamodb:ListTables
           Resource: "*"
       PolicyName: LambdaPolicy
       Roles:
@@ -73,6 +101,7 @@ Resources:
           Principal:
             Service:
             - lambda.amazonaws.com
+            - events.amazonaws.com
           Action:
           - sts:AssumeRole
         Version: '2012-10-17'
@@ -200,13 +229,107 @@ Resources:
       Runtime: 'python2.7'
       Timeout: 300
       MemorySize: 512
-  lambdaApiGatewayInvoke:
+  LambdaApiGatewayInvoke:
     Type: AWS::Lambda::Permission
     Properties:
       Action: 'lambda:InvokeFunction'
       FunctionName: !GetAtt 'LambdaFunction.Arn'
       Principal: 'apigateway.amazonaws.com'
       SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/POST/'
+  StartScheduledRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name:
+        Fn::Join:
+          - ''
+          - - !Ref 'LambdaFunction'
+            - "-fgtautoscale.views.start_scheduled"
+      Description: "fgtautoscale.views.start_scheduled"
+      ScheduleExpression: "rate(1 minute)"
+      State: "ENABLED"
+      RoleArn: !GetAtt
+        - LambdaRole
+        - Arn
+      Targets:
+        -
+          Arn:
+            Fn::GetAtt:
+              - 'LambdaFunction'
+              - 'Arn'
+          Id: !Ref 'LambdaFunction'
+          InputTransformer:
+              InputPathsMap:
+                detail-type: $.detail-type
+                resources: $.resources
+                detail: $.detail
+                id: $.id
+                source: $.source
+                time: $.time
+                region: $.region
+                version: $.version
+                account: $.account
+              InputTemplate: >-
+                  {"time": <time>, "detail-type": <detail-type>, "source": <source>,"account":
+                  <account>, "region": <region>,"detail": <detail>, "version":
+                  <version>,"resources": <resources>,"id": <id>,"kwargs": {}}
+  PermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: "LambdaFunction"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn:
+        Fn::GetAtt:
+          - "StartScheduledRule"
+          - "Arn"
+  KeepWarmCallBack:
+    Type: AWS::Events::Rule
+    Properties:
+      Name:
+        Fn::Join:
+          - ''
+          - - !Ref 'LambdaFunction'
+            - "-zappa-keep-warm-handler.keep_warm_callback"
+      Description: "Keep Warm - Callback"
+      ScheduleExpression: "rate(4 minutes)"
+      State: "ENABLED"
+      RoleArn: !GetAtt
+        - LambdaRole
+        - Arn
+      Targets:
+        -
+          Arn:
+            Fn::GetAtt:
+              - 'LambdaFunction'
+              - 'Arn'
+          Id: !Ref 'LambdaFunction'
+          InputTransformer:
+              InputPathsMap:
+                detail-type: $.detail-type
+                resources: $.resources
+                detail: $.detail
+                id: $.id
+                source: $.source
+                time: $.time
+                region: $.region
+                version: $.version
+                account: $.account
+              InputTemplate: >-
+                  {"time": <time>, "detail-type": <detail-type>, "source": <source>,"account":
+                  <account>, "region": <region>,"detail": <detail>, "version":
+                  <version>,"resources": <resources>,"id": <id>,"kwargs": {}}
+  KeepWarmCallBackInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: "LambdaFunction"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn:
+        Fn::GetAtt:
+          - "KeepWarmCallBack"
+          - "Arn"
 Outputs:
   ApiURL:
     Value: !Sub 'https://${Api}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}'

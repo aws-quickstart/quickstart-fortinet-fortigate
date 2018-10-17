@@ -83,14 +83,24 @@ Parameters:
     Type: AWS::EC2::KeyPair::KeyName
   VPCID:
     Type: AWS::EC2::VPC::Id
-  Public1Subnet:
+  PublicSubnet1ID:
     Type: AWS::EC2::Subnet::Id
-  Public2Subnet:
+  PublicSubnet2ID:
     Type: AWS::EC2::Subnet::Id
-  Private1Subnet:
+  PrivateSubnet1AID:
     Type: AWS::EC2::Subnet::Id
-  Private2Subnet:
+  PrivateSubnet2AID:
     Type: AWS::EC2::Subnet::Id
+Rules:
+  SubnetsInVPC:
+    Assertions:
+    - Assert:
+        Fn::EachMemberIn:
+        - Fn::ValueOfAll:
+          - AWS::EC2::Subnet::Id
+          - VpcId
+        - Fn::RefAll: AWS::EC2::VPC::Id
+      AssertDescription: All subnets must in the VPC
 Mappings:
   DefaultScalingupDownMap:
     CPUUtilization:
@@ -111,33 +121,33 @@ Mappings:
     us-east-1:
       fgtodami: ami-0426217b
     us-east-2:
-      fgtodami: ami-340a3451
+      fgtodami: ami-a94c76cc
     us-west-1:
-      fgtodami: ami-05de3a66
+      fgtodami: ami-408e6323
     us-west-2:
-      fgtodami: ami-b6befdce
+      fgtodami: ami-42dc833a
     ca-central-1:
-      fgtodami: ami-25028141
+      fgtodami: ami-05911c61
     eu-central-1:
-      fgtodami: ami-6a85b581
+      fgtodami: ami-89161662
     eu-west-1:
-      fgtodami: ami-3da3ae44
+      fgtodami: ami-17e0f9fd
     eu-west-2:
-      fgtodami: ami-878d63e0
+      fgtodami: ami-5ca64c3b
     eu-west-3:
-      fgtodami: ami-ae2e9fd3
+      fgtodami: ami-2d883850
     ap-southeast-1:
-      fgtodami: ami-5f6a6d23
+      fgtodami: ami-b546025f
     ap-southeast-2:
-      fgtodami: ami-6eaa750c
+      fgtodami: ami-35be1957
     ap-northeast-1:
-      fgtodami: ami-2865a957
+      fgtodami: ami-ff4b2012
     ap-northeast-2:
-      fgtodami: ami-dc9b31b2
+      fgtodami: ami-b89720d6
     ap-south-1:
-      fgtodami: ami-bb88a0d4
+      fgtodami: ami-ce0033a1
     sa-east-1:
-      fgtodami: ami-03461d6f
+      fgtodami: ami-438fa92f
 Conditions:
   CPUSelection:
     Fn::Equals:
@@ -167,8 +177,8 @@ Resources:
       TopicName:
         Fn::Join:
         - ''
-        - - Ref: AWS::StackName
-          - "-FgtScEvt"
+        - - "sns-asg"
+          - "-FgtEvt"
   SNSRole:
     Type: AWS::IAM::Role
     Properties:
@@ -409,8 +419,8 @@ Resources:
       AutoScalingGroupName:
         Fn::Join:
           - ''
-          - - Ref: AWS::StackName
-            - "-FgtScEvt"
+          - - "sns-asg"
+            - "-FgtEvt"
       Cooldown:
         Ref: ASGroupCoolDown
       DesiredCapacity:
@@ -421,6 +431,8 @@ Resources:
         Ref: ASGroupMaxSize
       MinSize:
         Ref: ASGroupMinSize
+      TargetGroupARNs:
+        - !Ref PublicTargetGroup
       NotificationConfigurations:
       - TopicARN:
           Ref: FgtScEvt
@@ -436,12 +448,12 @@ Resources:
         Value:
           Fn::Join:
           - ''
-          - - Ref: AWS::StackName
-            - "-Fortigate"
+          - - "Fortigate"
+            - "-Instance"
         PropagateAtLaunch: 'true'
       VPCZoneIdentifier:
-      - Ref: Public1Subnet
-      - Ref: Public2Subnet
+      - Ref: PublicSubnet1ID
+      - Ref: PublicSubnet2ID
   ASLifecycleLaunchHook:
     Type: AWS::AutoScaling::LifecycleHook
     Properties:
@@ -458,13 +470,13 @@ Resources:
       NotificationMetadata:
           Fn::Join:
             - ''
-            - - Ref: Public1Subnet
+            - - Ref: PublicSubnet1ID
               - ":"
-              - Ref: Private1Subnet
+              - Ref: PrivateSubnet1AID
               - ":"
-              - Ref: Public2Subnet
+              - Ref: PublicSubnet2ID
               - ":"
-              - Ref: Private2Subnet
+              - Ref: PrivateSubnet2AID
   ASLifecycleTerminateHook:
     Type: AWS::AutoScaling::LifecycleHook
     Properties:
@@ -484,12 +496,12 @@ Resources:
       Name:
         Fn::Join:
         - ''
-        - - 'Loadbalancer'
-          - '-FgtScEvt'
+        - - 'Elastic'
+          - '-LoadBalancer'
       Scheme: internet-facing
       Subnets:
-      - Ref: Public1Subnet
-      - Ref: Public2Subnet
+      - Ref: PublicSubnet1ID
+      - Ref: PublicSubnet2ID
       Type: network
   PublicTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -497,8 +509,8 @@ Resources:
       Name:
         Fn::Join:
           - ''
-          - - 'LoadBalancertrgtgrp'
-            - "-FgtScEvt"
+          - - 'Public'
+            - "-TargetGroup"
       Port: 80
       Protocol: TCP
       HealthCheckProtocol: TCP

@@ -13,10 +13,10 @@ Metadata:
         default: Network Configuration
       Parameters:
       - VPCID
-      - PrivateSubnet1ID
-      - PrivateSubnet2ID
       - PublicSubnet1ID
       - PublicSubnet2ID
+      - PrivateSubnet1AID
+      - PrivateSubnet2AID
     - Label:
         default: Lambda and Api-Gateway Configuration
       Parameters:
@@ -48,9 +48,9 @@ Metadata:
     ParameterLabels:
       VPCID:
         default: VPC ID
-      PrivateSubnet1ID:
+      PrivateSubnet1AID:
         default: Private Subnet 1 ID
-      PrivateSubnet2ID:
+      PrivateSubnet2AID:
         default: Private Subnet 2 ID
       PublicSubnet1ID:
         default: Public Subnet 1 ID
@@ -92,26 +92,33 @@ Parameters:
   VPCID:
     Description: ID of your existing VPC for deployment
     Type: AWS::EC2::VPC::Id
-  PrivateSubnet1ID:
-    Description: ID of private subnet 1 in Availability Zone 1
+  PrivateSubnet1AID:
+    Description: ID of private subnet 1 in Availability Zone 1 for the Workload (e.g.,
+      subnet-a0246dcd)
     Type: AWS::EC2::Subnet::Id
-  PrivateSubnet2ID:
-    Description: ID of private subnet 2 in Availability Zone 2
+  PrivateSubnet2AID:
+    Description: ID of private subnet 2 in Availability Zone 2 for the Workload (e.g.,
+      subnet-b1f432cd)
     Type: AWS::EC2::Subnet::Id
   PublicSubnet1ID:
-    Description: ID of public subnet 1 in Availability Zone 1
+    Description: ID of public subnet 1 in Availability Zone 1 for the ELB load balancer
+      (e.g., subnet-9bc642ac)
     Type: AWS::EC2::Subnet::Id
   PublicSubnet2ID:
-    Description: ID of public subnet 2 in Availability Zone 2
+    Description: ID of public subnet 2 in Availability Zone 2 for the ELB load balancer
+      (e.g., subnet-e3246d8e)
     Type: AWS::EC2::Subnet::Id
   ScaleUpThreshold:
     Type: Number
     Description: Value at which a Scaleup event would take place
+    Default: '80'
   ScaleDownThreshold:
     Type: Number
     Description: Value at which a Scaledown event would take place
+    Default: '70'
   ScalingParameter:
     Type: String
+    Default: CPUUtilization
     AllowedValues:
     - CPUUtilization
     - MemoryUtilization
@@ -123,29 +130,37 @@ Parameters:
     Type: Number
     Description: Number of seconds for the CloudWatchAlarm to trigger the
       ScaleinPolicy
+    Default: '300'
   ASGroupMaxSize:
     Type: Number
     Description: Maximum number of instances in the Auto Scaling Group
+    Default: '4'
   ASGroupMinSize:
     Type: Number
     Description: Minimum number of instances in the Auto Scaling Group
+    Default: '0'
   ASGroupCoolDown:
     Type: Number
+    Default: '300'
     Description: Cooldown period of the Auto Scaling Group
   ApiGateway:
     Description: API Gateway Name
     Type: String
+    Default: 'lambda-Api-Gateway'
   ApiStage:
     Description: API Stage Name
     Type: String
     AllowedPattern: '^[a-z0-9]+$'
+    Default: 'dev'
   LambdaFunction:
     Description: Lambda Function Name
     Type: String
     AllowedPattern: '^[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+$'
+    Default: 'lambda-function-v1'
   SNSEndpointProtocol:
     Type: String
     Description: Enter the protocol for the SNS Endpoint
+    Default: https
     AllowedValues:
     - https
   CIDRForFGTAccess:
@@ -157,6 +172,7 @@ Parameters:
   FortiGateEC2Type:
     Description: Amazon EC2 instance type for FortiGate Instances
     Type: String
+    Default: c4.large
     AllowedValues:
     - t2.nano
     - t2.micro
@@ -227,6 +243,15 @@ Parameters:
       forward slash (/).
     Type: String
 Resources:
+  CopyLambda:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL:
+        Fn::Sub: https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/copy-lambda.template
+      TimeoutInMinutes: '20'
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
   Lambda:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -237,8 +262,11 @@ Resources:
         ApiName: !Ref ApiGateway
         ApiStageName: !Ref ApiStage
         LambdaFunctionName: !Ref LambdaFunction
-        S3Bucket: !Ref QSS3BucketName
-        S3Key: !Sub ${QSS3KeyPrefix}submodules/lambda.zip
+        S3Bucket: !GetAtt
+          - CopyLambda
+          - Outputs.LambdaZipsBucket
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/lambda.zip'
+    DependsOn: CopyLambda
   ASG:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -256,10 +284,10 @@ Resources:
         SNSNotificationEndpoint: !Sub ${Lambda.Outputs.SNSEndPoint}
         SNSEndpointProtocol: !Ref SNSEndpointProtocol
         VPCID: !Ref VPCID
-        Public1Subnet: !Ref PublicSubnet1ID
-        Public2Subnet: !Ref PublicSubnet2ID
-        Private1Subnet: !Ref PrivateSubnet1ID
-        Private2Subnet: !Ref PrivateSubnet2ID
+        PublicSubnet1ID: !Ref PublicSubnet1ID
+        PublicSubnet2ID: !Ref PublicSubnet2ID
+        PrivateSubnet1AID: !Ref PrivateSubnet1AID
+        PrivateSubnet2AID: !Ref PrivateSubnet2AID
         FortiGateEC2Type: !Ref FortiGateEC2Type
         CIDRForFGTAccess: !Ref CIDRForFGTAccess
         FortiGateKeyPair: !Ref KeyPair
