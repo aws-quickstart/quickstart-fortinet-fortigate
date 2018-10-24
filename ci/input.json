@@ -37,27 +37,27 @@
     },
     {
         "ParameterKey": "Private1Subnet",
-        "ParameterValue": "10.0.1.0/24"
+        "ParameterValue": "10.0.0.0/19"
     },
     {
         "ParameterKey": "Private2Subnet",
-        "ParameterValue": "10.0.3.0/24"
+        "ParameterValue": "10.0.32.0/19"
     },
     {
         "ParameterKey": "Public1Subnet",
-        "ParameterValue": "10.0.0.0/24"
+        "ParameterValue": "10.0.128.0/20"
     },
     {
         "ParameterKey": "Public2Subnet",
-        "ParameterValue": "10.0.2.0/24"
+        "ParameterValue": "10.0.144.0/20"
     },
     {
         "ParameterKey": "QSS3BucketName",
-        "ParameterValue": "aws-qsg-fortinet"
+        "ParameterValue": "aws-quickstart"
     },
     {
         "ParameterKey": "QSS3KeyPrefix",
-        "ParameterValue": "quickstart-fortinet-fortigate/"
+        "ParameterValue": "fortigate-quickstart/"
     },
     {
         "ParameterKey": "ScaleDownThreshold",

@@ -109,28 +109,28 @@ Parameters:
     AllowedPattern: >-
       ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
-    Default: '10.0.0.0/24'
+    Default: '10.0.128.0/20'
     Description: CIDR Block for the public subnet 1 located in Availability Zone 1
     Type: String
   Public2Subnet:
     AllowedPattern: >-
       ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
-    Default: '10.0.2.0/24'
+    Default: '10.0.144.0/20'
     Description: CIDR Block for the public subnet 2 located in Availability Zone 2
     Type: String
   Private1Subnet:
     AllowedPattern: >-
       ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
-    Default: '10.0.1.0/24'
+    Default: '10.0.0.0/19'
     Description: CIDR block for private subnet 1 located in Availability Zone 1
     Type: String
   Private2Subnet:
     AllowedPattern: >-
       ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
-    Default: '10.0.3.0/24'
+    Default: '10.0.32.0/19'
     Description: CIDR block for private subnet 2 located in Availability Zone 2
     Type: String
   ScaleUpThreshold:
@@ -163,7 +163,7 @@ Parameters:
   ASGroupMinSize:
     Type: Number
     Description: Minimum number of instances in the Auto Scaling Group
-    Default: '2'
+    Default: '0'
   ASGroupCoolDown:
     Type: Number
     Default: '300'
@@ -272,22 +272,21 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template
+        Fn::Sub: https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}submodules/vpc.template
       Parameters:
-        AvailabilityZones:
-          Fn::Join:
-          - ','
-          - Ref: AvailabilityZones
-        KeyPairName:
-          Ref: KeyPair
-        NumberOfAZs: '2'
-        PrivateSubnet1ACIDR:
+        AZForSubnet1: !Select
+          - 0
+          - Fn::GetAZs: !Ref 'AWS::Region'
+        AZForSubnet2: !Select
+          - 1
+          - Fn::GetAZs: !Ref 'AWS::Region'
+        Private1Subnet:
           Ref: Private1Subnet
-        PrivateSubnet2ACIDR:
+        Private2Subnet:
           Ref: Private2Subnet
-        PublicSubnet1CIDR:
+        Public1Subnet:
           Ref: Public1Subnet
-        PublicSubnet2CIDR:
+        Public2Subnet:
           Ref: Public2Subnet
         VPCCIDR:
           Ref: VPCCIDR
@@ -318,19 +317,19 @@ Resources:
         PublicSubnet1ID:
           Fn::GetAtt:
           - VPCStack
-          - Outputs.PublicSubnet1ID
+          - Outputs.SubnetID1
         PublicSubnet2ID:
           Fn::GetAtt:
           - VPCStack
-          - Outputs.PublicSubnet2ID
-        PrivateSubnet1ID:
+          - Outputs.SubnetID3
+        PrivateSubnet1AID:
           Fn::GetAtt:
           - VPCStack
-          - Outputs.PrivateSubnet1AID
-        PrivateSubnet2ID:
+          - Outputs.SubnetID2
+        PrivateSubnet2AID:
           Fn::GetAtt:
           - VPCStack
-          - Outputs.PrivateSubnet2AID
+          - Outputs.SubnetID4
         FortiGateEC2Type: !Ref FortiGateEC2Type
         CIDRForFGTAccess: !Ref CIDRForFGTAccess
         KeyPair: !Ref KeyPair
