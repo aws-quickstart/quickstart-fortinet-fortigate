@@ -17,7 +17,7 @@
     },
     {
         "ParameterKey": "ASGroupMinSize",
-        "ParameterValue": 0
+        "ParameterValue": 1
     },
     {
         "ParameterKey": "CIDRForFGTAccess",

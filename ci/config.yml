@@ -1,8 +1,7 @@
 ---
 global:
   owner: amakkar
-  qsname: taskcat
-  s3bucket: aws-quickstart
+  qsname: quickstart-fortinet-fortigate
   regions:
     - us-east-1
     - us-east-2
