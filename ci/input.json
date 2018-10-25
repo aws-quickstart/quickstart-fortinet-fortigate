@@ -57,7 +57,7 @@
     },
     {
         "ParameterKey": "QSS3KeyPrefix",
-        "ParameterValue": "fortigate-quickstart/"
+        "ParameterValue": "quickstart-fortinet-fortigate/"
     },
     {
         "ParameterKey": "ScaleDownThreshold",
