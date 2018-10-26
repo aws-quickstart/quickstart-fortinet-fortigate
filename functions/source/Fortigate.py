@@ -207,7 +207,12 @@ class Fortigate(object):
             # and allow the instance to change state to "Proceed:terminate"
             if i['Status'] == 'available':
                 self.ec2_client.delete_network_interface(NetworkInterfaceId=item['ENIId'])
-                self.lch_action('CONTINUE')
+                while True:
+                    q = self.ec2_client.describe_network_interfaces(NetworkInterfaceIds=[item['ENIId']])
+                    if i['Status'] == 'available':
+                        time.sleep(5)
+                    else:
+                        self.lch_action('CONTINUE')
                 try:
                     t.delete_item(TableName=self.auto_scale_group.name,
                                   Key={"Type": const.TYPE_ENI_ID, "TypeId": item['ENIId']})
@@ -358,7 +363,7 @@ class Fortigate(object):
         self.auto_scale_group.asg = {"Type": const.TYPE_ENI_ID, "TypeId": self.second_nic_id,
                                      "AutoScaleGroupName": self.auto_scale_group.name,
                                      "LifecycleHookName": self.lch_name, "LifecycleToken": self.lch_token,
-                                     "ENIId": self.second_nic_id}
+                                     "1": self.second_nic_id}
         t.put_item(Item=self.auto_scale_group.asg)
         return const.STATUS_OK
 
