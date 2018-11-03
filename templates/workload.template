@@ -295,8 +295,8 @@
         }
     },
     "Mappings": {
-        "FortiGateAutoScaleNameMap":{
-            "FortiGateVersion":{
+        "FortiGateAutoScaleNameMap": {
+            "FortiGateVersion": {
                 "LATEST": "FGTVM64ONDEMAND0200",
                 "603": "FGTVM64ONDEMAND0200"
             }
@@ -423,11 +423,12 @@
                                 ]
                             }
                         ]
-                    }
+                    },
+                    "Objects": "scripts/fortigate-autoscale-lambda.zip"
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/submodules/copy-lambda.template",
+                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/templates/copy-lambda.template",
                         {
                             "QSS3BucketName": {
                                 "Ref": "QSS3BucketName"
@@ -764,7 +765,10 @@
                 "Timeout": 300,
                 "Code": {
                     "S3Bucket": {
-                        "Ref": "QSS3BucketName"
+                        "Fn::GetAtt": [
+                            "StackCopyLambda",
+                            "Outputs.LambdaZipsBucket"
+                        ]
                     },
                     "S3Key": {
                         "Fn::Join": [
@@ -773,8 +777,8 @@
                                 {
                                     "Ref": "QSS3KeyPrefix"
                                 },
-                                "functions",
-                                "lambda.zip"
+                                "scripts",
+                                "fortigate-autoscale-lambda.zip"
                             ]
                         ]
                     }

@@ -17,15 +17,26 @@ Parameters:
       cannot start or end with a hyphen (-).
     Type: String
   QSS3KeyPrefix:
-    AllowedPattern: '^[0-9a-zA-Z-/]*$'
+    AllowedPattern: '^[0-9a-zA-Z-/]*[/]$'
     ConstraintDescription: >-
       Quick Start key prefix can include numbers, lowercase letters, uppercase
-      letters, hyphens (-), and forward slash (/).
-    Default: fortigate-quickstart/
+      letters, hyphens (-), and forward slash (/). must end with a forward slash (/).
+    Default: /
     Description: >-
       S3 key prefix for the Quick Start assets. Quick Start key prefix can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
+    Type: String
+  Objects:
+    AllowedPattern: '^(([0-9a-zA-Z-/.])*[,]?)+$'
+    ConstraintDescription: >-
+      Objects can include comma delimited filenames of numbers, lowercase letters, uppercase
+      letters, hyphens (-), and dot (.).
+    Default: lambda.zip
+    Description: >-
+      A comma delimited filepath of S3 objects in a bucket. (e.g. path/to/filename1, path/to/filename2, path/to/filename3 ...).
+      Each filename can include numbers, lowercase letters, uppercase letters, hyphens (-),
+      and dot (.).
     Type: String
 Resources:
   CopyObjects:
@@ -34,8 +45,7 @@ Resources:
         - CopyObjectsFunction
         - Arn
       DestBucket: !Ref LambdaZipsBucket
-      Objects:
-        - functions/packages/lambda.zip
+      Objects: !Ref Objects
       SourceBucket: !Ref QSS3BucketName
       Prefix: !Ref QSS3KeyPrefix
     Type: 'AWS::CloudFormation::CustomResource'
@@ -54,7 +64,7 @@ Resources:
             - ''
             - 'def copy_objects(source_bucket, dest_bucket, prefix, objects):'
             - '    s3 = boto3.client(''s3'')'
-            - '    for o in objects:'
+            - '    for o in objects.split('',''):'
             - '        key = prefix + o'
             - '        copy_source = {'
             - '            ''Bucket'': source_bucket,'
