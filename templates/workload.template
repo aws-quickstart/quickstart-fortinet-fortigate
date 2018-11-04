@@ -10,6 +10,20 @@
             "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
             "Description": "An identifier as resource name prefix. Must be at most 10 characters long and only contain uppercase, lowercase letters, and numbers."
         },
+        "QSS3BucketName": {
+            "Type": "String",
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Default": "aws-quickstart",
+            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+        },
+        "QSS3KeyPrefix": {
+            "Type": "String",
+            "AllowedPattern": "^[0-9a-zA-Z-/]*$",
+            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Default": "quickstart-fortinet-fortigate",
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+        },
         "AvailabilityZone1": {
             "Description": "Availability Zones #1 in the VPC.",
             "Type": "AWS::EC2::AvailabilityZone::Name",
@@ -47,6 +61,26 @@
         "PrivateSubnet2RouteTable": {
             "Type": "String",
             "Description": "Route table Id for the 2nd protected subnet."
+        },
+        "AddNatGatewayToPublicSubnet1": {
+            "Type": "String",
+            "Default": "add a new FortiGate Instance as NAT Gateway",
+            "AllowedValues": [
+                "add a new FortiGate Instance as NAT Gateway",
+                "use a NAT Gateway specified below"
+            ],
+            "ConstraintDescription": "must choose from the provided options.",
+            "Description": "Adding a new NAT Gateway creates additional cost. Please refer to the **Fortinet FortiGate Next-Generation Firewall** Pricing on AWS Market Place. Or specify your own NAT Gateway Id in the 'NAT Gateway #1 ID'"
+        },
+        "AddNatGatewayToPublicSubnet2": {
+            "Type": "String",
+            "Default": "add a new FortiGate Instance as NAT Gateway",
+            "AllowedValues": [
+                "add a new FortiGate Instance as NAT Gateway",
+                "use a NAT Gateway specified below"
+            ],
+            "ConstraintDescription": "must choose from the provided options.",
+            "Description": "Adding an AWS NAT Gateway creates additional cost. Please refer to the **Fortinet FortiGate Next-Generation Firewall** Pricing on AWS Market Place. Or specify your own NAT Gateway Id in the 'NAT Gateway #2 ID'"
         },
         "NatGatewayId1": {
             "Type": "String",
@@ -97,16 +131,7 @@
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
             "Description": "Seconds. FortiGate instance lifecycle expiry entry in seconds."
         },
-        "QSS3BucketName": {
-            "Type": "String",
-            "Default": "",
-            "Description": "The name of the Amazon S3 bucket where the .zip file that contains your deployment package is stored. This bucket must reside in the same AWS Region that you're creating the Lambda function in. You can specify a bucket from another AWS account as long as the Lambda function and the bucket are in the same region."
-        },
-        "QSS3KeyPrefix": {
-            "Type": "String",
-            "Default": "",
-            "Description": "The location within the QuickStart S3 bucket where the Quick Start codes, templates, and other access are stored."
-        },
+        
         "ScalingPolicyOptions": {
             "Type": "String",
             "Default": "CPU Utilization",
@@ -213,11 +238,14 @@
         },
         "FortigateAdminCidr": {
             "Type": "String",
-            "Default": "0.0.0.0/0",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format and 0.0.0.0/0 is not recommended.",
             "MinLength": 9,
-            "Description": "CIDR block for external admin management access. Do not use 0.0.0.0/0"
+            "Description": "CIDR block for external admin management access. **WARNING!** The default value 0.0.0.0/0 accepts connections from any IP address. Please consider to change it to match your needs."
+        },
+        "AdminAccessKeyPairName": {
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "Description": "Amazon EC2 Key Pair for admin access."
         }
     },
     "Conditions": {
@@ -292,6 +320,22 @@
                     ]
                 }
             ]
+        },
+        "IfAddNatGatewayToPublicSubnet1": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AddNatGatewayToPublicSubnet1"
+                },
+                "add a new FortiGate Instance as NAT Gateway"
+            ]
+        },
+        "IfAddNatGatewayToPublicSubnet2": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AddNatGatewayToPublicSubnet2"
+                },
+                "add a new FortiGate Instance as NAT Gateway"
+            ]
         }
     },
     "Mappings": {
@@ -364,6 +408,72 @@
         }
     },
     "Resources": {
+        "StackCreateFortigateNatGateway": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "Parameters": {
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
+                    },
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
+                    },
+                    "CustomIdentifier": {
+                        "Ref": "CustomIdentifier"
+                    },
+                    "VpcId": {
+                        "Ref": "VpcId"
+                    },
+                    "SubnetId1": {
+                        "Ref": "PublicSubnet1"
+                    },
+                    "SubnetId2": {
+                        "Ref": "PublicSubnet2"
+                    },
+                    "FortiGateImageId": {
+                        "Fn::FindInMap": [
+                            "OfficialAmiMap",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            {
+                                "Fn::FindInMap": [
+                                    "FortiGateAutoScaleNameMap",
+                                    "FortiGateVersion",
+                                    "LATEST"
+                                ]
+                            }
+                        ]
+                    },
+                    "FortigateInstanceType": {
+                        "Ref": "FortigateInstanceType"
+                    },
+                    "FortigateAdminCidr": {
+                        "Ref": "FortigateAdminCidr"
+                    },
+                    "AdminAccessKeyPairName": {
+                        "Ref": "AdminAccessKeyPairName"
+                    },
+                    "FortigateAdminPort": {
+                        "Ref": "FortigateAdminPort"
+                    }
+                },
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/templates/create-nat-fgt-master.template",
+                        {
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
+                            },
+                            "QSS3KeyPrefix": {
+                                "Ref": "QSS3KeyPrefix"
+                            }
+                        }
+                    ]
+                },
+                "TimeoutInMinutes": "10"
+            }
+        },
         "NatGateway1RouteAttachment": {
             "Type": "AWS::EC2::Route",
             "Properties": {
@@ -371,8 +481,11 @@
                 "RouteTableId": {
                     "Ref": "PrivateSubnet1RouteTable"
                 },
-                "NatGatewayId": {
-                    "Ref": "NatGatewayId1"
+                "InstanceId": {
+                    "Fn::GetAtt": [
+                        "StackCreateFortigateNatGateway",
+                        "Outputs.InstanceId1"
+                    ]
                 }
             },
             "Metadata": {
@@ -388,8 +501,11 @@
                 "RouteTableId": {
                     "Ref": "PrivateSubnet2RouteTable"
                 },
-                "NatGatewayId": {
-                    "Ref": "NatGatewayId2"
+                "InstanceId": {
+                    "Fn::GetAtt": [
+                        "StackCreateFortigateNatGateway",
+                        "Outputs.InstanceId2"
+                    ]
                 }
             },
             "Metadata": {
@@ -530,7 +646,10 @@
                             ],
                             "AssociatePublicIpAddress": true
                         }
-                    ]
+                    ],
+                    "KeyName": {
+                        "Ref": "AdminAccessKeyPairName"
+                    }
                 }
             },
             "DependsOn": [
@@ -2133,7 +2252,9 @@
                         "PrivateSubnet1",
                         "PrivateSubnet2",
                         "PrivateSubnet1RouteTable",
+                        "AddNatGatewayToPublicSubnet1",
                         "NatGatewayId1",
+                        "AddNatGatewayToPublicSubnet2",
                         "PrivateSubnet2RouteTable",
                         "NatGatewayId2"
                     ]
@@ -2147,6 +2268,7 @@
                         "FortigatePskSecret",
                         "FortigateAdminPort",
                         "FortigateAdminCidr",
+                        "AdminAccessKeyPairName",
                         "FgtAutoScaleSecurityGroup"
                     ]
                 },
@@ -2223,6 +2345,12 @@
                 "FgtAutoScaleSecurityGroup": {
                     "default": "Security Group"
                 },
+                "AddNatGatewayToPublicSubnet1": {
+                    "default": "NAT Gateway #1 Options"
+                },
+                "AddNatGatewayToPublicSubnet2": {
+                    "default": "NAT Gateway #2 Options"
+                },
                 "NatGatewayId1": {
                     "default": "NAT Gateway #1 ID"
                 },
@@ -2288,6 +2416,9 @@
                 },
                 "FortigateAdminCidr": {
                     "default": "Admin Access CIDR Block"
+                },
+                "AdminAccessKeyPairName": {
+                    "default": "Admin Access Key Pair"
                 }
             }
         }

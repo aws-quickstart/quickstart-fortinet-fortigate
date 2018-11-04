@@ -1,0 +1,100 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Create an ondemand FortiGate to a subnet in a VPC. This template is intented to be called by a master template only. **WARNING!** You are responsible for running this template alone.",
+    "Parameters": {
+        "CustomTagValue": {
+            "Type": "String",
+            "Description": "A custom tag value."
+        },
+        "FortigateInstanceType": {
+            "Type": "String",
+            "Description": "Instance Type."
+        },
+        "AdminAccessKeyPairName": {
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "Description": "Amazon EC2 Key Pair for admin access."
+        },        
+        "FortiGateSecurityGroupId": {
+            "Type": "String",
+            "Description": "The security group id which is to attach to this FortiGate instance if you want to use an existing one instead of creating new one."
+        },
+        "SubnetId": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "The subnet Id to deploy the NAT Gateway."
+        },
+        "FortiGateImageId": {
+            "Type": "String",
+            "Description": "FortiGate Official AMI Id."
+        },
+        "InstanceProfile": {
+            "Type": "String",
+            "Description": "The security group id which is to attach to this FortiGate instance if you want to use an existing one instead of creating new one."
+        }
+    },
+    "Mappings": {
+    },
+    "Conditions": {
+    },
+    "Resources": {
+        "ec2InstanceFortiGate": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": {
+                    "Ref": "AdminAccessKeyPairName"
+                },
+                "IamInstanceProfile": {
+                    "Ref": "InstanceProfile"
+                },
+                "NetworkInterfaces": [
+                    {
+                        "AssociatePublicIpAddress": "True",
+                        "DeleteOnTermination": "True",
+                        "SubnetId": {
+                            "Ref": "SubnetId"
+                        },
+                        "DeviceIndex": "0",
+                        "GroupSet": [
+                            {
+                                "Ref": "FortiGateSecurityGroupId"
+                            }
+                        ]
+                    }
+                ],
+                "ImageId": {
+                    "Ref": "FortiGateImageId"
+                },
+                "InstanceType": {
+                    "Ref": "FortigateInstanceType"
+                },
+                "Monitoring": "true",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Ref": "CustomTagValue"
+                        }
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "",
+                                ""
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "InstanceId": {
+            "Description": "The instance id of the created FortiGate.",
+            "Value": {
+                "Ref": "ec2InstanceFortiGate"
+            }
+        }
+    }
+}
