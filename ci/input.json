@@ -1,0 +1,130 @@
+[
+    {  
+	"ParameterKey": "AddNatGatewayToPublicSubnet1",
+        "ParameterValue": "add a new AWS NAT Gateway"
+    },
+    {  
+	"ParameterKey": "AddNatGatewayToPublicSubnet2",
+        "ParameterValue": "add a new AWS NAT Gateway"
+    },
+    {
+        "ParameterKey": "ApiGwResource",
+        "ParameterValue": "complete"
+    },
+    {
+        "ParameterKey": "ApiGwStageName",
+        "ParameterValue": "prod"
+    },
+    {
+        "ParameterKey": "AvailabilityZones",
+        "ParameterValue": "$[taskcat_genaz_2]"
+    },
+    {
+        "ParameterKey": "BalanceWebTrafficOverPort",
+        "ParameterValue": 443
+    },
+    {
+        "ParameterKey": "CustomIdentifier",
+        "ParameterValue": "fgtASG"
+    },
+    {
+        "ParameterKey": "ExpireLifecycleEntry",
+        "ParameterValue": "300"
+    },
+    {
+        "ParameterKey": "FortigateAdminCidr",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "FortigateAdminPort",
+        "ParameterValue": "8443"
+    },
+    {
+        "ParameterKey": "FortigateAsgCooldown",
+        "ParameterValue": "300"
+    },
+    {
+        "ParameterKey": "FortigateAsgDesiredCapacity",
+        "ParameterValue": "2"
+    },
+    {
+        "ParameterKey": "FortigateAsgHealthCheckGracePeriod",
+        "ParameterValue": "300"
+    },
+    {
+        "ParameterKey": "FortigateAsgMaxSize",
+        "ParameterValue": "4"
+    },
+    {
+        "ParameterKey": "FortigateAsgMinSize",
+        "ParameterValue": "2"
+    },
+    {
+        "ParameterKey": "FortigateAsgScaleInThreshold",
+        "ParameterValue": "25"
+    },
+    {
+        "ParameterKey": "FortigateAsgScaleOutThreshold",
+        "ParameterValue": "80"
+    },
+    {
+        "ParameterKey": "FortigateElbTgHealthyThreshold",
+        "ParameterValue": "3"
+    },
+    {
+        "ParameterKey": "FortigateInstanceType",
+        "ParameterValue": "c5.large"
+    },
+    {
+        "ParameterKey": "FortigatePskSecret",
+        "ParameterValue": "$[taskcat_genpass_8]"
+    }, 
+    {  
+	"ParameterKey": "InternalLoadBalancingOptions",
+        "ParameterValue": "add a new internal load balancer"
+    },
+    {  
+	"ParameterKey": "InternalLoadBalancerDnsName",
+        "ParameterValue": "fgtqsg-asg"
+    },	
+    {  
+	"ParameterKey": "NatGatewayId1",
+        "ParameterValue": "ngw1"
+    },
+    {  
+	"ParameterKey": "NatGatewayId2",
+        "ParameterValue": "ngw2"
+    },
+    {
+        "ParameterKey": "PrivateSubnetCidrBlock1",
+        "ParameterValue": "10.0.1.0/24"
+    },
+    {   
+	"ParameterKey": "PrivateSubnetCidrBlock2",
+        "ParameterValue": "10.0.3.0/24"
+    },
+    {   
+	"ParameterKey": "PublicSubnetCidrBlock1",
+        "ParameterValue": "10.0.0.0/24"
+    },
+    {   
+	"ParameterKey": "PublicSubnetCidrBlock2",
+        "ParameterValue": "10.0.2.0/24"
+    },
+    {   
+	"ParameterKey": "QSS3BucketName",
+        "ParameterValue": "aws-quickstart-fortigate-autoscale"
+    },
+    {   
+	"ParameterKey": "QSS3KeyPrefix",
+        "ParameterValue": "quickstart-fortinet-fortigate"
+    },
+    {   
+	"ParameterKey": "ScalingPolicyOptions",
+        "ParameterValue": "CPU Utilization"
+    },
+    {  
+	"ParameterKey": "VpcCidrBlock",
+        "ParameterValue": "10.0.0.0/16"
+    }
+]

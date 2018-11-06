@@ -8,89 +8,69 @@
             "MaxLength": "10",
             "AllowedPattern": "[A-Za-z0-9]+",
             "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
-            "Description": "An identifier as resource name prefix. Must be at most 10 characters long and only contain uppercase, lowercase letters, and numbers."
+            "Description": "A custom identifier as resource name prefix. Must be at most 10 characters long and only contain uppercase, lowercase letters, and numbers."
         },
         "QSS3BucketName": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Default": "aws-quickstart",
-            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+            "Description": "The S3 bucket you have created for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. The bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but should not start or end with a hyphen."
         },
         "QSS3KeyPrefix": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Default": "quickstart-fortinet-fortigate",
-            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+            "Description": "The S3 key name prefix used to simulate a folder for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes."
         },
         "AvailabilityZone1": {
-            "Description": "Availability Zones #1 in the VPC.",
+            "Description": "The Quick Start uses two Availability Zones. Choose one from the list.",
             "Type": "AWS::EC2::AvailabilityZone::Name",
             "MinLength": 1
         },
         "AvailabilityZone2": {
-            "Description": "Availability Zones #2 in the VPC.",
+            "Description": "The Quick Start uses two Availability Zones. Choose a different one from #1 above.",
             "Type": "AWS::EC2::AvailabilityZone::Name",
             "MinLength": 1
         },
         "VpcId": {
             "Type": "AWS::EC2::VPC::Id",
-            "Description": "Enter a valid VPC Id to deploy. The VPC must have the option 'DNS hostnames' enabled."
+            "Description": "Choose one the existing VPC IDs where you deploy the Auto-Scaling group and related resources. The VPC must have the option 'DNS hostnames' enabled."
         },
         "PublicSubnet1": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The 1st public subnet. FortiGate Auto-Scaling Group will be created across all those public subnets."
+            "Description": "Choose one public (DMZ) subnet, which is located in Availability Zone 1."
         },
         "PublicSubnet2": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The 1st public subnet. FortiGate Auto-Scaling Group will be created across all those public subnets."
+            "Description": "Choose one public (DMZ) subnet, which is located in Availability Zone 2."
         },
         "PrivateSubnet1": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The 1st protected subnet."
+            "Description": "Choose one private subnet, which is located in Availability Zone 1."
         },
         "PrivateSubnet2": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The 2nd protected subnet."
+            "Description": "Choose one private subnet, which is located in Availability Zone 2."
         },
         "PrivateSubnet1RouteTable": {
             "Type": "String",
-            "Description": "Route table Id for the 1st protected subnet."
+            "Description": "Specify the route table Id for the 1st private subnet."
         },
         "PrivateSubnet2RouteTable": {
             "Type": "String",
-            "Description": "Route table Id for the 2nd protected subnet."
+            "Description": "Specify the route table Id for the 2nd private subnet."
         },
-        "AddNatGatewayToPublicSubnet1": {
+        "AddNatGatewayToPublicSubnet": {
             "Type": "String",
-            "Default": "add a new FortiGate Instance as NAT Gateway",
+            "Default": "use FortiGate as NAT Gateway",
             "AllowedValues": [
-                "add a new FortiGate Instance as NAT Gateway",
+                "use FortiGate as NAT Gateway",
                 "use a NAT Gateway specified below"
             ],
             "ConstraintDescription": "must choose from the provided options.",
-            "Description": "Adding a new NAT Gateway creates additional cost. Please refer to the **Fortinet FortiGate Next-Generation Firewall** Pricing on AWS Market Place. Or specify your own NAT Gateway Id in the 'NAT Gateway #1 ID'"
-        },
-        "AddNatGatewayToPublicSubnet2": {
-            "Type": "String",
-            "Default": "add a new FortiGate Instance as NAT Gateway",
-            "AllowedValues": [
-                "add a new FortiGate Instance as NAT Gateway",
-                "use a NAT Gateway specified below"
-            ],
-            "ConstraintDescription": "must choose from the provided options.",
-            "Description": "Adding an AWS NAT Gateway creates additional cost. Please refer to the **Fortinet FortiGate Next-Generation Firewall** Pricing on AWS Market Place. Or specify your own NAT Gateway Id in the 'NAT Gateway #2 ID'"
-        },
-        "NatGatewayId1": {
-            "Type": "String",
-            "Default": "",
-            "Description": "The NAT Gateway used in the Protected Subnet #1. the NAT Gateway #1 and the Protected Subnet #1 must be in the same Availability Zone."
-        },
-        "NatGatewayId2": {
-            "Type": "String",
-            "Default": "",
-            "Description": "The NAT Gateway used in the Protected Subnet #2. the NAT Gateway #2 and the Protected Subnet #2 must be in the same Availability Zone."
+            "Description": "Having NAT gateway is required. This template will add one FortiGate as a NAT gateway for each protected subnet."
         },
         "FgtAutoScaleSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup::Id",
@@ -101,27 +81,24 @@
             "Default": "c5.large",
             "AllowedValues": [
                 "t2.small",
-                "c4.large",
-                "c4.xlarge",
-                "c4.2xlarge",
-                "c4.4xlarge",
                 "c5.large",
                 "c5.xlarge",
                 "c5.2xlarge",
-                "c5.9xlarge",
-                "c5.18xlarge"
+                "c5.4xlarge",
+                "c5.9xlarge"
             ],
-            "ConstraintDescription": "must be a valid EC2 instance type."
+            "ConstraintDescription": "must be a valid EC2 instance type.",
+            "Description": "Choose one to launch as FortiGate On-Demand instances. There are t2.small and compute-optimized instances such as c4 and c5 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/"
         },
         "ApiGwStageName": {
             "Type": "String",
             "Default": "prod",
-            "Description": "A deployment stage."
+            "Description": "A deployment stage name. You can leave it as is."
         },
         "ApiGwResource": {
             "Type": "String",
             "Default": "complete",
-            "Description": "An API Gateway resource group name."
+            "Description": "An API Gateway resource group name. You can leave it as is."
         },
         "ExpireLifecycleEntry": {
             "Type": "Number",
@@ -131,7 +108,7 @@
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
             "Description": "Seconds. FortiGate instance lifecycle expiry entry in seconds."
         },
-        
+
         "ScalingPolicyOptions": {
             "Type": "String",
             "Default": "CPU Utilization",
@@ -139,7 +116,7 @@
                 "CPU Utilization"
             ],
             "ConstraintDescription": "must be a valid String from options.",
-            "Description": "Auto Scaling Policy Options."
+            "Description": "This is what scaling policy of Auto-Scaling activities is based on. There is only CPU Utilization specifiable for FortiGate."
         },
         "FortigateAsgCooldown": {
             "Type": "Number",
@@ -147,28 +124,28 @@
             "MinValue": 60,
             "MaxValue": 3600,
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
-            "Description": "Seconds. Auto scaling group waits for the cooldown period to complete before resuming scaling activities. Time in seconds."
+            "Description": "Seconds. Auto-Scaling group waits for the cool-down period to complete before resuming scaling activities."
         },
         "FortigateAsgDesiredCapacity": {
             "Type": "Number",
             "Default": 2,
             "MinValue": 1,
             "ConstraintDescription": "must be a valid number not less than 1.",
-            "Description": "The number of FortiGate instances the group should have at any time, also called desired capacity. Default to 0 to not start to scale-out initially."
+            "Description": "The number of FortiGate instances the group should have at any time, also called desired capacity. Must keep at least 2 FortiGates in the group for High Availability."
         },
         "FortigateAsgMinSize": {
             "Type": "Number",
             "Default": 1,
             "MinValue": 1,
             "ConstraintDescription": "must be a valid number not less than 1.",
-            "Description": "Min number of FortiGate instances in the Auto-Scaling Group."
+            "Description": "Minimum number of FortiGate instances in the Auto-Scaling Group."
         },
         "FortigateAsgMaxSize": {
             "Type": "Number",
             "Default": 4,
             "MinValue": 1,
             "ConstraintDescription": "must be a valid number not less than 1.",
-            "Description": "Max number of FortiGate instances in the Auto-Scaling Group."
+            "Description": "Maximum number of FortiGate instances in the Auto-Scaling Group."
         },
         "FortigateAsgHealthCheckGracePeriod": {
             "Type": "Number",
@@ -206,7 +183,7 @@
             "MinValue": 1,
             "MaxValue": 65535,
             "ConstraintDescription": "must be a valid port number between 1 and 65535.",
-            "Description": "Balance web service traffics over this port if the internal web service traffics load balancer is enabled."
+            "Description": "Balance web service traffic over this port if the internal web-service load balancer is enabled."
         },
         "InternalLoadBalancingOptions": {
             "Type": "String",
@@ -217,7 +194,7 @@
                 "do not need one"
             ],
             "ConstraintDescription": "must choose from the provided options.",
-            "Description": "Add an optional pre-defined load balancer to route traffics to web service in the protected subnets. Or use your own one."
+            "Description": "Add an optional pre-defined load balancer to route traffic to web service in the protected subnets. You can optionally use your own one or decide to not need one."
         },
         "InternalLoadBalancerDnsName": {
             "Type": "String",
@@ -226,7 +203,7 @@
         "FortigatePskSecret": {
             "Type": "String",
             "NoEcho": true,
-            "Description": "A secret key for the FortiGate instances to securely communicate with each other."
+            "Description": "A secret key for the FortiGate instances to securely communicate with each other. It can be of your choice of a string, such as numbers or letters or the combination of them. Should not exceed 128 characters."
         },
         "FortigateAdminPort": {
             "Type": "Number",
@@ -321,20 +298,12 @@
                 }
             ]
         },
-        "IfAddNatGatewayToPublicSubnet1": {
+        "IfAddNatGatewayToPublicSubnet": {
             "Fn::Equals": [
                 {
-                    "Ref": "AddNatGatewayToPublicSubnet1"
+                    "Ref": "AddNatGatewayToPublicSubnet"
                 },
-                "add a new FortiGate Instance as NAT Gateway"
-            ]
-        },
-        "IfAddNatGatewayToPublicSubnet2": {
-            "Fn::Equals": [
-                {
-                    "Ref": "AddNatGatewayToPublicSubnet2"
-                },
-                "add a new FortiGate Instance as NAT Gateway"
+                "use FortiGate as NAT Gateway"
             ]
         }
     },
@@ -409,6 +378,7 @@
     },
     "Resources": {
         "StackCreateFortigateNatGateway": {
+            "Condition": "IfAddNatGatewayToPublicSubnet",
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
@@ -428,7 +398,13 @@
                         "Ref": "PublicSubnet1"
                     },
                     "SubnetId2": {
+                        "Ref": "PrivateSubnet1"
+                    },
+                    "SubnetId3": {
                         "Ref": "PublicSubnet2"
+                    },
+                    "SubnetId4": {
+                        "Ref": "PrivateSubnet2"
                     },
                     "FortiGateImageId": {
                         "Fn::FindInMap": [
@@ -474,17 +450,18 @@
                 "TimeoutInMinutes": "10"
             }
         },
-        "NatGateway1RouteAttachment": {
+        "NatGateway1RouteAttachmentNew": {
+            "Condition": "IfAddNatGatewayToPublicSubnet",
             "Type": "AWS::EC2::Route",
             "Properties": {
                 "DestinationCidrBlock": "0.0.0.0/0",
                 "RouteTableId": {
                     "Ref": "PrivateSubnet1RouteTable"
                 },
-                "InstanceId": {
+                "NetworkInterfaceId": {
                     "Fn::GetAtt": [
                         "StackCreateFortigateNatGateway",
-                        "Outputs.InstanceId1"
+                        "Outputs.InstanceId1Nic1Id"
                     ]
                 }
             },
@@ -494,17 +471,18 @@
                 }
             }
         },
-        "NatGateway2RouteAttachment": {
+        "NatGateway2RouteAttachmentNew": {
+            "Condition": "IfAddNatGatewayToPublicSubnet",
             "Type": "AWS::EC2::Route",
             "Properties": {
                 "DestinationCidrBlock": "0.0.0.0/0",
                 "RouteTableId": {
                     "Ref": "PrivateSubnet2RouteTable"
                 },
-                "InstanceId": {
+                "NetworkInterfaceId": {
                     "Fn::GetAtt": [
                         "StackCreateFortigateNatGateway",
-                        "Outputs.InstanceId2"
+                        "Outputs.InstanceId2Nic1Id"
                     ]
                 }
             },
@@ -2252,11 +2230,8 @@
                         "PrivateSubnet1",
                         "PrivateSubnet2",
                         "PrivateSubnet1RouteTable",
-                        "AddNatGatewayToPublicSubnet1",
-                        "NatGatewayId1",
-                        "AddNatGatewayToPublicSubnet2",
-                        "PrivateSubnet2RouteTable",
-                        "NatGatewayId2"
+                        "AddNatGatewayToPublicSubnet",
+                        "PrivateSubnet2RouteTable"
                     ]
                 },
                 {
@@ -2345,17 +2320,8 @@
                 "FgtAutoScaleSecurityGroup": {
                     "default": "Security Group"
                 },
-                "AddNatGatewayToPublicSubnet1": {
-                    "default": "NAT Gateway #1 Options"
-                },
-                "AddNatGatewayToPublicSubnet2": {
-                    "default": "NAT Gateway #2 Options"
-                },
-                "NatGatewayId1": {
-                    "default": "NAT Gateway #1 ID"
-                },
-                "NatGatewayId2": {
-                    "default": "NAT Gateway #2 ID"
+                "AddNatGatewayToPublicSubnet": {
+                    "default": "NAT Gateway Options"
                 },
                 "FortigateInstanceType": {
                     "default": "Instance Type"

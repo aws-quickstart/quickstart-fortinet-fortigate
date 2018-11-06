@@ -28,11 +28,19 @@
         },
         "SubnetId1": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The subnet Id to deploy the NAT Gateway #1."
+            "Description": "The subnet Id for the primary network interface of the NAT Gateway #1."
         },
         "SubnetId2": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The subnet Id to deploy the NAT Gateway #2."
+            "Description": "The subnet Id for the secondary network interface of the NAT Gateway #1."
+        },
+        "SubnetId3": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "The subnet Id for the primary network interface of the NAT Gateway #2."
+        },
+        "SubnetId4": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "The subnet Id for the secondary network interface of the NAT Gateway #2."
         },
         "FortiGateImageId": {
             "Type": "String",
@@ -150,8 +158,11 @@
                     "FortiGateSecurityGroupId": {
                         "Ref": "sgFortiGateInstance"
                     },
-                    "SubnetId": {
+                    "SubnetId1": {
                         "Ref": "SubnetId1"
+                    },
+                    "SubnetId2": {
+                        "Ref": "SubnetId2"
                     },
                     "FortiGateImageId": {
                         "Ref": "FortiGateImageId"
@@ -192,8 +203,11 @@
                     "FortiGateSecurityGroupId": {
                         "Ref": "sgFortiGateInstance"
                     },
-                    "SubnetId": {
-                        "Ref": "SubnetId2"
+                    "SubnetId1": {
+                        "Ref": "SubnetId3"
+                    },
+                    "SubnetId2": {
+                        "Ref": "SubnetId4"
                     },
                     "FortiGateImageId": {
                         "Ref": "FortiGateImageId"
@@ -229,12 +243,48 @@
                 ]
             }
         },
+        "InstanceId1Nic0Id": {
+            "Description": "The nic0 id of the FortiGate NAT Gateway #1.",
+            "Value": {
+                "Fn::GetAtt": [
+                    "StackCreateFortigateInstance1",
+                    "Outputs.NetworkInterface0Id"
+                ]
+            }
+        },
+        "InstanceId1Nic1Id": {
+            "Description": "The nic1 id of the FortiGate NAT Gateway #1.",
+            "Value": {
+                "Fn::GetAtt": [
+                    "StackCreateFortigateInstance1",
+                    "Outputs.NetworkInterface1Id"
+                ]
+            }
+        },
         "InstanceId2": {
             "Description": "The instance id of the FortiGate NAT Gateway #2.",
             "Value": {
                 "Fn::GetAtt": [
                     "StackCreateFortigateInstance2",
                     "Outputs.InstanceId"
+                ]
+            }
+        },
+        "InstanceId2Nic0Id": {
+            "Description": "The nic0 id of the FortiGate NAT Gateway #2.",
+            "Value": {
+                "Fn::GetAtt": [
+                    "StackCreateFortigateInstance2",
+                    "Outputs.NetworkInterface0Id"
+                ]
+            }
+        },
+        "InstanceId2Nic1Id": {
+            "Description": "The nic1 id of the FortiGate NAT Gateway #2.",
+            "Value": {
+                "Fn::GetAtt": [
+                    "StackCreateFortigateInstance2",
+                    "Outputs.NetworkInterface1Id"
                 ]
             }
         }
