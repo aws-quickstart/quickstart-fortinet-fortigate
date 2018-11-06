@@ -14,6 +14,13 @@
             "Type": "AWS::EC2::KeyPair::KeyName",
             "Description": "Amazon EC2 Key Pair for admin access."
         },
+        "FortigateAdminPort": {
+            "Type": "Number",
+            "MinValue": 1,
+            "MaxValue": 65535,
+            "ConstraintDescription": "must be a valid port number between 1 and 65535.",
+            "Description": "A port number for FortiGate administration. Default to 8443. Do not use: 443, 541, 514, 703."
+        },
         "FortiGateSecurityGroupId": {
             "Type": "String",
             "Description": "The security group id which is to attach to this FortiGate instance if you want to use an existing one instead of creating new one."
@@ -170,6 +177,18 @@
                         "Fn::Join": [
                             "\n",
                             [
+                                "config system global",
+                                {
+                                    "Fn::Sub": [
+                                        "  set admin-sport ${FortigateAdminPort}",
+                                        {
+                                            "FortigateAdminPort": {
+                                                "Ref": "FortigateAdminPort"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "end",
                                 "config system interface",
                                 "  edit port1",
                                 "    set mode dhcp",
@@ -178,7 +197,7 @@
                                 "  edit port2",
                                 "    set mode dhcp",
                                 "    set allowaccess ping",
-                                "    set default-gw disable",
+                                "    set defaultgw disable",
                                 "  next",
                                 "end",
                                 "config firewall policy",

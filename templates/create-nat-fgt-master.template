@@ -155,6 +155,9 @@
                     "AdminAccessKeyPairName": {
                         "Ref": "AdminAccessKeyPairName"
                     },
+                    "FortigateAdminPort": {
+                        "Ref": "FortigateAdminPort"
+                    },
                     "FortiGateSecurityGroupId": {
                         "Ref": "sgFortiGateInstance"
                     },
@@ -199,6 +202,9 @@
                     },
                     "AdminAccessKeyPairName": {
                         "Ref": "AdminAccessKeyPairName"
+                    },
+                    "FortigateAdminPort": {
+                        "Ref": "FortigateAdminPort"
                     },
                     "FortiGateSecurityGroupId": {
                         "Ref": "sgFortiGateInstance"
