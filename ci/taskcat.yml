@@ -1,7 +1,7 @@
 ---
 global:
   marketplace-ami: true
-  owner: quickstart-eng@amazon.com
+  owner: dchao@fortinet.com
   qsname: quickstart-fortinet-fortigate
   regions:
     - us-east-1

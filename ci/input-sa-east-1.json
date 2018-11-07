@@ -13,7 +13,7 @@
     },
     {
         "ParameterKey": "AvailabilityZones",
-        "ParameterValue": "$[taskcat_genaz_2]"
+        "ParameterValue": "sa-east-1a,sa-east-1c"
     },
     {
         "ParameterKey": "BalanceWebTrafficOverPort",

@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "FortiGate Autoscale Solution (Existing VPC). This template deploys Fortinet Fortigate cluster into an existing VPC with a Multi-AZ Autoscale group with Lambda and LifecycleHook. Please see the Quick Start documentation for more details. **WARNING** You will be billed for the FortiGate On-Demand instances and related AWS resources if you create a stack from this template.",
+    "Description": "FortiGate Autoscale Solution (Existing VPC). This template deploys Fortinet FortiGate cluster into an existing VPC with a Multi-AZ Autoscale group with Lambda and LifecycleHook. Please see the Quick Start documentation for more details. **WARNING** You will be billed for the FortiGate On-Demand instances and related AWS resources if you create a stack from this template.",
     "Parameters": {
         "QSS3BucketName": {
             "Type": "String",
@@ -58,7 +58,7 @@
             "Type": "String",
             "Description": "Route table Id associated with the private subnet 2."
         },
-        "FortigateInstanceType": {
+        "FortiGateInstanceType": {
             "Type": "String",
             "Default": "c5.large",
             "AllowedValues": [
@@ -90,7 +90,6 @@
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
             "Description": "FortiGate instance lifecycle expiry entry (in second). Minimum is 60. Maximum is 3600."
         },
-
         "ScalingPolicyOptions": {
             "Type": "String",
             "Default": "CPU Utilization",
@@ -100,7 +99,7 @@
             "ConstraintDescription": "must be a valid String from options.",
             "Description": "This is what scaling policy of Auto-Scaling activities is based on. There is only CPU Utilization specifiable for FortiGate."
         },
-        "FortigateAsgCooldown": {
+        "FortiGateAsgCooldown": {
             "Type": "Number",
             "Default": 300,
             "MinValue": 60,
@@ -108,35 +107,35 @@
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
             "Description": "Auto-Scaling group waits for the cool-down period (in second) to complete before resuming scaling activities. Minimum is 60. Maximum is 3600."
         },
-        "FortigateAsgDesiredCapacity": {
+        "FortiGateAsgDesiredCapacity": {
             "Type": "Number",
             "Default": 2,
             "MinValue": 2,
             "ConstraintDescription": "must be a valid number not less than 1.",
             "Description": "The number of FortiGate instances the group should have at any time, also called desired capacity. Must keep at least 2 FortiGates in the group for High Availability. Minimum is 2."
         },
-        "FortigateAsgMinSize": {
+        "FortiGateAsgMinSize": {
             "Type": "Number",
             "Default": 2,
             "MinValue": 2,
             "ConstraintDescription": "must be a valid number not less than 1.",
             "Description": "Minimum number of FortiGate instances in the Auto-Scaling Group. Minimum is 2."
         },
-        "FortigateAsgMaxSize": {
+        "FortiGateAsgMaxSize": {
             "Type": "Number",
             "Default": 4,
             "MinValue": 2,
             "ConstraintDescription": "must be a valid number not less than 1.",
             "Description": "Maximum number of FortiGate instances in the Auto-Scaling Group. Minimum is 2."
         },
-        "FortigateAsgHealthCheckGracePeriod": {
+        "FortiGateAsgHealthCheckGracePeriod": {
             "Type": "Number",
             "Default": 300,
             "MinValue": 60,
             "ConstraintDescription": "must be a valid number not less than 60.",
             "Description": "The length of time (in second) that Auto-Scaling waits before checking an instance's health status. Minimum is 60."
         },
-        "FortigateAsgScaleInThreshold": {
+        "FortiGateAsgScaleInThreshold": {
             "Type": "Number",
             "Default": 25,
             "MinValue": 1,
@@ -144,7 +143,7 @@
             "ConstraintDescription": "must be a valid number between 1 and 100.",
             "Description": "The threshold (in percentage) for the FortiGate Auto-Scaling group to scale-in (remove) 1 instance. Minimum is 1. Maximum is 100."
         },
-        "FortigateAsgScaleOutThreshold": {
+        "FortiGateAsgScaleOutThreshold": {
             "Type": "Number",
             "Default": 80,
             "MinValue": 1,
@@ -152,7 +151,7 @@
             "ConstraintDescription": "must be a valid number between 1 and 100.",
             "Description": "The threshold (in percentage) for the FortiGate Auto-Scaling group to scale-out (add) 1 instance. Minimum is 1. Maximum is 100."
         },
-        "FortigateElbTgHealthyThreshold": {
+        "FortiGateElbTgHealthyThreshold": {
             "Type": "Number",
             "Default": 3,
             "MinValue": 3,
@@ -182,12 +181,12 @@
             "Type": "String",
             "Description": "DNS Name of the Elastic Load Balancer which is used in the private subnets. Specify if only you use your own one."
         },
-        "FortigatePskSecret": {
+        "FortiGatePskSecret": {
             "Type": "String",
             "NoEcho": true,
             "Description": "A secret key for the FortiGate instances to securely communicate with each other. It can be of your choice of a string, such as numbers or letters or the combination of them. Max length 128."
         },
-        "FortigateAdminPort": {
+        "FortiGateAdminPort": {
             "Type": "Number",
             "Default": 8443,
             "MinValue": 1,
@@ -195,7 +194,7 @@
             "ConstraintDescription": "must be a valid port number between 1 and 65535.",
             "Description": "A port number for FortiGate administration. Minimum is 1. Maximum is 65535. Do not use: 443, 541, 514, 703 because these are FortiGate preserved ports."
         },
-        "FortigateAdminCidr": {
+        "FortiGateAdminCidr": {
             "Type": "String",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format and 0.0.0.0/0 is not recommended.",
@@ -384,7 +383,7 @@
                 "FromPort": "22",
                 "ToPort": "22",
                 "CidrIp": {
-                    "Ref": "FortigateAdminCidr"
+                    "Ref": "FortiGateAdminCidr"
                 }
             }
         },
@@ -398,7 +397,7 @@
                 "FromPort": "541",
                 "ToPort": "541",
                 "CidrIp": {
-                    "Ref": "FortigateAdminCidr"
+                    "Ref": "FortiGateAdminCidr"
                 }
             }
         },
@@ -410,13 +409,13 @@
                 },
                 "IpProtocol": "tcp",
                 "FromPort": {
-                    "Ref": "FortigateAdminPort"
+                    "Ref": "FortiGateAdminPort"
                 },
                 "ToPort": {
-                    "Ref": "FortigateAdminPort"
+                    "Ref": "FortiGateAdminPort"
                 },
                 "CidrIp": {
-                    "Ref": "FortigateAdminCidr"
+                    "Ref": "FortiGateAdminCidr"
                 }
             }
         },
@@ -430,7 +429,7 @@
                 "CidrIp": "0.0.0.0/0"
             }
         },
-        "StackCreateFortigateNatGateway": {
+        "StackCreateFortiGateNatGateway": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
@@ -473,17 +472,17 @@
                             }
                         ]
                     },
-                    "FortigateInstanceType": {
-                        "Ref": "FortigateInstanceType"
+                    "FortiGateInstanceType": {
+                        "Ref": "FortiGateInstanceType"
                     },
-                    "FortigateAdminCidr": {
-                        "Ref": "FortigateAdminCidr"
+                    "FortiGateAdminCidr": {
+                        "Ref": "FortiGateAdminCidr"
                     },
                     "KeyPairName": {
                         "Ref": "KeyPairName"
                     },
-                    "FortigateAdminPort": {
-                        "Ref": "FortigateAdminPort"
+                    "FortiGateAdminPort": {
+                        "Ref": "FortiGateAdminPort"
                     }
                 },
                 "TemplateURL": {
@@ -511,7 +510,7 @@
                 },
                 "NetworkInterfaceId": {
                     "Fn::GetAtt": [
-                        "StackCreateFortigateNatGateway",
+                        "StackCreateFortiGateNatGateway",
                         "Outputs.InstanceId1Nic1Id"
                     ]
                 }
@@ -526,7 +525,7 @@
                 },
                 "NetworkInterfaceId": {
                     "Fn::GetAtt": [
-                        "StackCreateFortigateNatGateway",
+                        "StackCreateFortiGateNatGateway",
                         "Outputs.InstanceId2Nic1Id"
                     ]
                 }
@@ -652,7 +651,7 @@
                         }
                     },
                     "InstanceType": {
-                        "Ref": "FortigateInstanceType"
+                        "Ref": "FortiGateInstanceType"
                     },
                     "NetworkInterfaces": [
                         {
@@ -674,7 +673,7 @@
                 "IamInstanceProfileFgt"
             ]
         },
-        "FortigateScalingGroup": {
+        "FortiGateScalingGroup": {
             "Type": "AWS::AutoScaling::AutoScalingGroup",
             "Properties": {
                 "AutoScalingGroupName": {
@@ -718,20 +717,20 @@
                     "Version": "1"
                 },
                 "Cooldown": {
-                    "Ref": "FortigateAsgCooldown"
+                    "Ref": "FortiGateAsgCooldown"
                 },
                 "DesiredCapacity": {
-                    "Ref": "FortigateAsgDesiredCapacity"
+                    "Ref": "FortiGateAsgDesiredCapacity"
                 },
                 "HealthCheckGracePeriod": {
-                    "Ref": "FortigateAsgHealthCheckGracePeriod"
+                    "Ref": "FortiGateAsgHealthCheckGracePeriod"
                 },
                 "HealthCheckType": "EC2",
                 "MaxSize": {
-                    "Ref": "FortigateAsgMaxSize"
+                    "Ref": "FortiGateAsgMaxSize"
                 },
                 "MinSize": {
-                    "Ref": "FortigateAsgMinSize"
+                    "Ref": "FortiGateAsgMinSize"
                 },
                 "VPCZoneIdentifier": [
                     {
@@ -761,12 +760,12 @@
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
                 "AutoScalingGroupName": {
-                    "Ref": "FortigateScalingGroup"
+                    "Ref": "FortiGateScalingGroup"
                 },
                 "ScalingAdjustment": "-1"
             },
             "DependsOn": [
-                "FortigateScalingGroup"
+                "FortiGateScalingGroup"
             ]
         },
         "ScaleOutPolicy": {
@@ -774,12 +773,12 @@
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
                 "AutoScalingGroupName": {
-                    "Ref": "FortigateScalingGroup"
+                    "Ref": "FortiGateScalingGroup"
                 },
                 "ScalingAdjustment": "1"
             },
             "DependsOn": [
-                "FortigateScalingGroup"
+                "FortiGateScalingGroup"
             ]
         },
         "AlarmCpuUtilHigh": {
@@ -789,11 +788,11 @@
                 "EvaluationPeriods": "1",
                 "Statistic": "Average",
                 "Threshold": {
-                    "Ref": "FortigateAsgScaleOutThreshold"
+                    "Ref": "FortiGateAsgScaleOutThreshold"
                 },
                 "AlarmDescription": "Alarm if CPU too high or metric disappears indicating instance is down",
                 "Period": {
-                    "Ref": "FortigateAsgCooldown"
+                    "Ref": "FortiGateAsgCooldown"
                 },
                 "AlarmActions": [
                     {
@@ -805,7 +804,7 @@
                     {
                         "Name": "AutoScalingGroupName",
                         "Value": {
-                            "Ref": "FortigateScalingGroup"
+                            "Ref": "FortiGateScalingGroup"
                         }
                     }
                 ],
@@ -820,11 +819,11 @@
                 "EvaluationPeriods": "1",
                 "Statistic": "Average",
                 "Threshold": {
-                    "Ref": "FortigateAsgScaleInThreshold"
+                    "Ref": "FortiGateAsgScaleInThreshold"
                 },
                 "AlarmDescription": "Alarm if CPU too low or metric disappears indicating instance is down",
                 "Period": {
-                    "Ref": "FortigateAsgCooldown"
+                    "Ref": "FortiGateAsgCooldown"
                 },
                 "AlarmActions": [
                     {
@@ -836,7 +835,7 @@
                     {
                         "Name": "AutoScalingGroupName",
                         "Value": {
-                            "Ref": "FortigateScalingGroup"
+                            "Ref": "FortiGateScalingGroup"
                         }
                     }
                 ],
@@ -1021,8 +1020,7 @@
                         "STACK_ASSETS_S3_BUCKET_NAME": {
                             "Ref": "QSS3BucketName"
                         },
-                        "STACK_ASSETS_S3_KEY_PREFIX":
-                        {
+                        "STACK_ASSETS_S3_KEY_PREFIX": {
                             "Fn::Join": [
                                 "/",
                                 [
@@ -1076,10 +1074,10 @@
                             ]
                         },
                         "FORTIGATE_PSKSECRET": {
-                            "Ref": "FortigatePskSecret"
+                            "Ref": "FortiGatePskSecret"
                         },
                         "FORTIGATE_ADMIN_PORT": {
-                            "Ref": "FortigateAdminPort"
+                            "Ref": "FortiGateAdminPort"
                         },
                         "FORTIGATE_TRAFFIC_PORT": {
                             "Ref": "BalanceWebTrafficOverPort"
@@ -1226,21 +1224,21 @@
                 "Path": "/",
                 "Policies": [
                     {
-                       "PolicyDocument": {
-                          "Version": "2012-10-17",
-                          "Statement": [
-                             {
-                                "Action": [
-                                   "s3:GetObject"
-                                ],
-                                "Resource": {
-                                   "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*"
-                                },
-                                "Effect": "Allow"
-                             }
-                          ]
-                       },
-                       "PolicyName": "aws-quick-start-s3-policy"
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:GetObject"
+                                    ],
+                                    "Resource": {
+                                        "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*"
+                                    },
+                                    "Effect": "Allow"
+                                }
+                            ]
+                        },
+                        "PolicyName": "aws-quick-start-s3-policy"
                     }
                 ]
             }
@@ -1558,7 +1556,7 @@
             "Type": "AWS::AutoScaling::LifecycleHook",
             "Properties": {
                 "AutoScalingGroupName": {
-                    "Ref": "FortigateScalingGroup"
+                    "Ref": "FortiGateScalingGroup"
                 },
                 "LifecycleHookName": "asgFgtAutoscaleLifecycleLaunching",
                 "LifecycleTransition": "autoscaling:EC2_INSTANCE_LAUNCHING",
@@ -1573,7 +1571,7 @@
             "Type": "AWS::AutoScaling::LifecycleHook",
             "Properties": {
                 "AutoScalingGroupName": {
-                    "Ref": "FortigateScalingGroup"
+                    "Ref": "FortiGateScalingGroup"
                 },
                 "LifecycleHookName": "asgFgtAutoscaleLifecycleHookTerminating",
                 "LifecycleTransition": "autoscaling:EC2_INSTANCE_TERMINATING",
@@ -1638,13 +1636,13 @@
                 },
                 "HealthCheckProtocol": "TCP",
                 "HealthCheckPort": {
-                    "Ref": "FortigateAdminPort"
+                    "Ref": "FortiGateAdminPort"
                 },
                 "HealthyThresholdCount": {
-                    "Ref": "FortigateElbTgHealthyThreshold"
+                    "Ref": "FortiGateElbTgHealthyThreshold"
                 },
                 "UnhealthyThresholdCount": {
-                    "Ref": "FortigateElbTgHealthyThreshold"
+                    "Ref": "FortiGateElbTgHealthyThreshold"
                 },
                 "VpcId": {
                     "Ref": "VpcId"
@@ -1930,7 +1928,7 @@
                             {
                                 "Ref": "CustomIdentifier"
                             },
-                            "FortigateMasterElection",
+                            "FortiGateMasterElection",
                             {
                                 "Fn::Select": [
                                     0,
@@ -1993,7 +1991,7 @@
                             {
                                 "Ref": "CustomIdentifier"
                             },
-                            "FortigateLifecycleItem",
+                            "FortiGateLifecycleItem",
                             {
                                 "Fn::Select": [
                                     0,
@@ -2048,7 +2046,7 @@
                             {
                                 "Ref": "CustomIdentifier"
                             },
-                            "FortigateAutoscale",
+                            "FortiGateAutoscale",
                             {
                                 "Fn::Select": [
                                     0,
@@ -2103,7 +2101,7 @@
                             {
                                 "Ref": "CustomIdentifier"
                             },
-                            "FortigateConfigSet",
+                            "FortiGateConfigSet",
                             {
                                 "Fn::Select": [
                                     0,
@@ -2166,10 +2164,10 @@
                     },
                     "Parameters": [
                         "CustomIdentifier",
-                        "FortigateInstanceType",
-                        "FortigatePskSecret",
-                        "FortigateAdminPort",
-                        "FortigateAdminCidr",
+                        "FortiGateInstanceType",
+                        "FortiGatePskSecret",
+                        "FortiGateAdminPort",
+                        "FortiGateAdminCidr",
                         "KeyPairName"
                     ]
                 },
@@ -2179,15 +2177,15 @@
                     },
                     "Parameters": [
                         "ExpireLifecycleEntry",
-                        "FortigateAsgDesiredCapacity",
-                        "FortigateAsgMinSize",
-                        "FortigateAsgMaxSize",
-                        "FortigateAsgHealthCheckGracePeriod",
-                        "FortigateAsgCooldown",
+                        "FortiGateAsgDesiredCapacity",
+                        "FortiGateAsgMinSize",
+                        "FortiGateAsgMaxSize",
+                        "FortiGateAsgHealthCheckGracePeriod",
+                        "FortiGateAsgCooldown",
                         "ScalingPolicyOptions",
-                        "FortigateAsgScaleOutThreshold",
-                        "FortigateAsgScaleInThreshold",
-                        "FortigateElbTgHealthyThreshold"
+                        "FortiGateAsgScaleOutThreshold",
+                        "FortiGateAsgScaleInThreshold",
+                        "FortiGateElbTgHealthyThreshold"
                     ]
                 },
                 {
@@ -2214,91 +2212,91 @@
             ],
             "ParameterLabels": {
                 "CustomIdentifier": {
-                    "default": "Resource name prefix"
+                    "default": "Resource Name Prefix"
                 },
                 "VpcId": {
-                    "default": "VPC id"
+                    "default": "VPC Id"
                 },
                 "PublicSubnet1": {
-                    "default": "FortiGate subnet 1"
+                    "default": "FortiGate Subnet 1"
                 },
                 "PublicSubnet2": {
-                    "default": "FortiGate subnet 2"
+                    "default": "FortiGate Subnet 2"
                 },
                 "PrivateSubnet1": {
-                    "default": "Private subnet 1"
+                    "default": "Protected Subnet 1"
                 },
                 "PrivateSubnet2": {
-                    "default": "Private subnet 2"
+                    "default": "Protected Subnet 2"
                 },
                 "PrivateSubnet1RouteTable": {
-                    "default": "Route table 1 Id"
+                    "default": "Route Table 1 ID"
                 },
                 "PrivateSubnet2RouteTable": {
-                    "default": "Route table 2 Id"
+                    "default": "Route Table 2 ID"
                 },
-                "FortigateInstanceType": {
-                    "default": "Instance type"
+                "FortiGateInstanceType": {
+                    "default": "Instance Type"
                 },
                 "QSS3BucketName": {
-                    "default": "Quick Start S3 bucket name"
+                    "default": "Quick Start S3 Bucket Name"
                 },
                 "QSS3KeyPrefix": {
-                    "default": "Quick Start S3 key prefix"
+                    "default": "Quick Start S3 Key Prefix"
                 },
                 "ApiGwStageName": {
-                    "default": "Stage name"
+                    "default": "Stage Name"
                 },
                 "ApiGwResource": {
-                    "default": "Resource group name"
+                    "default": "Resource Group Name"
                 },
                 "ExpireLifecycleEntry": {
-                    "default": "Instance lifecycle expiry"
+                    "default": "Instance Lifecycle Expiry"
                 },
                 "ScalingPolicyOptions": {
-                    "default": "Scaling policy options"
+                    "default": "Scaling Policy Options"
                 },
-                "FortigateAsgCooldown": {
-                    "default": "Scaling cooldown period"
+                "FortiGateAsgCooldown": {
+                    "default": "Scaling Cooldown Period"
                 },
-                "FortigateAsgDesiredCapacity": {
-                    "default": "Desired capacity"
+                "FortiGateAsgDesiredCapacity": {
+                    "default": "Desired Capacity"
                 },
-                "FortigateAsgMinSize": {
-                    "default": "Minimum group size"
+                "FortiGateAsgMinSize": {
+                    "default": "Minimum Group Size"
                 },
-                "FortigateAsgMaxSize": {
-                    "default": "Maximum group size"
+                "FortiGateAsgMaxSize": {
+                    "default": "Maximum Group size"
                 },
-                "FortigateAsgHealthCheckGracePeriod": {
-                    "default": "Health check grace period"
+                "FortiGateAsgHealthCheckGracePeriod": {
+                    "default": "Health Check Grace Period"
                 },
-                "FortigateAsgScaleInThreshold": {
-                    "default": "Scale-in threshold"
+                "FortiGateAsgScaleInThreshold": {
+                    "default": "Scale-in Threshold"
                 },
-                "FortigateAsgScaleOutThreshold": {
-                    "default": "Scale-out threshold"
+                "FortiGateAsgScaleOutThreshold": {
+                    "default": "Scale-out Threshold"
                 },
-                "FortigateElbTgHealthyThreshold": {
-                    "default": "Healthy threshold"
+                "FortiGateElbTgHealthyThreshold": {
+                    "default": "Healthy Threshold"
                 },
                 "BalanceWebTrafficOverPort": {
-                    "default": "Web service traffic port"
+                    "default": "Web Service Traffic Port"
                 },
                 "InternalLoadBalancingOptions": {
-                    "default": "Internal ELB options"
+                    "default": "Internal ELB Options"
                 },
                 "InternalLoadBalancerDnsName": {
-                    "default": "Internal ELB DNS name"
+                    "default": "Internal ELB DNS Name"
                 },
-                "FortigateAdminPort": {
-                    "default": "Admin port"
+                "FortiGateAdminPort": {
+                    "default": "Admin Port"
                 },
-                "FortigateAdminCidr": {
-                    "default": "Admin CIDR block"
+                "FortiGateAdminCidr": {
+                    "default": "Admin CIDR Block"
                 },
                 "KeyPairName": {
-                    "default": "Admin key pair"
+                    "default": "Admin Key Pair"
                 },
                 "VPCCIDR": {
                     "default": "VPC CIDR"

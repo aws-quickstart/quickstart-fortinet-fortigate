@@ -46,11 +46,11 @@
             "Type": "String",
             "Description": "FortiGate Official AMI Id."
         },
-        "FortigateInstanceType": {
+        "FortiGateInstanceType": {
             "Type": "String",
             "Description": "Instance Type."
         },
-        "FortigateAdminCidr": {
+        "FortiGateAdminCidr": {
             "Type": "String",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format and 0.0.0.0/0 is not recommended.",
@@ -61,7 +61,7 @@
             "Type": "AWS::EC2::KeyPair::KeyName",
             "Description": "Amazon EC2 Key Pair for admin access."
         },
-        "FortigateAdminPort": {
+        "FortiGateAdminPort": {
             "Type": "Number",
             "MinValue": 1,
             "MaxValue": 65535,
@@ -69,10 +69,8 @@
             "Description": "A port number for FortiGate administration. Default to 8443. Do not use: 443, 541, 514, 703."
         }
     },
-    "Mappings": {
-    },
-    "Conditions": {
-    },
+    "Mappings": {},
+    "Conditions": {},
     "Resources": {
         "sgFortiGateInstance": {
             "Type": "AWS::EC2::SecurityGroup",
@@ -82,7 +80,7 @@
                     {
                         "IpProtocol": "tcp",
                         "CidrIp": {
-                            "Ref": "FortigateAdminCidr"
+                            "Ref": "FortiGateAdminCidr"
                         },
                         "FromPort": 22,
                         "ToPort": 22
@@ -90,13 +88,13 @@
                     {
                         "IpProtocol": "tcp",
                         "CidrIp": {
-                            "Ref": "FortigateAdminCidr"
+                            "Ref": "FortiGateAdminCidr"
                         },
                         "FromPort": {
-                            "Ref": "FortigateAdminPort"
+                            "Ref": "FortiGateAdminPort"
                         },
                         "ToPort": {
-                            "Ref": "FortigateAdminPort"
+                            "Ref": "FortiGateAdminPort"
                         }
                     }
                 ],
@@ -133,21 +131,21 @@
                 "Path": "/",
                 "Policies": [
                     {
-                       "PolicyDocument": {
-                          "Version": "2012-10-17",
-                          "Statement": [
-                             {
-                                "Action": [
-                                   "s3:GetObject"
-                                ],
-                                "Resource": {
-                                   "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*"
-                                },
-                                "Effect": "Allow"
-                             }
-                          ]
-                       },
-                       "PolicyName": "aws-quick-start-s3-policy"
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "s3:GetObject"
+                                    ],
+                                    "Resource": {
+                                        "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*"
+                                    },
+                                    "Effect": "Allow"
+                                }
+                            ]
+                        },
+                        "PolicyName": "aws-quick-start-s3-policy"
                     }
                 ]
             }
@@ -162,21 +160,21 @@
                 ]
             }
         },
-        "StackCreateFortigateInstance1": {
+        "StackCreateFortiGateInstance1": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
                     "CustomTagValue": {
                         "Ref": "CustomIdentifier"
                     },
-                    "FortigateInstanceType": {
-                        "Ref": "FortigateInstanceType"
+                    "FortiGateInstanceType": {
+                        "Ref": "FortiGateInstanceType"
                     },
                     "KeyPairName": {
                         "Ref": "KeyPairName"
                     },
-                    "FortigateAdminPort": {
-                        "Ref": "FortigateAdminPort"
+                    "FortiGateAdminPort": {
+                        "Ref": "FortiGateAdminPort"
                     },
                     "FortiGateSecurityGroupId": {
                         "Ref": "sgFortiGateInstance"
@@ -207,24 +205,24 @@
                         }
                     ]
                 },
-                "TimeoutInMinutes": "5"
+                "TimeoutInMinutes": "10"
             }
         },
-        "StackCreateFortigateInstance2": {
+        "StackCreateFortiGateInstance2": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
                     "CustomTagValue": {
                         "Ref": "CustomIdentifier"
                     },
-                    "FortigateInstanceType": {
-                        "Ref": "FortigateInstanceType"
+                    "FortiGateInstanceType": {
+                        "Ref": "FortiGateInstanceType"
                     },
                     "KeyPairName": {
                         "Ref": "KeyPairName"
                     },
-                    "FortigateAdminPort": {
-                        "Ref": "FortigateAdminPort"
+                    "FortiGateAdminPort": {
+                        "Ref": "FortiGateAdminPort"
                     },
                     "FortiGateSecurityGroupId": {
                         "Ref": "sgFortiGateInstance"
@@ -264,7 +262,7 @@
             "Description": "The instance id of the FortiGate NAT Gateway #1.",
             "Value": {
                 "Fn::GetAtt": [
-                    "StackCreateFortigateInstance1",
+                    "StackCreateFortiGateInstance1",
                     "Outputs.InstanceId"
                 ]
             }
@@ -273,7 +271,7 @@
             "Description": "The nic0 id of the FortiGate NAT Gateway #1.",
             "Value": {
                 "Fn::GetAtt": [
-                    "StackCreateFortigateInstance1",
+                    "StackCreateFortiGateInstance1",
                     "Outputs.NetworkInterface0Id"
                 ]
             }
@@ -282,7 +280,7 @@
             "Description": "The nic1 id of the FortiGate NAT Gateway #1.",
             "Value": {
                 "Fn::GetAtt": [
-                    "StackCreateFortigateInstance1",
+                    "StackCreateFortiGateInstance1",
                     "Outputs.NetworkInterface1Id"
                 ]
             }
@@ -291,7 +289,7 @@
             "Description": "The instance id of the FortiGate NAT Gateway #2.",
             "Value": {
                 "Fn::GetAtt": [
-                    "StackCreateFortigateInstance2",
+                    "StackCreateFortiGateInstance2",
                     "Outputs.InstanceId"
                 ]
             }
@@ -300,7 +298,7 @@
             "Description": "The nic0 id of the FortiGate NAT Gateway #2.",
             "Value": {
                 "Fn::GetAtt": [
-                    "StackCreateFortigateInstance2",
+                    "StackCreateFortiGateInstance2",
                     "Outputs.NetworkInterface0Id"
                 ]
             }
@@ -309,7 +307,7 @@
             "Description": "The nic1 id of the FortiGate NAT Gateway #2.",
             "Value": {
                 "Fn::GetAtt": [
-                    "StackCreateFortigateInstance2",
+                    "StackCreateFortiGateInstance2",
                     "Outputs.NetworkInterface1Id"
                 ]
             }

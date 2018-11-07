@@ -6,7 +6,7 @@
             "Type": "String",
             "Description": "A custom tag value."
         },
-        "FortigateInstanceType": {
+        "FortiGateInstanceType": {
             "Type": "String",
             "Description": "Instance Type."
         },
@@ -14,7 +14,7 @@
             "Type": "AWS::EC2::KeyPair::KeyName",
             "Description": "Amazon EC2 Key Pair for admin access."
         },
-        "FortigateAdminPort": {
+        "FortiGateAdminPort": {
             "Type": "Number",
             "MinValue": 1,
             "MaxValue": 65535,
@@ -44,8 +44,8 @@
     },
     "Resources": {
         "nic0": {
-            "Type" : "AWS::EC2::NetworkInterface",
-            "Properties" : {
+            "Type": "AWS::EC2::NetworkInterface",
+            "Properties": {
                 "Description": "FortiGate NIC: port1",
                 "GroupSet": [
                     {
@@ -54,14 +54,15 @@
                 ],
                 "SourceDestCheck": "false",
                 "SubnetId": {
-					"Ref": "SubnetId1"
+                    "Ref": "SubnetId1"
                 },
                 "Tags": [
                     {
                         "Key": "Name",
                         "Value": {
                             "Fn::Join": [
-                                "-", [
+                                "-",
+                                [
                                     {
                                         "Ref": "CustomTagValue"
                                     },
@@ -78,8 +79,8 @@
             }
         },
         "nic1": {
-            "Type" : "AWS::EC2::NetworkInterface",
-            "Properties" : {
+            "Type": "AWS::EC2::NetworkInterface",
+            "Properties": {
                 "Description": "FortiGate NIC: port2",
                 "GroupSet": [
                     {
@@ -88,14 +89,15 @@
                 ],
                 "SourceDestCheck": "false",
                 "SubnetId": {
-					"Ref": "SubnetId2"
+                    "Ref": "SubnetId2"
                 },
                 "Tags": [
                     {
                         "Key": "Name",
                         "Value": {
                             "Fn::Join": [
-                                "-", [
+                                "-",
+                                [
                                     {
                                         "Ref": "CustomTagValue"
                                     },
@@ -112,23 +114,26 @@
             }
         },
         "eip": {
-			"Type": "AWS::EC2::EIP",
-			"Properties": {
-				"Domain": "vpc"
-			},
-			"DependsOn": "nic0"
+            "Type": "AWS::EC2::EIP",
+            "Properties": {
+                "Domain": "vpc"
+            },
+            "DependsOn": "nic0"
         },
         "eipAssociation": {
-			"Type": "AWS::EC2::EIPAssociation",
-			"Properties": {
-				"AllocationId": {
-					"Fn::GetAtt": ["eip", "AllocationId"]
-				},
-				"NetworkInterfaceId": {
-					"Ref": "nic0"
-				}
-			},
-			"DependsOn": "eip"
+            "Type": "AWS::EC2::EIPAssociation",
+            "Properties": {
+                "AllocationId": {
+                    "Fn::GetAtt": [
+                        "eip",
+                        "AllocationId"
+                    ]
+                },
+                "NetworkInterfaceId": {
+                    "Ref": "nic0"
+                }
+            },
+            "DependsOn": "eip"
         },
         "ec2InstanceFortiGate": {
             "Type": "AWS::EC2::Instance",
@@ -141,23 +146,23 @@
                 },
                 "NetworkInterfaces": [
                     {
-						"NetworkInterfaceId": {
-							"Ref": "nic0"
-						},
-						"DeviceIndex": "0"
+                        "NetworkInterfaceId": {
+                            "Ref": "nic0"
+                        },
+                        "DeviceIndex": "0"
                     },
                     {
-						"NetworkInterfaceId": {
-							"Ref": "nic1"
-						},
-						"DeviceIndex": "1"
+                        "NetworkInterfaceId": {
+                            "Ref": "nic1"
+                        },
+                        "DeviceIndex": "1"
                     }
                 ],
                 "ImageId": {
                     "Ref": "FortiGateImageId"
                 },
                 "InstanceType": {
-                    "Ref": "FortigateInstanceType"
+                    "Ref": "FortiGateInstanceType"
                 },
                 "Monitoring": "true",
                 "Tags": [
@@ -176,10 +181,10 @@
                                 "config system global",
                                 {
                                     "Fn::Sub": [
-                                        "  set admin-sport ${FortigateAdminPort}",
+                                        "  set admin-sport ${FortiGateAdminPort}",
                                         {
-                                            "FortigateAdminPort": {
-                                                "Ref": "FortigateAdminPort"
+                                            "FortiGateAdminPort": {
+                                                "Ref": "FortiGateAdminPort"
                                             }
                                         }
                                     ]

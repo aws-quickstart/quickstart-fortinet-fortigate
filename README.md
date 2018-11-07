@@ -1,6 +1,6 @@
 # quickstart-fortinet-fortigate-autoscale
 
-## Fortinet Fortigate Auto Scaling Solution
+## Fortinet FortiGate Auto Scaling Solution
 
 
 ## Support
