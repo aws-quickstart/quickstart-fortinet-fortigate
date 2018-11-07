@@ -2,14 +2,6 @@
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "FortiGate Autoscale Solution (Existing VPC). This template deploys Fortinet Fortigate cluster into an existing VPC with a Multi-AZ Autoscale group with Lambda and LifecycleHook. Please see the Quick Start documentation for more details. **WARNING** You will be billed for the FortiGate On-Demand instances and related AWS resources if you create a stack from this template.",
     "Parameters": {
-        "CustomIdentifier": {
-            "Type": "String",
-            "Default": "fgtASG",
-            "MaxLength": "10",
-            "AllowedPattern": "[A-Za-z0-9]+",
-            "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
-            "Description": "A custom identifier as resource name prefix. Must be at most 10 characters long and only contain uppercase, lowercase letters, and numbers."
-        },
         "QSS3BucketName": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
@@ -24,37 +16,47 @@
             "Default": "quickstart-fortinet-fortigate",
             "Description": "The S3 key name prefix used to simulate a folder for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes."
         },
+        "CustomIdentifier": {
+            "Type": "String",
+            "Default": "fgtASG",
+            "MaxLength": "10",
+            "AllowedPattern": "[A-Za-z0-9]+",
+            "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
+            "Description": "A custom identifier as resource name prefix. Must be at most 10 characters long and only contain uppercase, lowercase letters, and numbers. Max length is 10."
+        },
         "VpcId": {
             "Type": "AWS::EC2::VPC::Id",
-            "Description": "Choose one the existing VPC IDs where you deploy the Auto-Scaling group and related resources. The VPC must have the option 'DNS hostnames' enabled."
+            "Description": "The existing VPC IDs where you deploy the Auto-Scaling group and related resources. The VPC must have the option 'DNS hostnames' enabled."
+        },
+        "VPCCIDR": {
+            "Type": "String",
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
+            "ConstraintDescription": "must be a valid CIDR block format.",
+            "Description": "The CIDR block for the selected VPC."
         },
         "PublicSubnet1": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Choose one public (DMZ) subnet, which is located in Availability Zone 1."
+            "Description": "Public (DMZ) subnet 1, which is located in Availability Zone 1."
         },
         "PublicSubnet2": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Choose one public (DMZ) subnet, which is located in Availability Zone 2."
+            "Description": "Public (DMZ) subnet 2, which is located in Availability Zone 2."
         },
         "PrivateSubnet1": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Choose one private subnet, which is located in Availability Zone 1."
+            "Description": "Private subnet, which is located in Availability Zone 1."
         },
         "PrivateSubnet2": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Choose one private subnet, which is located in Availability Zone 2."
+            "Description": "Private subnet, which is located in Availability Zone 2."
         },
         "PrivateSubnet1RouteTable": {
             "Type": "String",
-            "Description": "Specify the route table Id for the private subnet 1."
+            "Description": "Route table Id associated with the private subnet 1."
         },
         "PrivateSubnet2RouteTable": {
             "Type": "String",
-            "Description": "Specify the route table Id for the private subnet 2."
-        },
-        "FgtAutoScaleSecurityGroup": {
-            "Type": "AWS::EC2::SecurityGroup::Id",
-            "Description": "The Security Group for the FortiGate AutoScaling."
+            "Description": "Route table Id associated with the private subnet 2."
         },
         "FortigateInstanceType": {
             "Type": "String",
@@ -174,16 +176,16 @@
                 "do not need one"
             ],
             "ConstraintDescription": "must choose from the provided options.",
-            "Description": "Add an optional pre-defined load balancer to route traffic to web service in the protected subnets. You can optionally use your own one or decide to not need one."
+            "Description": "Add an optional pre-defined load balancer to route traffic to web service in the private subnets. You can optionally use your own one or decide to not need one."
         },
         "InternalLoadBalancerDnsName": {
             "Type": "String",
-            "Description": "DNS Name of the Elastic Load Balancer which is used in the protected subnets. Specify if only you use your own one."
+            "Description": "DNS Name of the Elastic Load Balancer which is used in the private subnets. Specify if only you use your own one."
         },
         "FortigatePskSecret": {
             "Type": "String",
             "NoEcho": true,
-            "Description": "A secret key for the FortiGate instances to securely communicate with each other. It can be of your choice of a string, such as numbers or letters or the combination of them. Should not exceed 128 characters."
+            "Description": "A secret key for the FortiGate instances to securely communicate with each other. It can be of your choice of a string, such as numbers or letters or the combination of them. Max length 128."
         },
         "FortigateAdminPort": {
             "Type": "Number",
@@ -197,7 +199,7 @@
             "Type": "String",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format and 0.0.0.0/0 is not recommended.",
-            "Description": "CIDR block for external admin management access. **WARNING!** The default value 0.0.0.0/0 accepts connections from any IP address. Please consider to change it to match your needs."
+            "Description": "CIDR block for external admin management access. **WARNING!** 0.0.0.0/0 accepts connections from any IP address. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses."
         },
         "KeyPairName": {
             "Type": "AWS::EC2::KeyPair::KeyName",
@@ -351,6 +353,83 @@
         }
     },
     "Resources": {
+        "FgtAsgSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "FortiGate security group",
+                "VpcId": {
+                    "Ref": "VpcId"
+                }
+            }
+        },
+        "FgtAsgSecurityGroupIngressInternal": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "FgtAsgSecurityGroup"
+                },
+                "IpProtocol": "-1",
+                "CidrIp": {
+                    "Ref": "VPCCIDR"
+                }
+            }
+        },
+        "FgtAsgSecurityGroupIngressSSH": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "FgtAsgSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "CidrIp": {
+                    "Ref": "FortigateAdminCidr"
+                }
+            }
+        },
+        "FgtAsgSecurityGroupIngress1": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "FgtAsgSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "541",
+                "ToPort": "541",
+                "CidrIp": {
+                    "Ref": "FortigateAdminCidr"
+                }
+            }
+        },
+        "FgtAsgSecurityGroupIngressAdminAccess": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "FgtAsgSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": {
+                    "Ref": "FortigateAdminPort"
+                },
+                "ToPort": {
+                    "Ref": "FortigateAdminPort"
+                },
+                "CidrIp": {
+                    "Ref": "FortigateAdminCidr"
+                }
+            }
+        },
+        "FgtAsgSecurityGroupEgressInternal": {
+            "Type": "AWS::EC2::SecurityGroupEgress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "FgtAsgSecurityGroup"
+                },
+                "IpProtocol": "-1",
+                "CidrIp": "0.0.0.0/0"
+            }
+        },
         "StackCreateFortigateNatGateway": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
@@ -381,7 +460,7 @@
                     },
                     "FortiGateImageId": {
                         "Fn::FindInMap": [
-                            "OfficialAmiMap",
+                            "AWSAMIRegionMap",
                             {
                                 "Ref": "AWS::Region"
                             },
@@ -502,7 +581,7 @@
             "Condition": "IfCustomBalanceWebTrafficOverPort",
             "Properties": {
                 "GroupId": {
-                    "Ref": "FgtAutoScaleSecurityGroup"
+                    "Ref": "FgtAsgSecurityGroup"
                 },
                 "IpProtocol": "tcp",
                 "FromPort": {
@@ -550,7 +629,7 @@
                     "InstanceInitiatedShutdownBehavior": "terminate",
                     "ImageId": {
                         "Fn::FindInMap": [
-                            "OfficialAmiMap",
+                            "AWSAMIRegionMap",
                             {
                                 "Ref": "AWS::Region"
                             },
@@ -580,7 +659,7 @@
                             "DeviceIndex": 0,
                             "Groups": [
                                 {
-                                    "Ref": "FgtAutoScaleSecurityGroup"
+                                    "Ref": "FgtAsgSecurityGroup"
                                 }
                             ],
                             "AssociatePublicIpAddress": true
@@ -1105,7 +1184,7 @@
                 },
                 "SecurityGroupIds": [
                     {
-                        "Ref": "FgtAutoScaleSecurityGroup"
+                        "Ref": "FgtAsgSecurityGroup"
                     }
                 ],
                 "SubnetIds": [
@@ -2072,6 +2151,7 @@
                     },
                     "Parameters": [
                         "VpcId",
+                        "VPCCIDR",
                         "PublicSubnet1",
                         "PublicSubnet2",
                         "PrivateSubnet1",
@@ -2090,8 +2170,7 @@
                         "FortigatePskSecret",
                         "FortigateAdminPort",
                         "FortigateAdminCidr",
-                        "KeyPairName",
-                        "FgtAutoScaleSecurityGroup"
+                        "KeyPairName"
                     ]
                 },
                 {
@@ -2158,9 +2237,6 @@
                 "PrivateSubnet2RouteTable": {
                     "default": "Route Table 2 ID"
                 },
-                "FgtAutoScaleSecurityGroup": {
-                    "default": "Security Group"
-                },
                 "FortigateInstanceType": {
                     "default": "Instance Type"
                 },
@@ -2223,6 +2299,9 @@
                 },
                 "KeyPairName": {
                     "default": "Admin Key Pair"
+                },
+                "VPCCIDR": {
+                    "default": "VPC CIDR"
                 }
             }
         }
