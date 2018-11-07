@@ -469,7 +469,6 @@
                         "default": "Lambda Function and API Gateway Configuration"
                     },
                     "Parameters": [
-                        "LambdaDeploymentMethod",
                         "QSS3BucketName",
                         "QSS3KeyPrefix",
                         "ApiGwStageName",
@@ -479,91 +478,88 @@
             ],
             "ParameterLabels": {
                 "CustomIdentifier": {
-                    "default": "Resource Name Prefix"
+                    "default": "Resource name prefix"
                 },
                 "AvailabilityZones": {
-                    "default": "Availability Zones"
+                    "default": "Availability zones"
                 },
                 "VPCCIDR": {
                     "default": "VPC CIDR"
                 },
                 "PublicSubnet1CIDR": {
-                    "default": "Public Subnet 1 CIDR"
+                    "default": "Public subnet 1 CIDR"
                 },
                 "PublicSubnet2CIDR": {
-                    "default": "Public Subnet 2 CIDR"
+                    "default": "Public subnet 2 CIDR"
                 },
                 "PrivateSubnet1CIDR": {
-                    "default": "Private Subnet 1 CIDR"
+                    "default": "Private subnet 1 CIDR"
                 },
                 "PrivateSubnet2CIDR": {
-                    "default": "Private Subnet 2 CIDR"
+                    "default": "Private subnet 2 CIDR"
                 },
                 "FortigateInstanceType": {
-                    "default": "Instance Type"
-                },
-                "LambdaDeploymentMethod": {
-                    "default": "Deployment Method"
+                    "default": "Instance type"
                 },
                 "QSS3BucketName": {
-                    "default": "Quick Start S3 Bucket Name"
+                    "default": "Quick Start S3 bucket name"
                 },
                 "QSS3KeyPrefix": {
-                    "default": "Quick Start S3 Key Prefix"
+                    "default": "Quick Start S3 key prefix"
                 },
                 "ApiGwStageName": {
-                    "default": "Stage Name"
+                    "default": "Stage name"
                 },
                 "ApiGwResource": {
-                    "default": "Resource Group Name"
+                    "default": "Resource group name"
                 },
                 "ExpireLifecycleEntry": {
-                    "default": "Instance Lifecycle Expiry"
+                    "default": "Instance lifecycle expiry"
                 },
                 "ScalingPolicyOptions": {
-                    "default": "Scaling Policy Options"
+                    "default": "Scaling policy options"
                 },
                 "FortigateAsgCooldown": {
-                    "default": "Scaling Cooldown Period"
+                    "default": "Scaling cooldown period"
                 },
                 "FortigateAsgDesiredCapacity": {
-                    "default": "Desired Capacity"
+                    "default": "Desired capacity"
                 },
                 "FortigateAsgMinSize": {
-                    "default": "Minimum Group Size"
+                    "default": "Minimum group size"
                 },
                 "FortigateAsgMaxSize": {
-                    "default": "Maximum Group size"
+                    "default": "Maximum group size"
                 },
                 "FortigateAsgHealthCheckGracePeriod": {
-                    "default": "Health Check Grace Period"
+                    "default": "Health check grace period"
                 },
                 "FortigateAsgScaleInThreshold": {
-                    "default": "Scale-in Threshold"
+                    "default": "Scale-in threshold"
                 },
                 "FortigateAsgScaleOutThreshold": {
-                    "default": "Scale-out Threshold"
+                    "default": "Scale-out threshold"
                 },
                 "FortigateElbTgHealthyThreshold": {
-                    "default": "Healthy Threshold"
+                    "default": "Healthy threshold"
                 },
                 "BalanceWebTrafficOverPort": {
-                    "default": "Web Service Traffic Port"
+                    "default": "Web service traffic port"
                 },
                 "InternalLoadBalancingOptions": {
-                    "default": "Internal ELB Options"
+                    "default": "Internal ELB options"
                 },
                 "InternalLoadBalancerDnsName": {
-                    "default": "Internal ELB DNS Name"
+                    "default": "Internal ELB DNS name"
                 },
                 "FortigateAdminPort": {
-                    "default": "Admin Port"
+                    "default": "Admin port"
                 },
                 "FortigateAdminCidr": {
-                    "default": "Admin CIDR Block"
+                    "default": "Admin CIDR block"
                 },
                 "KeyPairName": {
-                    "default": "Admin Key Pair Name"
+                    "default": "Admin key pair name"
                 }
             }
         }
