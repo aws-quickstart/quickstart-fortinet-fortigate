@@ -10,7 +10,7 @@
             "Type": "String",
             "Description": "Instance Type."
         },
-        "AdminAccessKeyPairName": {
+        "KeyPairName": {
             "Type": "AWS::EC2::KeyPair::KeyName",
             "Description": "Amazon EC2 Key Pair for admin access."
         },
@@ -41,10 +41,6 @@
             "Type": "String",
             "Description": "The security group id which is to attach to this FortiGate instance if you want to use an existing one instead of creating new one."
         }
-    },
-    "Mappings": {
-    },
-    "Conditions": {
     },
     "Resources": {
         "nic0": {
@@ -138,7 +134,7 @@
             "Type": "AWS::EC2::Instance",
             "Properties": {
                 "KeyName": {
-                    "Ref": "AdminAccessKeyPairName"
+                    "Ref": "KeyPairName"
                 },
                 "IamInstanceProfile": {
                     "Ref": "InstanceProfile"

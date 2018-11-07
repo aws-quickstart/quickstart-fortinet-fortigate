@@ -57,7 +57,7 @@
             "MinLength": 9,
             "Description": "CIDR block for external admin management access. **WARNING!** The default value 0.0.0.0/0 accepts connections from any IP address. Please consider hanging it to match your needs."
         },
-        "AdminAccessKeyPairName": {
+        "KeyPairName": {
             "Type": "AWS::EC2::KeyPair::KeyName",
             "Description": "Amazon EC2 Key Pair for admin access."
         },
@@ -111,7 +111,7 @@
                 }
             }
         },
-        "iamRFgtInstance": {
+        "IamRoleFgtInstance": {
             "Type": "AWS::IAM::Role",
             "Properties": {
                 "ManagedPolicyArns": [
@@ -129,15 +129,35 @@
                             "Action": "sts:AssumeRole"
                         }
                     ]
-                }
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                       "PolicyDocument": {
+                          "Version": "2012-10-17",
+                          "Statement": [
+                             {
+                                "Action": [
+                                   "s3:GetObject"
+                                ],
+                                "Resource": {
+                                   "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*"
+                                },
+                                "Effect": "Allow"
+                             }
+                          ]
+                       },
+                       "PolicyName": "aws-quick-start-s3-policy"
+                    }
+                ]
             }
         },
-        "iamIpFgtInstance": {
+        "IamInstanceProfileFgt": {
             "Type": "AWS::IAM::InstanceProfile",
             "Properties": {
                 "Roles": [
                     {
-                        "Ref": "iamRFgtInstance"
+                        "Ref": "IamRoleFgtInstance"
                     }
                 ]
             }
@@ -152,8 +172,8 @@
                     "FortigateInstanceType": {
                         "Ref": "FortigateInstanceType"
                     },
-                    "AdminAccessKeyPairName": {
-                        "Ref": "AdminAccessKeyPairName"
+                    "KeyPairName": {
+                        "Ref": "KeyPairName"
                     },
                     "FortigateAdminPort": {
                         "Ref": "FortigateAdminPort"
@@ -171,7 +191,7 @@
                         "Ref": "FortiGateImageId"
                     },
                     "InstanceProfile": {
-                        "Ref": "iamIpFgtInstance"
+                        "Ref": "IamInstanceProfileFgt"
                     }
                 },
                 "TemplateURL": {
@@ -200,8 +220,8 @@
                     "FortigateInstanceType": {
                         "Ref": "FortigateInstanceType"
                     },
-                    "AdminAccessKeyPairName": {
-                        "Ref": "AdminAccessKeyPairName"
+                    "KeyPairName": {
+                        "Ref": "KeyPairName"
                     },
                     "FortigateAdminPort": {
                         "Ref": "FortigateAdminPort"
@@ -219,7 +239,7 @@
                         "Ref": "FortiGateImageId"
                     },
                     "InstanceProfile": {
-                        "Ref": "iamIpFgtInstance"
+                        "Ref": "IamInstanceProfileFgt"
                     }
                 },
                 "TemplateURL": {

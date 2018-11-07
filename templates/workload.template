@@ -24,16 +24,6 @@
             "Default": "quickstart-fortinet-fortigate",
             "Description": "The S3 key name prefix used to simulate a folder for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes."
         },
-        "AvailabilityZone1": {
-            "Description": "The Quick Start uses two Availability Zones. Choose one from the list.",
-            "Type": "AWS::EC2::AvailabilityZone::Name",
-            "MinLength": 1
-        },
-        "AvailabilityZone2": {
-            "Description": "The Quick Start uses two Availability Zones. Choose a different one from #1 above.",
-            "Type": "AWS::EC2::AvailabilityZone::Name",
-            "MinLength": 1
-        },
         "VpcId": {
             "Type": "AWS::EC2::VPC::Id",
             "Description": "Choose one the existing VPC IDs where you deploy the Auto-Scaling group and related resources. The VPC must have the option 'DNS hostnames' enabled."
@@ -56,21 +46,11 @@
         },
         "PrivateSubnet1RouteTable": {
             "Type": "String",
-            "Description": "Specify the route table Id for the 1st private subnet."
+            "Description": "Specify the route table Id for the private subnet 1."
         },
         "PrivateSubnet2RouteTable": {
             "Type": "String",
-            "Description": "Specify the route table Id for the 2nd private subnet."
-        },
-        "AddNatGatewayToPublicSubnet": {
-            "Type": "String",
-            "Default": "use FortiGate as NAT Gateway",
-            "AllowedValues": [
-                "use FortiGate as NAT Gateway",
-                "use a NAT Gateway specified below"
-            ],
-            "ConstraintDescription": "must choose from the provided options.",
-            "Description": "Having NAT gateway is required. This template will add one FortiGate as a NAT gateway for each protected subnet."
+            "Description": "Specify the route table Id for the private subnet 2."
         },
         "FgtAutoScaleSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup::Id",
@@ -88,7 +68,7 @@
                 "c5.9xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 instance type.",
-            "Description": "Choose one to launch as FortiGate On-Demand instances. There are t2.small and compute-optimized instances such as c4 and c5 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/"
+            "Description": "Instance type to launch as FortiGate On-Demand instances. There are t2.small and compute-optimized instances such as c4 and c5 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/"
         },
         "ApiGwStageName": {
             "Type": "String",
@@ -106,7 +86,7 @@
             "MinValue": 60,
             "MaxValue": 3600,
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
-            "Description": "Seconds. FortiGate instance lifecycle expiry entry in seconds."
+            "Description": "FortiGate instance lifecycle expiry entry (in second). Minimum is 60. Maximum is 3600."
         },
 
         "ScalingPolicyOptions": {
@@ -124,35 +104,35 @@
             "MinValue": 60,
             "MaxValue": 3600,
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
-            "Description": "Seconds. Auto-Scaling group waits for the cool-down period to complete before resuming scaling activities."
+            "Description": "Auto-Scaling group waits for the cool-down period (in second) to complete before resuming scaling activities. Minimum is 60. Maximum is 3600."
         },
         "FortigateAsgDesiredCapacity": {
             "Type": "Number",
             "Default": 2,
-            "MinValue": 1,
+            "MinValue": 2,
             "ConstraintDescription": "must be a valid number not less than 1.",
-            "Description": "The number of FortiGate instances the group should have at any time, also called desired capacity. Must keep at least 2 FortiGates in the group for High Availability."
+            "Description": "The number of FortiGate instances the group should have at any time, also called desired capacity. Must keep at least 2 FortiGates in the group for High Availability. Minimum is 2."
         },
         "FortigateAsgMinSize": {
             "Type": "Number",
-            "Default": 1,
-            "MinValue": 1,
+            "Default": 2,
+            "MinValue": 2,
             "ConstraintDescription": "must be a valid number not less than 1.",
-            "Description": "Minimum number of FortiGate instances in the Auto-Scaling Group."
+            "Description": "Minimum number of FortiGate instances in the Auto-Scaling Group. Minimum is 2."
         },
         "FortigateAsgMaxSize": {
             "Type": "Number",
             "Default": 4,
-            "MinValue": 1,
+            "MinValue": 2,
             "ConstraintDescription": "must be a valid number not less than 1.",
-            "Description": "Maximum number of FortiGate instances in the Auto-Scaling Group."
+            "Description": "Maximum number of FortiGate instances in the Auto-Scaling Group. Minimum is 2."
         },
         "FortigateAsgHealthCheckGracePeriod": {
             "Type": "Number",
             "Default": 300,
             "MinValue": 60,
             "ConstraintDescription": "must be a valid number not less than 60.",
-            "Description": "Seconds. The length of time that Auto-Scaling waits before checking an instance's health status."
+            "Description": "The length of time (in second) that Auto-Scaling waits before checking an instance's health status. Minimum is 60."
         },
         "FortigateAsgScaleInThreshold": {
             "Type": "Number",
@@ -160,7 +140,7 @@
             "MinValue": 1,
             "MaxValue": 100,
             "ConstraintDescription": "must be a valid number between 1 and 100.",
-            "Description": "Percentage. The threshold for the FortiGate Auto-Scaling group to scale-in (remove) 1 instance."
+            "Description": "The threshold (in percentage) for the FortiGate Auto-Scaling group to scale-in (remove) 1 instance. Minimum is 1. Maximum is 100."
         },
         "FortigateAsgScaleOutThreshold": {
             "Type": "Number",
@@ -168,14 +148,14 @@
             "MinValue": 1,
             "MaxValue": 100,
             "ConstraintDescription": "must be a valid number between 1 and 100.",
-            "Description": "Percentage. The threshold for the FortiGate Auto-Scaling group to scale-out (add) 1 instance."
+            "Description": "The threshold (in percentage) for the FortiGate Auto-Scaling group to scale-out (add) 1 instance. Minimum is 1. Maximum is 100."
         },
         "FortigateElbTgHealthyThreshold": {
             "Type": "Number",
             "Default": 3,
             "MinValue": 3,
             "ConstraintDescription": "must be a valid number not less than 3.",
-            "Description": "Healthy threshold for the FortiGate Auto-Scaling Group. The number of consecutive health check failures required before considering a FortiGate instance unhealthy."
+            "Description": "Healthy threshold for the FortiGate Auto-Scaling Group. The number of consecutive health check failures required before considering a FortiGate instance unhealthy. Minimum is 3."
         },
         "BalanceWebTrafficOverPort": {
             "Type": "Number",
@@ -183,7 +163,7 @@
             "MinValue": 1,
             "MaxValue": 65535,
             "ConstraintDescription": "must be a valid port number between 1 and 65535.",
-            "Description": "Balance web service traffic over this port if the internal web-service load balancer is enabled."
+            "Description": "Balance web service traffic over this port if the internal web-service load balancer is enabled. Minimum is 1. Maximum is 65535."
         },
         "InternalLoadBalancingOptions": {
             "Type": "String",
@@ -198,7 +178,7 @@
         },
         "InternalLoadBalancerDnsName": {
             "Type": "String",
-            "Description": "If you use your own one, specify the DNS Name of the Elastic Load Balancer which is used in the protected subnets."
+            "Description": "DNS Name of the Elastic Load Balancer which is used in the protected subnets. Specify if only you use your own one."
         },
         "FortigatePskSecret": {
             "Type": "String",
@@ -211,16 +191,15 @@
             "MinValue": 1,
             "MaxValue": 65535,
             "ConstraintDescription": "must be a valid port number between 1 and 65535.",
-            "Description": "A port number for FortiGate administration. Default to 8443. Do not use: 443, 541, 514, 703."
+            "Description": "A port number for FortiGate administration. Minimum is 1. Maximum is 65535. Do not use: 443, 541, 514, 703 because these are FortiGate preserved ports."
         },
         "FortigateAdminCidr": {
             "Type": "String",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format and 0.0.0.0/0 is not recommended.",
-            "MinLength": 9,
             "Description": "CIDR block for external admin management access. **WARNING!** The default value 0.0.0.0/0 accepts connections from any IP address. Please consider to change it to match your needs."
         },
-        "AdminAccessKeyPairName": {
+        "KeyPairName": {
             "Type": "AWS::EC2::KeyPair::KeyName",
             "Description": "Amazon EC2 Key Pair for admin access."
         }
@@ -297,71 +276,66 @@
                     ]
                 }
             ]
-        },
-        "IfAddNatGatewayToPublicSubnet": {
-            "Fn::Equals": [
-                {
-                    "Ref": "AddNatGatewayToPublicSubnet"
-                },
-                "use FortiGate as NAT Gateway"
-            ]
         }
     },
     "Mappings": {
         "FortiGateAutoScaleNameMap": {
             "FortiGateVersion": {
-                "LATEST": "FGTVM64ONDEMAND0200",
-                "603": "FGTVM64ONDEMAND0200"
+                "LATEST": "FGTVM64PAYG603",
+                "603": "FGTVM64PAYG603"
             }
         },
-        "OfficialAmiMap": {
+        "AWSAMIRegionMap": {
+            "AMI": {
+                "FGTVM64PAYG603": "aws-marketplace/FortiGate-VM64-AWSONDEMAND build0200 (6.0.3) GA-3124a694-441c-4ff1-8bf7-4d153be424a6-ami-09dba22e5db2d4fb5.4"
+            },
             "ap-northeast-1": {
-                "FGTVM64ONDEMAND0200": "ami-0bd9e6e0020928ef9"
+                "FGTVM64PAYG603": "ami-0bd9e6e0020928ef9"
             },
             "ap-northeast-2": {
-                "FGTVM64ONDEMAND0200": "ami-0a560b6c089c6310a"
+                "FGTVM64PAYG603": "ami-0a560b6c089c6310a"
             },
             "ap-southeast-1": {
-                "FGTVM64ONDEMAND0200": "ami-000c0166f49864e4a"
+                "FGTVM64PAYG603": "ami-000c0166f49864e4a"
             },
             "ap-southeast-2": {
-                "FGTVM64ONDEMAND0200": "ami-0e3662b3f822e3be4"
+                "FGTVM64PAYG603": "ami-0e3662b3f822e3be4"
             },
             "ap-south-1": {
-                "FGTVM64ONDEMAND0200": "ami-0c5a28e0b56028d6d"
+                "FGTVM64PAYG603": "ami-0c5a28e0b56028d6d"
             },
             "sa-east-1": {
-                "FGTVM64ONDEMAND0200": "ami-0424ffd602f0af643"
+                "FGTVM64PAYG603": "ami-0424ffd602f0af643"
             },
             "eu-west-1": {
-                "FGTVM64ONDEMAND0200": "ami-0aeda1bdca1b205bd"
+                "FGTVM64PAYG603": "ami-0aeda1bdca1b205bd"
             },
             "eu-west-2": {
-                "FGTVM64ONDEMAND0200": "ami-0de7050ef166ab900"
+                "FGTVM64PAYG603": "ami-0de7050ef166ab900"
             },
             "eu-west-3": {
-                "FGTVM64ONDEMAND0200": "ami-0ce86abfa74c76ad2"
+                "FGTVM64PAYG603": "ami-0ce86abfa74c76ad2"
             },
             "eu-central-1": {
-                "FGTVM64ONDEMAND0200": "ami-0af055c02be246473"
+                "FGTVM64PAYG603": "ami-0af055c02be246473"
             },
             "ca-central-1": {
-                "FGTVM64ONDEMAND0200": "ami-0583f62d15a462f5c"
+                "FGTVM64PAYG603": "ami-0583f62d15a462f5c"
             },
             "us-east-1": {
-                "FGTVM64ONDEMAND0200": "ami-09e4f25ec992c94ab"
+                "FGTVM64PAYG603": "ami-09e4f25ec992c94ab"
             },
             "us-east-2": {
-                "FGTVM64ONDEMAND0200": "ami-0a1f403f5e0cfa88e"
+                "FGTVM64PAYG603": "ami-0a1f403f5e0cfa88e"
             },
             "us-west-1": {
-                "FGTVM64ONDEMAND0200": "ami-057300bd7e60ea2b2"
+                "FGTVM64PAYG603": "ami-057300bd7e60ea2b2"
             },
             "us-west-2": {
-                "FGTVM64ONDEMAND0200": "ami-0ea3f14da73832fdc"
+                "FGTVM64PAYG603": "ami-0ea3f14da73832fdc"
             },
             "us-gov-west-1": {
-                "FGTVM64ONDEMAND0200": "ami-ddf76dbc"
+                "FGTVM64PAYG603": "ami-ddf76dbc"
             }
         },
         "ProtocolPortMap": {
@@ -378,7 +352,6 @@
     },
     "Resources": {
         "StackCreateFortigateNatGateway": {
-            "Condition": "IfAddNatGatewayToPublicSubnet",
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
@@ -427,8 +400,8 @@
                     "FortigateAdminCidr": {
                         "Ref": "FortigateAdminCidr"
                     },
-                    "AdminAccessKeyPairName": {
-                        "Ref": "AdminAccessKeyPairName"
+                    "KeyPairName": {
+                        "Ref": "KeyPairName"
                     },
                     "FortigateAdminPort": {
                         "Ref": "FortigateAdminPort"
@@ -451,7 +424,6 @@
             }
         },
         "NatGateway1RouteAttachmentNew": {
-            "Condition": "IfAddNatGatewayToPublicSubnet",
             "Type": "AWS::EC2::Route",
             "Properties": {
                 "DestinationCidrBlock": "0.0.0.0/0",
@@ -464,15 +436,9 @@
                         "Outputs.InstanceId1Nic1Id"
                     ]
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "7a41968e-6da5-4acc-b4ff-ceb6f00e64c5"
-                }
             }
         },
         "NatGateway2RouteAttachmentNew": {
-            "Condition": "IfAddNatGatewayToPublicSubnet",
             "Type": "AWS::EC2::Route",
             "Properties": {
                 "DestinationCidrBlock": "0.0.0.0/0",
@@ -484,11 +450,6 @@
                         "StackCreateFortigateNatGateway",
                         "Outputs.InstanceId2Nic1Id"
                     ]
-                }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "7a41968e-6da5-4acc-b4ff-ceb6f00e64c5"
                 }
             }
         },
@@ -536,7 +497,7 @@
                 "TimeoutInMinutes": "10"
             }
         },
-        "fgtSecurityGroupIngressAllowedTraffic1": {
+        "FgtSecurityGroupIngressAllowedTraffic1": {
             "Type": "AWS::EC2::SecurityGroupIngress",
             "Condition": "IfCustomBalanceWebTrafficOverPort",
             "Properties": {
@@ -553,7 +514,7 @@
                 "CidrIp": "0.0.0.0/0"
             }
         },
-        "ltFortigateAutoscale": {
+        "LaunchTemplateFgtAutoscale": {
             "Type": "AWS::EC2::LaunchTemplate",
             "Properties": {
                 "LaunchTemplateData": {
@@ -570,7 +531,7 @@
                                                     "Ref": "AWS::Region"
                                                 },
                                                 "api": {
-                                                    "Ref": "apiGatewayLfFgtAutoscale"
+                                                    "Ref": "ApiGatewayFgtAsg"
                                                 },
                                                 "stage": {
                                                     "Ref": "ApiGwStageName"
@@ -606,7 +567,7 @@
                     "IamInstanceProfile": {
                         "Arn": {
                             "Fn::GetAtt": [
-                                "iamIpFgtInstance",
+                                "IamInstanceProfileFgt",
                                 "Arn"
                             ]
                         }
@@ -626,20 +587,15 @@
                         }
                     ],
                     "KeyName": {
-                        "Ref": "AdminAccessKeyPairName"
+                        "Ref": "KeyPairName"
                     }
                 }
             },
             "DependsOn": [
-                "iamIpFgtInstance"
-            ],
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "8189ff3f-1a69-4618-9584-ea25de3b81e6"
-                }
-            }
+                "IamInstanceProfileFgt"
+            ]
         },
-        "asgFortigateScalingGroup": {
+        "FortigateScalingGroup": {
             "Type": "AWS::AutoScaling::AutoScalingGroup",
             "Properties": {
                 "AutoScalingGroupName": {
@@ -678,7 +634,7 @@
                 },
                 "LaunchTemplate": {
                     "LaunchTemplateId": {
-                        "Ref": "ltFortigateAutoscale"
+                        "Ref": "LaunchTemplateFgtAutoscale"
                     },
                     "Version": "1"
                 },
@@ -711,48 +667,43 @@
                 ],
                 "TargetGroupARNs": [
                     {
-                        "Ref": "elbV2TargetGroupFgtAutoscale"
+                        "Ref": "ElbV2TargetGroupFgtAsg"
                     }
                 ]
             },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "8b4dbf31-4d24-444f-9330-fc0e04ee1ad9"
-                }
-            },
             "DependsOn": [
-                "ltFortigateAutoscale",
-                "elbV2TargetGroupFgtAutoscale",
-                "lfFgtAutoscale"
+                "LaunchTemplateFgtAutoscale",
+                "ElbV2TargetGroupFgtAsg",
+                "LambdaFunctionFgtAsg"
             ]
         },
-        "asgScaleInPolicy": {
+        "AsgScaleInPolicy": {
             "Type": "AWS::AutoScaling::ScalingPolicy",
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
                 "AutoScalingGroupName": {
-                    "Ref": "asgFortigateScalingGroup"
+                    "Ref": "FortigateScalingGroup"
                 },
                 "ScalingAdjustment": "-1"
             },
             "DependsOn": [
-                "asgFortigateScalingGroup"
+                "FortigateScalingGroup"
             ]
         },
-        "asgScaleOutPolicy": {
+        "ScaleOutPolicy": {
             "Type": "AWS::AutoScaling::ScalingPolicy",
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
                 "AutoScalingGroupName": {
-                    "Ref": "asgFortigateScalingGroup"
+                    "Ref": "FortigateScalingGroup"
                 },
                 "ScalingAdjustment": "1"
             },
             "DependsOn": [
-                "asgFortigateScalingGroup"
+                "FortigateScalingGroup"
             ]
         },
-        "cwAlarmCpuUtilizationHigh": {
+        "AlarmCpuUtilHigh": {
             "Type": "AWS::CloudWatch::Alarm",
             "Condition": "IfScalingPolicyOnCPU",
             "Properties": {
@@ -767,7 +718,7 @@
                 },
                 "AlarmActions": [
                     {
-                        "Ref": "asgScaleOutPolicy"
+                        "Ref": "ScaleOutPolicy"
                     }
                 ],
                 "Namespace": "AWS/EC2",
@@ -775,7 +726,7 @@
                     {
                         "Name": "AutoScalingGroupName",
                         "Value": {
-                            "Ref": "asgFortigateScalingGroup"
+                            "Ref": "FortigateScalingGroup"
                         }
                     }
                 ],
@@ -783,7 +734,7 @@
                 "MetricName": "CPUUtilization"
             }
         },
-        "cwAlarmCpuUtilizationLow": {
+        "AlarmCpuUtilLow": {
             "Type": "AWS::CloudWatch::Alarm",
             "Condition": "IfScalingPolicyOnCPU",
             "Properties": {
@@ -798,7 +749,7 @@
                 },
                 "AlarmActions": [
                     {
-                        "Ref": "asgScaleInPolicy"
+                        "Ref": "AsgScaleInPolicy"
                     }
                 ],
                 "Namespace": "AWS/EC2",
@@ -806,7 +757,7 @@
                     {
                         "Name": "AutoScalingGroupName",
                         "Value": {
-                            "Ref": "asgFortigateScalingGroup"
+                            "Ref": "FortigateScalingGroup"
                         }
                     }
                 ],
@@ -814,7 +765,7 @@
                 "MetricName": "CPUUtilization"
             }
         },
-        "lfFgtAutoscale": {
+        "LambdaFunctionFgtAsg": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
                 "FunctionName": {
@@ -854,7 +805,7 @@
                 "Runtime": "nodejs8.10",
                 "Role": {
                     "Fn::GetAtt": [
-                        "iamrLfFgtAutoscale",
+                        "IamRoleLfFgtAsg",
                         "Arn"
                     ]
                 },
@@ -991,8 +942,17 @@
                         "STACK_ASSETS_S3_BUCKET_NAME": {
                             "Ref": "QSS3BucketName"
                         },
-                        "STACK_ASSETS_S3_KEY_PREFIX": {
-                            "Ref": "QSS3KeyPrefix"
+                        "STACK_ASSETS_S3_KEY_PREFIX":
+                        {
+                            "Fn::Join": [
+                                "/",
+                                [
+                                    {
+                                        "Ref": "QSS3KeyPrefix"
+                                    },
+                                    "assets"
+                                ]
+                            ]
                         },
                         "REQUIRED_CONFIG_SET": {
                             "Fn::Join": [
@@ -1021,7 +981,7 @@
                                 "IfAddNewInternalLoadBalancer",
                                 {
                                     "Fn::GetAtt": [
-                                        "elbV2LoadBalancerPrivateSubnet",
+                                        "ElbV2LoadBalancerInternal",
                                         "DNSName"
                                     ]
                                 },
@@ -1050,18 +1010,13 @@
             },
             "DependsOn": [
                 "StackCopyLambda",
-                "ddbTableMasterElection",
-                "ddbTableAutoscale",
-                "ddbTableConfigSet",
-                "ddbTableLifecycleItem"
-            ],
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "ddf94f65-65d7-4bb6-963b-1bdb7c5e0cb8"
-                }
-            }
+                "DdbTableMasterElection",
+                "DdbTableAutoscale",
+                "DdbTableConfigSet",
+                "DdbTableLifecycleItem"
+            ]
         },
-        "apiGatewayLfFgtAutoscale": {
+        "ApiGatewayFgtAsg": {
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
                 "Name": {
@@ -1108,39 +1063,29 @@
                         "{\\\"Version\\\":\\\"2012-10-17\\\",\\\"Statement\\\":[{\\\"Effect\\\":\\\"Allow\\\",\\\"Principal\\\":\\\"*\\\",\\\"Action\\\":\\\"execute-api:Invoke\\\",\\\"Resource\\\":\\\"execute-api:\\/*\\\",\\\"Condition\\\":{\\\"StringEquals\\\":{\\\"aws:sourceVpce\\\":\\\"${vpce}\\\"}}}]}",
                         {
                             "vpce": {
-                                "Ref": "ec2VpcEndpointApiGw"
+                                "Ref": "VpcEndpointApiGw"
                             }
                         }
                     ]
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "029a569f-ecc5-4129-992c-39f80559ff32"
-                }
             }
         },
-        "apiGwDeploymentLfFgtAutoscale": {
+        "ApiGwDeploymentFgtAsg": {
             "DependsOn": [
-                "apiGwMethodLfFgtAutoscaleComplete",
-                "apiGwMethodLfFgtAutoscaleGetConfig"
+                "ApiGwMethodFgtAsgComplete",
+                "ApiGwMethodFgtAsgGetConfig"
             ],
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
                 "RestApiId": {
-                    "Ref": "apiGatewayLfFgtAutoscale"
+                    "Ref": "ApiGatewayFgtAsg"
                 },
                 "StageName": {
                     "Ref": "ApiGwStageName"
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "30e24d38-e913-41eb-8d91-637ec96efd8b"
-                }
             }
         },
-        "ec2VpcEndpointApiGw": {
+        "VpcEndpointApiGw": {
             "Type": "AWS::EC2::VPCEndpoint",
             "Properties": {
                 "VpcEndpointType": "Interface",
@@ -1168,29 +1113,19 @@
                         "Ref": "PublicSubnet1"
                     }
                 ]
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "f28cf262-50eb-47b2-a451-27dc8ad7aec4"
-                }
             }
         },
-        "iamIpFgtInstance": {
+        "IamInstanceProfileFgt": {
             "Type": "AWS::IAM::InstanceProfile",
             "Properties": {
                 "Roles": [
                     {
-                        "Ref": "iamrFgtInstance"
+                        "Ref": "IamRoleFgtInstance"
                     }
                 ]
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "9ad6e88a-6c1d-441f-b50b-2e1a26540042"
-                }
             }
         },
-        "iamrFgtInstance": {
+        "IamRoleFgtInstance": {
             "Type": "AWS::IAM::Role",
             "Properties": {
                 "ManagedPolicyArns": [
@@ -1208,44 +1143,54 @@
                             "Action": "sts:AssumeRole"
                         }
                     ]
-                }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "a87c4975-8ae1-47e5-857c-3040475392de"
-                }
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                       "PolicyDocument": {
+                          "Version": "2012-10-17",
+                          "Statement": [
+                             {
+                                "Action": [
+                                   "s3:GetObject"
+                                ],
+                                "Resource": {
+                                   "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*"
+                                },
+                                "Effect": "Allow"
+                             }
+                          ]
+                       },
+                       "PolicyName": "aws-quick-start-s3-policy"
+                    }
+                ]
             }
         },
-        "apiGwResourceLfFgtAutoscaleComplete": {
+        "ApiGwResFgtAsgComplete": {
             "Type": "AWS::ApiGateway::Resource",
             "Properties": {
                 "RestApiId": {
-                    "Ref": "apiGatewayLfFgtAutoscale"
+                    "Ref": "ApiGatewayFgtAsg"
                 },
                 "PathPart": {
                     "Ref": "ApiGwResource"
                 },
                 "ParentId": {
                     "Fn::GetAtt": [
-                        "apiGatewayLfFgtAutoscale",
+                        "ApiGatewayFgtAsg",
                         "RootResourceId"
                     ]
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "547ace79-d6f3-4058-93d0-d7dde4049226"
-                }
             }
         },
-        "apiGwMethodLfFgtAutoscaleComplete": {
+        "ApiGwMethodFgtAsgComplete": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
                 "ResourceId": {
-                    "Ref": "apiGwResourceLfFgtAutoscaleComplete"
+                    "Ref": "ApiGwResFgtAsgComplete"
                 },
                 "RestApiId": {
-                    "Ref": "apiGatewayLfFgtAutoscale"
+                    "Ref": "ApiGatewayFgtAsg"
                 },
                 "AuthorizationType": "NONE",
                 "HttpMethod": "POST",
@@ -1263,7 +1208,7 @@
                                 ":lambda:path/2015-03-31/functions/",
                                 {
                                     "Fn::GetAtt": [
-                                        "lfFgtAutoscale",
+                                        "LambdaFunctionFgtAsg",
                                         "Arn"
                                     ]
                                 },
@@ -1272,41 +1217,31 @@
                         ]
                     }
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "f84dbe67-08f1-4d15-ad1a-7de3879a67c5"
-                }
             }
         },
-        "apiGwResourceLfFgtAutoscaleGetConfig": {
+        "ApiGwResFgtAsgGetConfig": {
             "Type": "AWS::ApiGateway::Resource",
             "Properties": {
                 "RestApiId": {
-                    "Ref": "apiGatewayLfFgtAutoscale"
+                    "Ref": "ApiGatewayFgtAsg"
                 },
                 "PathPart": "get-config",
                 "ParentId": {
                     "Fn::GetAtt": [
-                        "apiGatewayLfFgtAutoscale",
+                        "ApiGatewayFgtAsg",
                         "RootResourceId"
                     ]
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "416c5998-2923-42ad-8747-79fb4eb00276"
-                }
             }
         },
-        "apiGwMethodLfFgtAutoscaleGetConfig": {
+        "ApiGwMethodFgtAsgGetConfig": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
                 "ResourceId": {
-                    "Ref": "apiGwResourceLfFgtAutoscaleGetConfig"
+                    "Ref": "ApiGwResFgtAsgGetConfig"
                 },
                 "RestApiId": {
-                    "Ref": "apiGatewayLfFgtAutoscale"
+                    "Ref": "ApiGatewayFgtAsg"
                 },
                 "AuthorizationType": "NONE",
                 "HttpMethod": "GET",
@@ -1324,7 +1259,7 @@
                                 ":lambda:path/2015-03-31/functions/",
                                 {
                                     "Fn::GetAtt": [
-                                        "lfFgtAutoscale",
+                                        "LambdaFunctionFgtAsg",
                                         "Arn"
                                     ]
                                 },
@@ -1333,14 +1268,9 @@
                         ]
                     }
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "aa429825-53f1-4c58-a7b4-a4f75a8308fb"
-                }
             }
         },
-        "iamrLfFgtAutoscale": {
+        "IamRoleLfFgtAsg": {
             "Type": "AWS::IAM::Role",
             "Properties": {
                 "AssumeRolePolicyDocument": {
@@ -1410,7 +1340,7 @@
                                     "Action": "s3:GetObject",
                                     "Resource": {
                                         "Fn::Sub": [
-                                            "arn:aws:s3:::${bucketname}/${keyprefix}/configset/*",
+                                            "arn:aws:s3:::${bucketname}/${keyprefix}/assets/configset/*",
                                             {
                                                 "bucketname": {
                                                     "Ref": "QSS3BucketName"
@@ -1426,14 +1356,9 @@
                         }
                     }
                 ]
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "ebe38e90-433d-40bc-89bf-df24d555cc8f"
-                }
             }
         },
-        "erAutoscaleLifecycleHookTrigger": {
+        "ErAsgLifecycleHookTrigger": {
             "Type": "AWS::Events::Rule",
             "Properties": {
                 "EventPattern": {
@@ -1484,46 +1409,36 @@
                         "Id": "erFortiGateAutoScalingTriggerToLambda",
                         "Arn": {
                             "Fn::GetAtt": [
-                                "lfFgtAutoscale",
+                                "LambdaFunctionFgtAsg",
                                 "Arn"
                             ]
                         }
                     }
                 ]
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "6bd83953-5cb8-470d-b215-7c2018ea162c"
-                }
             }
         },
-        "erAutoscaleLifecyclePermission": {
+        "LpAsgLifecyclePermission": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
                 "FunctionName": {
-                    "Ref": "lfFgtAutoscale"
+                    "Ref": "LambdaFunctionFgtAsg"
                 },
                 "Action": "lambda:InvokeFunction",
                 "Principal": "events.amazonaws.com",
                 "SourceArn": {
                     "Fn::GetAtt": [
-                        "erAutoscaleLifecycleHookTrigger",
+                        "ErAsgLifecycleHookTrigger",
                         "Arn"
                     ]
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "8f59d871-4a68-498d-92d3-9ded4f7b5249"
-                }
             }
         },
-        "agAutoscaleCompletePermission": {
+        "LpAsgComplete": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
                 "FunctionName": {
                     "Fn::GetAtt": [
-                        "lfFgtAutoscale",
+                        "LambdaFunctionFgtAsg",
                         "Arn"
                     ]
                 },
@@ -1540,7 +1455,7 @@
                                 "Ref": "AWS::AccountId"
                             },
                             "api": {
-                                "Ref": "apiGatewayLfFgtAutoscale"
+                                "Ref": "ApiGatewayFgtAsg"
                             },
                             "stage": {
                                 "Ref": "ApiGwStageName"
@@ -1550,26 +1465,21 @@
                 }
             },
             "DependsOn": [
-                "apiGatewayLfFgtAutoscale",
-                "apiGwDeploymentLfFgtAutoscale",
-                "apiGwResourceLfFgtAutoscaleGetConfig",
-                "apiGwMethodLfFgtAutoscaleGetConfig",
-                "apiGwResourceLfFgtAutoscaleComplete",
-                "apiGwMethodLfFgtAutoscaleComplete",
-                "lfFgtAutoscale"
-            ],
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "af72b1b0-1465-48b0-913d-956940474fb9"
-                }
-            }
+                "ApiGatewayFgtAsg",
+                "ApiGwDeploymentFgtAsg",
+                "ApiGwResFgtAsgGetConfig",
+                "ApiGwMethodFgtAsgGetConfig",
+                "ApiGwResFgtAsgComplete",
+                "ApiGwMethodFgtAsgComplete",
+                "LambdaFunctionFgtAsg"
+            ]
         },
-        "asLifeCycleHookLaunching": {
-            "DependsOn": "lfFgtAutoscale",
+        "AsgLifeCycleHookLaunching": {
+            "DependsOn": "LambdaFunctionFgtAsg",
             "Type": "AWS::AutoScaling::LifecycleHook",
             "Properties": {
                 "AutoScalingGroupName": {
-                    "Ref": "asgFortigateScalingGroup"
+                    "Ref": "FortigateScalingGroup"
                 },
                 "LifecycleHookName": "asgFgtAutoscaleLifecycleLaunching",
                 "LifecycleTransition": "autoscaling:EC2_INSTANCE_LAUNCHING",
@@ -1577,19 +1487,14 @@
                     "Ref": "ExpireLifecycleEntry"
                 },
                 "DefaultResult": "ABANDON"
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "0499aef1-ee80-4478-9d60-35d6848fcdfa"
-                }
             }
         },
-        "asLifeCycleHookTerminating": {
-            "DependsOn": "lfFgtAutoscale",
+        "AsgLifeCycleHookTerminating": {
+            "DependsOn": "LambdaFunctionFgtAsg",
             "Type": "AWS::AutoScaling::LifecycleHook",
             "Properties": {
                 "AutoScalingGroupName": {
-                    "Ref": "asgFortigateScalingGroup"
+                    "Ref": "FortigateScalingGroup"
                 },
                 "LifecycleHookName": "asgFgtAutoscaleLifecycleHookTerminating",
                 "LifecycleTransition": "autoscaling:EC2_INSTANCE_TERMINATING",
@@ -1597,14 +1502,9 @@
                     "Ref": "ExpireLifecycleEntry"
                 },
                 "DefaultResult": "CONTINUE"
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "0499aef1-ee80-4478-9d60-35d6848fcdfa"
-                }
             }
         },
-        "elbV2TargetGroupFgtAutoscale": {
+        "ElbV2TargetGroupFgtAsg": {
             "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
             "Properties": {
                 "Name": {
@@ -1670,14 +1570,9 @@
                 "VpcId": {
                     "Ref": "VpcId"
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "4674a8e1-187a-423f-82ad-9b9908e122ec"
-                }
             }
         },
-        "elbV2LoadBalancerFgtAutoscale": {
+        "ElbV2LoadBalancerFgtAsg": {
             "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
             "Properties": {
                 "Scheme": "internet-facing",
@@ -1725,26 +1620,21 @@
                     ]
                 }
             },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "a7424cf2-0d7c-4a8d-b7c0-9722aa45f03c"
-                }
-            },
             "DependsOn": [
-                "elbV2TargetGroupFgtAutoscale"
+                "ElbV2TargetGroupFgtAsg"
             ]
         },
-        "elbV2ListenerFgtAutoscale": {
+        "ElbV2ListenerFgtAsg": {
             "Type": "AWS::ElasticLoadBalancingV2::Listener",
             "Properties": {
                 "LoadBalancerArn": {
-                    "Ref": "elbV2LoadBalancerFgtAutoscale"
+                    "Ref": "ElbV2LoadBalancerFgtAsg"
                 },
                 "DefaultActions": [
                     {
                         "Type": "forward",
                         "TargetGroupArn": {
-                            "Ref": "elbV2TargetGroupFgtAutoscale"
+                            "Ref": "ElbV2TargetGroupFgtAsg"
                         }
                     }
                 ],
@@ -1765,17 +1655,12 @@
                     ]
                 }
             },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "08287e04-1bcb-41c2-b053-7d70239f9e72"
-                }
-            },
             "DependsOn": [
-                "elbV2LoadBalancerFgtAutoscale",
-                "elbV2TargetGroupFgtAutoscale"
+                "ElbV2LoadBalancerFgtAsg",
+                "ElbV2TargetGroupFgtAsg"
             ]
         },
-        "elbV2TargetGroupPrivateSubnet": {
+        "ElbV2TargetGroupInternal": {
             "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
             "Condition": "IfAddNewInternalLoadBalancer",
             "Properties": {
@@ -1848,14 +1733,9 @@
                 "VpcId": {
                     "Ref": "VpcId"
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "4674a8e1-187a-423f-82ad-9b9908e122ec"
-                }
             }
         },
-        "elbV2LoadBalancerPrivateSubnet": {
+        "ElbV2LoadBalancerInternal": {
             "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
             "Condition": "IfAddNewInternalLoadBalancer",
             "Properties": {
@@ -1904,27 +1784,22 @@
                     ]
                 }
             },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "a7424cf2-0d7c-4a8d-b7c0-9722aa45f03c"
-                }
-            },
             "DependsOn": [
-                "elbV2TargetGroupPrivateSubnet"
+                "ElbV2TargetGroupInternal"
             ]
         },
-        "elbV2ListenerPrivateSubnet": {
+        "ElbV2ListenerInternal": {
             "Type": "AWS::ElasticLoadBalancingV2::Listener",
             "Condition": "IfAddNewInternalLoadBalancer",
             "Properties": {
                 "LoadBalancerArn": {
-                    "Ref": "elbV2LoadBalancerPrivateSubnet"
+                    "Ref": "ElbV2LoadBalancerInternal"
                 },
                 "DefaultActions": [
                     {
                         "Type": "forward",
                         "TargetGroupArn": {
-                            "Ref": "elbV2TargetGroupPrivateSubnet"
+                            "Ref": "ElbV2TargetGroupInternal"
                         }
                     }
                 ],
@@ -1945,17 +1820,12 @@
                     ]
                 }
             },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "08287e04-1bcb-41c2-b053-7d70239f9e72"
-                }
-            },
             "DependsOn": [
-                "elbV2LoadBalancerPrivateSubnet",
-                "elbV2TargetGroupPrivateSubnet"
+                "ElbV2LoadBalancerInternal",
+                "ElbV2TargetGroupInternal"
             ]
         },
-        "ddbTableMasterElection": {
+        "DdbTableMasterElection": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "AttributeDefinitions": [
@@ -2008,14 +1878,9 @@
                         ]
                     ]
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "08287e04-1bcb-41c2-b053-7d70239f9e72"
-                }
             }
         },
-        "ddbTableLifecycleItem": {
+        "DdbTableLifecycleItem": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "AttributeDefinitions": [
@@ -2076,14 +1941,9 @@
                         ]
                     ]
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "08287e04-1bcb-41c2-b053-7d70239f9e72"
-                }
             }
         },
-        "ddbTableAutoscale": {
+        "DdbTableAutoscale": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "AttributeDefinitions": [
@@ -2136,14 +1996,9 @@
                         ]
                     ]
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "08287e04-1bcb-41c2-b053-7d70239f9e72"
-                }
             }
         },
-        "ddbTableConfigSet": {
+        "DdbTableConfigSet": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "AttributeDefinitions": [
@@ -2196,11 +2051,6 @@
                         ]
                     ]
                 }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "08287e04-1bcb-41c2-b053-7d70239f9e72"
-                }
             }
         }
     },
@@ -2212,7 +2062,6 @@
                         "default": "Basic Configuration"
                     },
                     "Parameters": [
-                        "CustomIdentifier",
                         "QSS3BucketName",
                         "QSS3KeyPrefix"
                     ]
@@ -2223,14 +2072,11 @@
                     },
                     "Parameters": [
                         "VpcId",
-                        "AvailabilityZone1",
-                        "AvailabilityZone2",
                         "PublicSubnet1",
                         "PublicSubnet2",
                         "PrivateSubnet1",
                         "PrivateSubnet2",
                         "PrivateSubnet1RouteTable",
-                        "AddNatGatewayToPublicSubnet",
                         "PrivateSubnet2RouteTable"
                     ]
                 },
@@ -2239,11 +2085,12 @@
                         "default": "FortiGate Configuration"
                     },
                     "Parameters": [
+                        "CustomIdentifier",
                         "FortigateInstanceType",
                         "FortigatePskSecret",
                         "FortigateAdminPort",
                         "FortigateAdminCidr",
-                        "AdminAccessKeyPairName",
+                        "KeyPairName",
                         "FgtAutoScaleSecurityGroup"
                     ]
                 },
@@ -2293,50 +2140,41 @@
                 "VpcId": {
                     "default": "VPC Id"
                 },
-                "AvailabilityZone1": {
-                    "default": "Availability Zone #1"
-                },
-                "AvailabilityZone2": {
-                    "default": "Availability Zone #1"
-                },
                 "PublicSubnet1": {
-                    "default": "FortiGate Subnet #1"
+                    "default": "FortiGate Subnet 1"
                 },
                 "PublicSubnet2": {
-                    "default": "FortiGate Subnet #2"
+                    "default": "FortiGate Subnet 2"
                 },
                 "PrivateSubnet1": {
-                    "default": "Protected Subnet #1"
+                    "default": "Protected Subnet 1"
                 },
                 "PrivateSubnet2": {
-                    "default": "Protected Subnet #2"
+                    "default": "Protected Subnet 2"
                 },
                 "PrivateSubnet1RouteTable": {
-                    "default": "Protected Subnet #1 Route Table ID"
+                    "default": "Route Table 1 ID"
                 },
                 "PrivateSubnet2RouteTable": {
-                    "default": "Protected Subnet #2 Route Table ID"
+                    "default": "Route Table 2 ID"
                 },
                 "FgtAutoScaleSecurityGroup": {
                     "default": "Security Group"
-                },
-                "AddNatGatewayToPublicSubnet": {
-                    "default": "NAT Gateway Options"
                 },
                 "FortigateInstanceType": {
                     "default": "Instance Type"
                 },
                 "QSS3BucketName": {
-                    "default": "S3 Bucket Name"
+                    "default": "Quick Start S3 Bucket Name"
                 },
                 "QSS3KeyPrefix": {
-                    "default": "S3 Key Prefix"
+                    "default": "Quick Start S3 Key Prefix"
                 },
                 "ApiGwStageName": {
-                    "default": "API Gateway Stage Name"
+                    "default": "Stage Name"
                 },
                 "ApiGwResource": {
-                    "default": "API Gateway Resource Group Name"
+                    "default": "Resource Group Name"
                 },
                 "ExpireLifecycleEntry": {
                     "default": "Instance Lifecycle Expiry"
@@ -2372,19 +2210,19 @@
                     "default": "Web Service Traffic Port"
                 },
                 "InternalLoadBalancingOptions": {
-                    "default": "Internal Load Balancing Options"
+                    "default": "Internal ELB Options"
                 },
                 "InternalLoadBalancerDnsName": {
-                    "default": "Internal Load Balancer DNS Name"
+                    "default": "Internal ELB DNS Name"
                 },
                 "FortigateAdminPort": {
-                    "default": "Admin Access Port"
+                    "default": "Admin Port"
                 },
                 "FortigateAdminCidr": {
-                    "default": "Admin Access CIDR Block"
+                    "default": "Admin CIDR Block"
                 },
-                "AdminAccessKeyPairName": {
-                    "default": "Admin Access Key Pair"
+                "KeyPairName": {
+                    "default": "Admin Key Pair"
                 }
             }
         }

@@ -3,7 +3,6 @@ global:
   marketplace-ami: false
   owner: jliang01@fortinet.com
   qsname: quickstart-fortinet-fortigate
-  #s3bucket: aws-quickstart-fortigate-autoscale
   regions:
     - us-east-1
     - us-east-2
@@ -60,4 +59,4 @@ tests:
 #      - eu-west-1
 #      - eu-west-2
 #      - eu-west-3
-      
+
