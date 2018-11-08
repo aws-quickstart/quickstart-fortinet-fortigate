@@ -1,7 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Create an ondemand FortiGates in each of two subnets in a VPC",
-    "Metadata": {},
+    "Description": "Deploys and configures FortiGates to the selected subnets in a VPC",
     "Parameters": {
         "QSS3BucketName": {
             "Type": "String",
@@ -69,8 +68,32 @@
             "Description": "A port number for FortiGate administration. Default to 8443. Do not use: 443, 541, 514, 703."
         }
     },
-    "Mappings": {},
-    "Conditions": {},
+    "Conditions": {
+        "IfQSS3KeyPrefixEndWithSlash": {
+            "Fn::Not": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Fn::Select": [
+                                0,
+                                {
+                                    "Fn::Split": [
+                                        "/",
+                                        {
+                                            "Ref": "QSS3KeyPrefix"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "Ref": "QSS3KeyPrefix"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
     "Resources": {
         "sgFortiGateInstance": {
             "Type": "AWS::EC2::SecurityGroup",
@@ -139,7 +162,33 @@
                                         "s3:GetObject"
                                     ],
                                     "Resource": {
-                                        "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*"
+                                        "Fn::Sub": [
+                                            "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
+                                            {
+                                                "QSS3BucketName": {
+                                                    "Ref": "QSS3BucketName"
+                                                },
+                                                "QSS3KeyPrefix": {
+                                                    "Fn::If": [
+                                                        "IfQSS3KeyPrefixEndWithSlash",
+                                                        {
+                                                            "Ref": "QSS3KeyPrefix"
+                                                        },
+                                                        {
+                                                            "Fn::Join": [
+                                                                "/",
+                                                                [
+                                                                    {
+                                                                        "Ref": "QSS3KeyPrefix"
+                                                                    },
+                                                                    ""
+                                                                ]
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     },
                                     "Effect": "Allow"
                                 }
@@ -194,13 +243,29 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/templates/create-fortigate.template",
+                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template",
                         {
                             "QSS3BucketName": {
                                 "Ref": "QSS3BucketName"
                             },
                             "QSS3KeyPrefix": {
-                                "Ref": "QSS3KeyPrefix"
+                                "Fn::If": [
+                                    "IfQSS3KeyPrefixEndWithSlash",
+                                    {
+                                        "Ref": "QSS3KeyPrefix"
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "/",
+                                            [
+                                                {
+                                                    "Ref": "QSS3KeyPrefix"
+                                                },
+                                                ""
+                                            ]
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     ]
@@ -242,13 +307,29 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/templates/create-fortigate.template",
+                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template",
                         {
                             "QSS3BucketName": {
                                 "Ref": "QSS3BucketName"
                             },
                             "QSS3KeyPrefix": {
-                                "Ref": "QSS3KeyPrefix"
+                                "Fn::If": [
+                                    "IfQSS3KeyPrefixEndWithSlash",
+                                    {
+                                        "Ref": "QSS3KeyPrefix"
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "/",
+                                            [
+                                                {
+                                                    "Ref": "QSS3KeyPrefix"
+                                                },
+                                                ""
+                                            ]
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     ]

@@ -352,6 +352,129 @@
         }
     },
     "Resources": {
+        "StackCreateDynamoDBTable": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "Parameters": {
+                    "CustomIdentifier": {
+                        "Ref": "CustomIdentifier"
+                    },
+                    "UniqueId": {
+                        "Fn::Select": [
+                            0,
+                            {
+                                "Fn::Split": [
+                                    "-",
+                                    {
+                                        "Fn::Select": [
+                                            2,
+                                            {
+                                                "Fn::Split": [
+                                                    "/",
+                                                    {
+                                                        "Ref": "AWS::StackId"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/create-db-table.template",
+                        {
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
+                            },
+                            "QSS3KeyPrefix": {
+                                "Fn::If": [
+                                    "IfQSS3KeyPrefixEndWithSlash",
+                                    {
+                                        "Ref": "QSS3KeyPrefix"
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "/",
+                                            [
+                                                {
+                                                    "Ref": "QSS3KeyPrefix"
+                                                },
+                                                ""
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "TimeoutInMinutes": "10"
+            }
+        },
+        "StackCopyLambda": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "Parameters": {
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
+                    },
+                    "QSS3KeyPrefix": {
+                        "Fn::If": [
+                            "IfQSS3KeyPrefixEndWithSlash",
+                            {
+                                "Ref": "QSS3KeyPrefix"
+                            },
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "QSS3KeyPrefix"
+                                        },
+                                        ""
+                                    ]
+                                ]
+                            }
+                        ]
+                    },
+                    "Objects": "scripts/fortigate-autoscale-lambda.zip"
+                },
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/copy-lambda.template",
+                        {
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
+                            },
+                            "QSS3KeyPrefix": {
+                                "Fn::If": [
+                                    "IfQSS3KeyPrefixEndWithSlash",
+                                    {
+                                        "Ref": "QSS3KeyPrefix"
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "/",
+                                            [
+                                                {
+                                                    "Ref": "QSS3KeyPrefix"
+                                                },
+                                                ""
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "TimeoutInMinutes": "10"
+            }
+        },
         "FgtAsgSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
@@ -487,13 +610,29 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/templates/create-nat-fgt-master.template",
+                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/create-nat-fgt-master.template",
                         {
                             "QSS3BucketName": {
                                 "Ref": "QSS3BucketName"
                             },
                             "QSS3KeyPrefix": {
-                                "Ref": "QSS3KeyPrefix"
+                                "Fn::If": [
+                                    "IfQSS3KeyPrefixEndWithSlash",
+                                    {
+                                        "Ref": "QSS3KeyPrefix"
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "/",
+                                            [
+                                                {
+                                                    "Ref": "QSS3KeyPrefix"
+                                                },
+                                                ""
+                                            ]
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     ]
@@ -529,50 +668,6 @@
                         "Outputs.InstanceId2Nic1Id"
                     ]
                 }
-            }
-        },
-        "StackCopyLambda": {
-            "Type": "AWS::CloudFormation::Stack",
-            "Properties": {
-                "Parameters": {
-                    "QSS3BucketName": {
-                        "Ref": "QSS3BucketName"
-                    },
-                    "QSS3KeyPrefix": {
-                        "Fn::If": [
-                            "IfQSS3KeyPrefixEndWithSlash",
-                            {
-                                "Ref": "QSS3KeyPrefix"
-                            },
-                            {
-                                "Fn::Join": [
-                                    "/",
-                                    [
-                                        {
-                                            "Ref": "QSS3KeyPrefix"
-                                        },
-                                        ""
-                                    ]
-                                ]
-                            }
-                        ]
-                    },
-                    "Objects": "scripts/fortigate-autoscale-lambda.zip"
-                },
-                "TemplateURL": {
-                    "Fn::Sub": [
-                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/templates/copy-lambda.template",
-                        {
-                            "QSS3BucketName": {
-                                "Ref": "QSS3BucketName"
-                            },
-                            "QSS3KeyPrefix": {
-                                "Ref": "QSS3KeyPrefix"
-                            }
-                        }
-                    ]
-                },
-                "TimeoutInMinutes": "10"
             }
         },
         "FgtSecurityGroupIngressAllowedTraffic1": {
@@ -897,15 +992,29 @@
                         ]
                     },
                     "S3Key": {
-                        "Fn::Join": [
-                            "/",
-                            [
-                                {
-                                    "Ref": "QSS3KeyPrefix"
-                                },
-                                "scripts",
-                                "fortigate-autoscale-lambda.zip"
-                            ]
+                        "Fn::Sub": [
+                            "${QSS3KeyPrefix}scripts/fortigate-autoscale-lambda.zip",
+                            {
+                                "QSS3KeyPrefix": {
+                                    "Fn::If": [
+                                        "IfQSS3KeyPrefixEndWithSlash",
+                                        {
+                                            "Ref": "QSS3KeyPrefix"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                "/",
+                                                [
+                                                    {
+                                                        "Ref": "QSS3KeyPrefix"
+                                                    },
+                                                    ""
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
                         ]
                     }
                 },
@@ -1020,15 +1129,31 @@
                         "STACK_ASSETS_S3_BUCKET_NAME": {
                             "Ref": "QSS3BucketName"
                         },
-                        "STACK_ASSETS_S3_KEY_PREFIX": {
-                            "Fn::Join": [
-                                "/",
-                                [
-                                    {
-                                        "Ref": "QSS3KeyPrefix"
-                                    },
-                                    "assets"
-                                ]
+                        "STACK_ASSETS_S3_KEY_PREFIX":
+                        {
+                            "Fn::Sub": [
+                                "${QSS3KeyPrefix}assets",
+                                {
+                                    "QSS3KeyPrefix": {
+                                        "Fn::If": [
+                                            "IfQSS3KeyPrefixEndWithSlash",
+                                            {
+                                                "Ref": "QSS3KeyPrefix"
+                                            },
+                                            {
+                                                "Fn::Join": [
+                                                    "/",
+                                                    [
+                                                        {
+                                                            "Ref": "QSS3KeyPrefix"
+                                                        },
+                                                        ""
+                                                    ]
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
                             ]
                         },
                         "REQUIRED_CONFIG_SET": {
@@ -1087,10 +1212,7 @@
             },
             "DependsOn": [
                 "StackCopyLambda",
-                "DdbTableMasterElection",
-                "DdbTableAutoscale",
-                "DdbTableConfigSet",
-                "DdbTableLifecycleItem"
+                "StackCreateDynamoDBTable"
             ]
         },
         "ApiGatewayFgtAsg": {
@@ -1232,7 +1354,33 @@
                                         "s3:GetObject"
                                     ],
                                     "Resource": {
-                                        "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*"
+                                        "Fn::Sub": [
+                                            "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
+                                            {
+                                                "QSS3BucketName": {
+                                                    "Ref": "QSS3BucketName"
+                                                },
+                                                "QSS3KeyPrefix": {
+                                                    "Fn::If": [
+                                                        "IfQSS3KeyPrefixEndWithSlash",
+                                                        {
+                                                            "Ref": "QSS3KeyPrefix"
+                                                        },
+                                                        {
+                                                            "Fn::Join": [
+                                                                "/",
+                                                                [
+                                                                    {
+                                                                        "Ref": "QSS3KeyPrefix"
+                                                                    },
+                                                                    ""
+                                                                ]
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     },
                                     "Effect": "Allow"
                                 }
@@ -1350,6 +1498,10 @@
         "IamRoleLfFgtAsg": {
             "Type": "AWS::IAM::Role",
             "Properties": {
+                "ManagedPolicyArns": [
+                    "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+                    "arn:aws:iam::aws:policy/AWSLambdaExecute"
+                ],
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [
@@ -1369,47 +1521,122 @@
                 "Path": "/",
                 "Policies": [
                     {
-                        "PolicyName": "root",
+                        "PolicyName": "autoscale-handler-inline-policy",
                         "PolicyDocument": {
                             "Version": "2012-10-17",
                             "Statement": [
                                 {
                                     "Effect": "Allow",
                                     "Action": [
-                                        "logs:CreateLogGroup",
-                                        "logs:CreateLogStream",
-                                        "logs:PutLogEvents",
                                         "dynamodb:CreateTable",
-                                        "dynamodb:PutItem",
-                                        "autoscaling:CompleteLifecycleAction",
-                                        "autoscaling:SetDesiredCapacity",
                                         "dynamodb:DescribeTable",
-                                        "dynamodb:DeleteItem",
-                                        "autoscaling:SetInstanceProtection",
-                                        "dynamodb:GetItem",
                                         "dynamodb:Scan",
                                         "dynamodb:Query",
-                                        "dynamodb:UpdateItem",
-                                        "apigateway:GET"
+                                        "dynamodb:DeleteItem",
+                                        "dynamodb:GetItem",
+                                        "dynamodb:PutItem",
+                                        "dynamodb:UpdateItem"
                                     ],
-                                    "Resource": [
-                                        "arn:aws:logs:*:*:*",
-                                        "arn:aws:dynamodb:*:*:table/*",
-                                        "arn:aws:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*",
-                                        "arn:aws:apigateway:*::/restapis"
-                                    ]
+                                    "Resource": {
+                                        "Fn::Split": [
+                                            ",",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "StackCreateDynamoDBTable",
+                                                    "Outputs.DdbTableArnList"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "autoscaling:CompleteLifecycleAction",
+                                        "autoscaling:SetDesiredCapacity",
+                                        "autoscaling:SetInstanceProtection"
+                                    ],
+                                    "Resource": {
+                                        "Fn::Sub": [
+                                            "arn:aws:autoscaling:${AWS_REGION}:${AWS_ACCOUNT_ID}:autoScalingGroup:*:autoScalingGroupName/${ASG_NAME}",
+                                            {
+                                                "AWS_REGION": {
+                                                    "Ref": "AWS::Region"
+                                                },
+                                                "AWS_ACCOUNT_ID": {
+                                                    "Ref": "AWS::AccountId"
+                                                },
+                                                "ASG_NAME": {
+                                                    "Fn::Join": [
+                                                        "-",
+                                                        [
+                                                            {
+                                                                "Ref": "CustomIdentifier"
+                                                            },
+                                                            "FortiGateAutoScalingGroup",
+                                                            {
+                                                                "Fn::Select": [
+                                                                    0,
+                                                                    {
+                                                                        "Fn::Split": [
+                                                                            "-",
+                                                                            {
+                                                                                "Fn::Select": [
+                                                                                    2,
+                                                                                    {
+                                                                                        "Fn::Split": [
+                                                                                            "/",
+                                                                                            {
+                                                                                                "Ref": "AWS::StackId"
+                                                                                            }
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "autoscaling:DescribeAutoScalingInstances",
+                                        "dynamodb:ListTables"
+                                    ],
+                                    "Resource": "*"
                                 },
                                 {
                                     "Sid": "VisualEditor0",
                                     "Effect": "Allow",
                                     "Action": [
-                                        "autoscaling:DescribeAutoScalingInstances",
                                         "ec2:DescribeInstances",
-                                        "dynamodb:ListTables",
                                         "ec2:DescribeVpcs",
                                         "ec2:DescribeInstanceAttribute"
                                     ],
                                     "Resource": "*"
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "apigateway:GET"
+                                    ],
+                                    "Resource": {
+                                        "Fn::Sub": [
+                                            "arn:aws:apigateway:${AWS_REGION}::*",
+                                            {
+                                                "AWS_REGION": {
+                                                    "Ref": "AWS::Region"
+                                                }
+                                            }
+                                        ]
+                                    }
                                 },
                                 {
                                     "Sid": "VisualEditor1",
@@ -1417,13 +1644,29 @@
                                     "Action": "s3:GetObject",
                                     "Resource": {
                                         "Fn::Sub": [
-                                            "arn:aws:s3:::${bucketname}/${keyprefix}/assets/configset/*",
+                                            "arn:aws:s3:::${bucketname}/${keyprefix}assets/configset/*",
                                             {
                                                 "bucketname": {
                                                     "Ref": "QSS3BucketName"
                                                 },
                                                 "keyprefix": {
-                                                    "Ref": "QSS3KeyPrefix"
+                                                    "Fn::If": [
+                                                        "IfQSS3KeyPrefixEndWithSlash",
+                                                        {
+                                                            "Ref": "QSS3KeyPrefix"
+                                                        },
+                                                        {
+                                                            "Fn::Join": [
+                                                                "/",
+                                                                [
+                                                                    {
+                                                                        "Ref": "QSS3KeyPrefix"
+                                                                    },
+                                                                    ""
+                                                                ]
+                                                            ]
+                                                        }
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -1533,9 +1776,6 @@
                             },
                             "api": {
                                 "Ref": "ApiGatewayFgtAsg"
-                            },
-                            "stage": {
-                                "Ref": "ApiGwStageName"
                             }
                         }
                     ]
@@ -1901,234 +2141,6 @@
                 "ElbV2LoadBalancerInternal",
                 "ElbV2TargetGroupInternal"
             ]
-        },
-        "DdbTableMasterElection": {
-            "Type": "AWS::DynamoDB::Table",
-            "Properties": {
-                "AttributeDefinitions": [
-                    {
-                        "AttributeName": "asgName",
-                        "AttributeType": "S"
-                    }
-                ],
-                "KeySchema": [
-                    {
-                        "AttributeName": "asgName",
-                        "KeyType": "HASH"
-                    }
-                ],
-                "ProvisionedThroughput": {
-                    "ReadCapacityUnits": "1",
-                    "WriteCapacityUnits": "1"
-                },
-                "TableName": {
-                    "Fn::Join": [
-                        "-",
-                        [
-                            {
-                                "Ref": "CustomIdentifier"
-                            },
-                            "FortiGateMasterElection",
-                            {
-                                "Fn::Select": [
-                                    0,
-                                    {
-                                        "Fn::Split": [
-                                            "-",
-                                            {
-                                                "Fn::Select": [
-                                                    2,
-                                                    {
-                                                        "Fn::Split": [
-                                                            "/",
-                                                            {
-                                                                "Ref": "AWS::StackId"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    ]
-                }
-            }
-        },
-        "DdbTableLifecycleItem": {
-            "Type": "AWS::DynamoDB::Table",
-            "Properties": {
-                "AttributeDefinitions": [
-                    {
-                        "AttributeName": "instanceId",
-                        "AttributeType": "S"
-                    },
-                    {
-                        "AttributeName": "actionName",
-                        "AttributeType": "S"
-                    }
-                ],
-                "KeySchema": [
-                    {
-                        "AttributeName": "instanceId",
-                        "KeyType": "HASH"
-                    },
-                    {
-                        "AttributeName": "actionName",
-                        "KeyType": "RANGE"
-                    }
-                ],
-                "ProvisionedThroughput": {
-                    "ReadCapacityUnits": "1",
-                    "WriteCapacityUnits": "1"
-                },
-                "TableName": {
-                    "Fn::Join": [
-                        "-",
-                        [
-                            {
-                                "Ref": "CustomIdentifier"
-                            },
-                            "FortiGateLifecycleItem",
-                            {
-                                "Fn::Select": [
-                                    0,
-                                    {
-                                        "Fn::Split": [
-                                            "-",
-                                            {
-                                                "Fn::Select": [
-                                                    2,
-                                                    {
-                                                        "Fn::Split": [
-                                                            "/",
-                                                            {
-                                                                "Ref": "AWS::StackId"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    ]
-                }
-            }
-        },
-        "DdbTableAutoscale": {
-            "Type": "AWS::DynamoDB::Table",
-            "Properties": {
-                "AttributeDefinitions": [
-                    {
-                        "AttributeName": "instanceId",
-                        "AttributeType": "S"
-                    }
-                ],
-                "KeySchema": [
-                    {
-                        "AttributeName": "instanceId",
-                        "KeyType": "HASH"
-                    }
-                ],
-                "ProvisionedThroughput": {
-                    "ReadCapacityUnits": "1",
-                    "WriteCapacityUnits": "1"
-                },
-                "TableName": {
-                    "Fn::Join": [
-                        "-",
-                        [
-                            {
-                                "Ref": "CustomIdentifier"
-                            },
-                            "FortiGateAutoscale",
-                            {
-                                "Fn::Select": [
-                                    0,
-                                    {
-                                        "Fn::Split": [
-                                            "-",
-                                            {
-                                                "Fn::Select": [
-                                                    2,
-                                                    {
-                                                        "Fn::Split": [
-                                                            "/",
-                                                            {
-                                                                "Ref": "AWS::StackId"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    ]
-                }
-            }
-        },
-        "DdbTableConfigSet": {
-            "Type": "AWS::DynamoDB::Table",
-            "Properties": {
-                "AttributeDefinitions": [
-                    {
-                        "AttributeName": "configName",
-                        "AttributeType": "S"
-                    }
-                ],
-                "KeySchema": [
-                    {
-                        "AttributeName": "configName",
-                        "KeyType": "HASH"
-                    }
-                ],
-                "ProvisionedThroughput": {
-                    "ReadCapacityUnits": "1",
-                    "WriteCapacityUnits": "1"
-                },
-                "TableName": {
-                    "Fn::Join": [
-                        "-",
-                        [
-                            {
-                                "Ref": "CustomIdentifier"
-                            },
-                            "FortiGateConfigSet",
-                            {
-                                "Fn::Select": [
-                                    0,
-                                    {
-                                        "Fn::Split": [
-                                            "-",
-                                            {
-                                                "Fn::Select": [
-                                                    2,
-                                                    {
-                                                        "Fn::Split": [
-                                                            "/",
-                                                            {
-                                                                "Ref": "AWS::StackId"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    ]
-                }
-            }
         }
     },
     "Metadata": {
@@ -2212,91 +2224,91 @@
             ],
             "ParameterLabels": {
                 "CustomIdentifier": {
-                    "default": "Resource Name Prefix"
+                    "default": "Resource name prefix"
                 },
                 "VpcId": {
-                    "default": "VPC Id"
+                    "default": "VPC id"
                 },
                 "PublicSubnet1": {
-                    "default": "FortiGate Subnet 1"
+                    "default": "FortiGate subnet 1"
                 },
                 "PublicSubnet2": {
-                    "default": "FortiGate Subnet 2"
+                    "default": "FortiGate subnet 2"
                 },
                 "PrivateSubnet1": {
-                    "default": "Protected Subnet 1"
+                    "default": "Protected subnet 1"
                 },
                 "PrivateSubnet2": {
-                    "default": "Protected Subnet 2"
+                    "default": "Protected subnet 2"
                 },
                 "PrivateSubnet1RouteTable": {
-                    "default": "Route Table 1 ID"
+                    "default": "Route table 1 id"
                 },
                 "PrivateSubnet2RouteTable": {
-                    "default": "Route Table 2 ID"
+                    "default": "Route table 2 id"
                 },
                 "FortiGateInstanceType": {
-                    "default": "Instance Type"
+                    "default": "Instance type"
                 },
                 "QSS3BucketName": {
-                    "default": "Quick Start S3 Bucket Name"
+                    "default": "Quick Start S3 bucket name"
                 },
                 "QSS3KeyPrefix": {
-                    "default": "Quick Start S3 Key Prefix"
+                    "default": "Quick Start S3 key prefix"
                 },
                 "ApiGwStageName": {
-                    "default": "Stage Name"
+                    "default": "Stage name"
                 },
                 "ApiGwResource": {
-                    "default": "Resource Group Name"
+                    "default": "Resource group name"
                 },
                 "ExpireLifecycleEntry": {
-                    "default": "Instance Lifecycle Expiry"
+                    "default": "Instance lifecycle expiry"
                 },
                 "ScalingPolicyOptions": {
-                    "default": "Scaling Policy Options"
+                    "default": "Scaling policy options"
                 },
                 "FortiGateAsgCooldown": {
-                    "default": "Scaling Cooldown Period"
+                    "default": "Scaling cooldown period"
                 },
                 "FortiGateAsgDesiredCapacity": {
-                    "default": "Desired Capacity"
+                    "default": "Desired capacity"
                 },
                 "FortiGateAsgMinSize": {
-                    "default": "Minimum Group Size"
+                    "default": "Minimum group size"
                 },
                 "FortiGateAsgMaxSize": {
-                    "default": "Maximum Group size"
+                    "default": "Maximum group size"
                 },
                 "FortiGateAsgHealthCheckGracePeriod": {
-                    "default": "Health Check Grace Period"
+                    "default": "Health check grace period"
                 },
                 "FortiGateAsgScaleInThreshold": {
-                    "default": "Scale-in Threshold"
+                    "default": "Scale-in threshold"
                 },
                 "FortiGateAsgScaleOutThreshold": {
-                    "default": "Scale-out Threshold"
+                    "default": "Scale-out threshold"
                 },
                 "FortiGateElbTgHealthyThreshold": {
-                    "default": "Healthy Threshold"
+                    "default": "Healthy threshold"
                 },
                 "BalanceWebTrafficOverPort": {
-                    "default": "Web Service Traffic Port"
+                    "default": "Web service traffic port"
                 },
                 "InternalLoadBalancingOptions": {
-                    "default": "Internal ELB Options"
+                    "default": "Internal ELB options"
                 },
                 "InternalLoadBalancerDnsName": {
-                    "default": "Internal ELB DNS Name"
+                    "default": "Internal ELB dns name"
                 },
                 "FortiGateAdminPort": {
-                    "default": "Admin Port"
+                    "default": "Admin port"
                 },
                 "FortiGateAdminCidr": {
-                    "default": "Admin CIDR Block"
+                    "default": "Admin CIDR block"
                 },
                 "KeyPairName": {
-                    "default": "Admin Key Pair"
+                    "default": "Key pair name"
                 },
                 "VPCCIDR": {
                     "default": "VPC CIDR"

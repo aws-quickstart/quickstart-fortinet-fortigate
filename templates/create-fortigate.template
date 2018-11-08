@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Create an ondemand FortiGate to a subnet in a VPC. This template is intented to be called by a master template only. **WARNING!** You are responsible for running this template alone.",
+    "Description": "Deploys a FortiGate EC2 instance to a subnet using a given FortiGate AMI, security group, and instance profile. **WARNING!** This template is designed for being called within FortiGate AutoScale Solution only but not compatible with any other Cloud Formation template. Do not directly use it anywhere else.",
     "Parameters": {
         "CustomTagValue": {
             "Type": "String",

@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "This template create a new VPC to deploy the FortiGate Autoscale Solution.",
+    "Description": "This template creates a new VPC to deploy the FortiGate Autoscale Solution.",
     "Parameters": {
         "QSS3BucketName": {
             "Type": "String",
