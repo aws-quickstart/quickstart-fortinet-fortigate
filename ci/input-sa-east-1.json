@@ -97,7 +97,7 @@
     },
     {
         "ParameterKey": "QSS3KeyPrefix",
-        "ParameterValue": "quickstart-fortinet-fortigate"
+        "ParameterValue": "quickstart-fortinet-fortigate/"
     },
     {
         "ParameterKey": "VPCCIDR",

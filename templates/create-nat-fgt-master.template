@@ -302,7 +302,7 @@
     },
     "Outputs": {
         "InstanceId1": {
-            "Description": "The instance id of the FortiGate NAT Gateway #1.",
+            "Description": "The instance ID of the FortiGate NAT Gateway #1.",
             "Value": {
                 "Fn::GetAtt": [
                     "StackCreateFortiGateInstance1",
@@ -311,7 +311,7 @@
             }
         },
         "InstanceId1Nic0Id": {
-            "Description": "The nic0 id of the FortiGate NAT Gateway #1.",
+            "Description": "The nic0 ID of the FortiGate NAT Gateway #1.",
             "Value": {
                 "Fn::GetAtt": [
                     "StackCreateFortiGateInstance1",
@@ -320,7 +320,7 @@
             }
         },
         "InstanceId1Nic1Id": {
-            "Description": "The nic1 id of the FortiGate NAT Gateway #1.",
+            "Description": "The nic1 ID of the FortiGate NAT Gateway #1.",
             "Value": {
                 "Fn::GetAtt": [
                     "StackCreateFortiGateInstance1",
@@ -329,7 +329,7 @@
             }
         },
         "InstanceId2": {
-            "Description": "The instance id of the FortiGate NAT Gateway #2.",
+            "Description": "The instance ID of the FortiGate NAT Gateway #2.",
             "Value": {
                 "Fn::GetAtt": [
                     "StackCreateFortiGateInstance2",
@@ -338,7 +338,7 @@
             }
         },
         "InstanceId2Nic0Id": {
-            "Description": "The nic0 id of the FortiGate NAT Gateway #2.",
+            "Description": "The nic0 ID of the FortiGate NAT Gateway #2.",
             "Value": {
                 "Fn::GetAtt": [
                     "StackCreateFortiGateInstance2",
@@ -347,7 +347,7 @@
             }
         },
         "InstanceId2Nic1Id": {
-            "Description": "The nic1 id of the FortiGate NAT Gateway #2.",
+            "Description": "The nic1 ID of the FortiGate NAT Gateway #2.",
             "Value": {
                 "Fn::GetAtt": [
                     "StackCreateFortiGateInstance2",

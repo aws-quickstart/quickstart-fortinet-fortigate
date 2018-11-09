@@ -26,7 +26,7 @@
         },
         "FortiGateSecurityGroupId": {
             "Type": "String",
-            "Description": "The security group id which is attached to this FortiGate instance."
+            "Description": "The security group ID which is attached to this FortiGate instance."
         },
         "SubnetId1": {
             "Type": "AWS::EC2::Subnet::Id",
@@ -262,19 +262,19 @@
     },
     "Outputs": {
         "InstanceId": {
-            "Description": "The instance id of the created FortiGate.",
+            "Description": "The instance ID of the created FortiGate.",
             "Value": {
                 "Ref": "ec2InstanceFortiGate"
             }
         },
         "NetworkInterface0Id": {
-            "Description": "The nic0 id of the created FortiGate.",
+            "Description": "The nic0 ID of the created FortiGate.",
             "Value": {
                 "Ref": "nic0"
             }
         },
         "NetworkInterface1Id": {
-            "Description": "The nic1 id of the created FortiGate.",
+            "Description": "The nic1 ID of the created FortiGate.",
             "Value": {
                 "Ref": "nic1"
             }
