@@ -13,7 +13,7 @@
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Default": "quickstart-fortinet-fortigate",
+            "Default": "quickstart-fortinet-fortigate/",
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
         },
         "CustomIdentifier": {
@@ -72,16 +72,6 @@
             "ConstraintDescription": "must be a valid EC2 instance type.",
             "Description": "Instance type to launch as FortiGate On-Demand instances. There are t2.small and compute-optimized instances such as c4 and c5 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/"
         },
-        "ApiGwStageName": {
-            "Type": "String",
-            "Default": "prod",
-            "Description": "A deployment stage name. You can leave it as is."
-        },
-        "ApiGwResource": {
-            "Type": "String",
-            "Default": "complete",
-            "Description": "An API Gateway resource group name. You can leave it as is."
-        },
         "ExpireLifecycleEntry": {
             "Type": "Number",
             "Default": 300,
@@ -89,15 +79,6 @@
             "MaxValue": 3600,
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
             "Description": "FortiGate instance lifecycle expiry entry (in seconds). Minimum is 60. Maximum is 3600."
-        },
-        "ScalingPolicyOptions": {
-            "Type": "String",
-            "Default": "CPU Utilization",
-            "AllowedValues": [
-                "CPU Utilization"
-            ],
-            "ConstraintDescription": "must be a valid String from options.",
-            "Description": "This is what scaling policy of Auto-Scaling activities is based on. There is only CPU Utilization specifiable for FortiGate."
         },
         "FortiGateAsgCooldown": {
             "Type": "Number",
@@ -206,6 +187,14 @@
         }
     },
     "Conditions": {
+        "GovCloudCondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AWS::Region"
+                },
+                "us-gov-west-1"
+            ]
+        },
         "IfQSS3KeyPrefixEndWithSlash": {
             "Fn::Not": [
                 {
@@ -228,14 +217,6 @@
                         }
                     ]
                 }
-            ]
-        },
-        "IfScalingPolicyOnCPU": {
-            "Fn::Equals": [
-                {
-                    "Ref": "ScalingPolicyOptions"
-                },
-                "CPU Utilization"
             ]
         },
         "IfAddNewInternalLoadBalancer": {
@@ -385,28 +366,13 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/create-db-table.template",
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-db-table.template",
                         {
-                            "QSS3BucketName": {
-                                "Ref": "QSS3BucketName"
-                            },
-                            "QSS3KeyPrefix": {
+                            "QSS3Region": {
                                 "Fn::If": [
-                                    "IfQSS3KeyPrefixEndWithSlash",
-                                    {
-                                        "Ref": "QSS3KeyPrefix"
-                                    },
-                                    {
-                                        "Fn::Join": [
-                                            "/",
-                                            [
-                                                {
-                                                    "Ref": "QSS3KeyPrefix"
-                                                },
-                                                ""
-                                            ]
-                                        ]
-                                    }
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
                                 ]
                             }
                         }
@@ -445,28 +411,13 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/copy-lambda.template",
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/copy-lambda.template",
                         {
-                            "QSS3BucketName": {
-                                "Ref": "QSS3BucketName"
-                            },
-                            "QSS3KeyPrefix": {
+                            "QSS3Region": {
                                 "Fn::If": [
-                                    "IfQSS3KeyPrefixEndWithSlash",
-                                    {
-                                        "Ref": "QSS3KeyPrefix"
-                                    },
-                                    {
-                                        "Fn::Join": [
-                                            "/",
-                                            [
-                                                {
-                                                    "Ref": "QSS3KeyPrefix"
-                                                },
-                                                ""
-                                            ]
-                                        ]
-                                    }
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
                                 ]
                             }
                         }
@@ -610,28 +561,13 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/create-nat-fgt-master.template",
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-nat-fgt-master.template",
                         {
-                            "QSS3BucketName": {
-                                "Ref": "QSS3BucketName"
-                            },
-                            "QSS3KeyPrefix": {
+                            "QSS3Region": {
                                 "Fn::If": [
-                                    "IfQSS3KeyPrefixEndWithSlash",
-                                    {
-                                        "Ref": "QSS3KeyPrefix"
-                                    },
-                                    {
-                                        "Fn::Join": [
-                                            "/",
-                                            [
-                                                {
-                                                    "Ref": "QSS3KeyPrefix"
-                                                },
-                                                ""
-                                            ]
-                                        ]
-                                    }
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
                                 ]
                             }
                         }
@@ -706,12 +642,8 @@
                                                 "api": {
                                                     "Ref": "ApiGatewayFgtAsg"
                                                 },
-                                                "stage": {
-                                                    "Ref": "ApiGwStageName"
-                                                },
-                                                "resource": {
-                                                    "Ref": "ApiGwResource"
-                                                }
+                                                "stage": "prod",
+                                                "resource": "complete"
                                             }
                                         ]
                                     },
@@ -878,7 +810,6 @@
         },
         "AlarmCpuUtilHigh": {
             "Type": "AWS::CloudWatch::Alarm",
-            "Condition": "IfScalingPolicyOnCPU",
             "Properties": {
                 "EvaluationPeriods": "1",
                 "Statistic": "Average",
@@ -909,7 +840,6 @@
         },
         "AlarmCpuUtilLow": {
             "Type": "AWS::CloudWatch::Alarm",
-            "Condition": "IfScalingPolicyOnCPU",
             "Properties": {
                 "EvaluationPeriods": "1",
                 "Statistic": "Average",
@@ -1057,12 +987,8 @@
                                 ]
                             ]
                         },
-                        "API_GATEWAY_STAGE_NAME": {
-                            "Ref": "ApiGwStageName"
-                        },
-                        "API_GATEWAY_RESOURCE_NAME": {
-                            "Ref": "ApiGwResource"
-                        },
+                        "API_GATEWAY_STAGE_NAME": "prod",
+                        "API_GATEWAY_RESOURCE_NAME": "complete",
                         "UNIQUE_ID": {
                             "Fn::Select": [
                                 0,
@@ -1279,9 +1205,7 @@
                 "RestApiId": {
                     "Ref": "ApiGatewayFgtAsg"
                 },
-                "StageName": {
-                    "Ref": "ApiGwStageName"
-                }
+                "StageName": "prod"
             }
         },
         "VpcEndpointApiGw": {
@@ -1397,9 +1321,7 @@
                 "RestApiId": {
                     "Ref": "ApiGatewayFgtAsg"
                 },
-                "PathPart": {
-                    "Ref": "ApiGwResource"
-                },
+                "PathPart": "complete",
                 "ParentId": {
                     "Fn::GetAtt": [
                         "ApiGatewayFgtAsg",
@@ -1613,7 +1535,6 @@
                                     "Resource": "*"
                                 },
                                 {
-                                    "Sid": "VisualEditor0",
                                     "Effect": "Allow",
                                     "Action": [
                                         "ec2:DescribeInstances",
@@ -1639,7 +1560,6 @@
                                     }
                                 },
                                 {
-                                    "Sid": "VisualEditor1",
                                     "Effect": "Allow",
                                     "Action": "s3:GetObject",
                                     "Resource": {
@@ -2185,7 +2105,6 @@
                         "FortiGateAsgMaxSize",
                         "FortiGateAsgHealthCheckGracePeriod",
                         "FortiGateAsgCooldown",
-                        "ScalingPolicyOptions",
                         "FortiGateAsgScaleOutThreshold",
                         "FortiGateAsgScaleInThreshold",
                         "FortiGateElbTgHealthyThreshold"
@@ -2199,15 +2118,6 @@
                         "InternalLoadBalancingOptions",
                         "InternalLoadBalancerDnsName",
                         "BalanceWebTrafficOverPort"
-                    ]
-                },
-                {
-                    "Label": {
-                        "default": "Lambda function and API Gateway configuration"
-                    },
-                    "Parameters": [
-                        "ApiGwStageName",
-                        "ApiGwResource"
                     ]
                 },
                 {
@@ -2254,17 +2164,8 @@
                 "QSS3KeyPrefix": {
                     "default": "Quick Start S3 key prefix"
                 },
-                "ApiGwStageName": {
-                    "default": "Stage name"
-                },
-                "ApiGwResource": {
-                    "default": "Resource group name"
-                },
                 "ExpireLifecycleEntry": {
                     "default": "Instance lifecycle expiry"
-                },
-                "ScalingPolicyOptions": {
-                    "default": "Scaling policy options"
                 },
                 "FortiGateAsgCooldown": {
                     "default": "Scaling cooldown period"
