@@ -7,12 +7,15 @@
             "Default": "fgtASG",
             "MaxLength": "10",
             "AllowedPattern": "[A-Za-z0-9]+",
-            "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
-            "Description": "A custom identifier as resource name prefix. Must be at most 10 characters long and only contain uppercase, lowercase letters, and numbers. Max length is 10."
+            "ConstraintDescription": "must only contain uppercase and lowercase letters and digits",
+            "Description": "A custom identifier as resource name prefix to help organize your DynamoDB tables. Can only contain uppercase, lowercase letters, and digits. Max length is 10."
         },
         "UniqueId": {
             "Type": "String",
-            "Description": "A unique id for this creation."
+            "MaxLength": "8",
+            "AllowedPattern": "[A-Za-z0-9]+",
+            "ConstraintDescription": "must only contain uppercase and lowercase letters and digits",
+            "Description": "A random text suffix for the DynamoDB table name which can help ensure the DB table name is unique per region. Can only contain uppercase, lowercase letters, and digits. Max length is 8."
         }
     },
     "Resources": {

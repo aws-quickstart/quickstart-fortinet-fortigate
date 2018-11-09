@@ -13,7 +13,7 @@
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Default": "quickstart-fortinet-fortigate",
+            "Default": "quickstart-fortinet-fortigate/",
             "Description": "The S3 key name prefix used to simulate a folder for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes."
         },
         "AvailabilityZones": {
@@ -406,31 +406,31 @@
     },
     "Outputs": {
         "FtgAsgVpc": {
-            "Description": "VPC Id",
+            "Description": "VPC ID",
             "Value": {
                 "Ref": "FtgAsgVpc"
             }
         },
         "PublicSubnet1": {
-            "Description": "Public Subnet 1 Id",
+            "Description": "Public Subnet 1 ID",
             "Value": {
                 "Ref": "PublicSubnet1"
             }
         },
         "PublicSubnet2": {
-            "Description": "Public Subnet 2 Id",
+            "Description": "Public Subnet 2 ID",
             "Value": {
                 "Ref": "PublicSubnet2"
             }
         },
         "PrivateSubnet1": {
-            "Description": "Private Subnet 1 Id",
+            "Description": "Private Subnet 1 ID",
             "Value": {
                 "Ref": "PrivateSubnet1"
             }
         },
         "PrivateSubnet2": {
-            "Description": "Private Subnet 2 Id",
+            "Description": "Private Subnet 2 ID",
             "Value": {
                 "Ref": "PrivateSubnet2"
             }

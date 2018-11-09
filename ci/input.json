@@ -4,14 +4,6 @@
         "ParameterValue": "taskcat"
     },
     {
-        "ParameterKey": "ApiGwResource",
-        "ParameterValue": "complete"
-    },
-    {
-        "ParameterKey": "ApiGwStageName",
-        "ParameterValue": "prod"
-    },
-    {
         "ParameterKey": "AvailabilityZones",
         "ParameterValue": "$[taskcat_genaz_2]"
     },
@@ -106,10 +98,6 @@
     {
         "ParameterKey": "QSS3KeyPrefix",
         "ParameterValue": "quickstart-fortinet-fortigate"
-    },
-    {
-        "ParameterKey": "ScalingPolicyOptions",
-        "ParameterValue": "CPU Utilization"
     },
     {
         "ParameterKey": "VPCCIDR",

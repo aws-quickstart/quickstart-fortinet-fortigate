@@ -23,27 +23,27 @@
         },
         "VpcId": {
             "Type": "AWS::EC2::VPC::Id",
-            "Description": "Enter a valid VPC Id to deploy. The VPC must have the option 'DNS hostnames' enabled."
+            "Description": "Enter a valid VPC ID to deploy. The VPC must have the option 'DNS hostnames' enabled."
         },
         "SubnetId1": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The subnet Id for the primary network interface of the NAT Gateway #1."
+            "Description": "The subnet ID for the primary network interface of the NAT Gateway #1."
         },
         "SubnetId2": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The subnet Id for the secondary network interface of the NAT Gateway #1."
+            "Description": "The subnet ID for the secondary network interface of the NAT Gateway #1."
         },
         "SubnetId3": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The subnet Id for the primary network interface of the NAT Gateway #2."
+            "Description": "The subnet ID for the primary network interface of the NAT Gateway #2."
         },
         "SubnetId4": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The subnet Id for the secondary network interface of the NAT Gateway #2."
+            "Description": "The subnet ID for the secondary network interface of the NAT Gateway #2."
         },
         "FortiGateImageId": {
             "Type": "String",
-            "Description": "FortiGate Official AMI Id."
+            "Description": "FortiGate Official AMI ID."
         },
         "FortiGateInstanceType": {
             "Type": "String",
@@ -69,6 +69,14 @@
         }
     },
     "Conditions": {
+        "GovCloudCondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AWS::Region"
+                },
+                "us-gov-west-1"
+            ]
+        },
         "IfQSS3KeyPrefixEndWithSlash": {
             "Fn::Not": [
                 {
@@ -169,23 +177,7 @@
                                                     "Ref": "QSS3BucketName"
                                                 },
                                                 "QSS3KeyPrefix": {
-                                                    "Fn::If": [
-                                                        "IfQSS3KeyPrefixEndWithSlash",
-                                                        {
-                                                            "Ref": "QSS3KeyPrefix"
-                                                        },
-                                                        {
-                                                            "Fn::Join": [
-                                                                "/",
-                                                                [
-                                                                    {
-                                                                        "Ref": "QSS3KeyPrefix"
-                                                                    },
-                                                                    ""
-                                                                ]
-                                                            ]
-                                                        }
-                                                    ]
+                                                    "Ref": "QSS3KeyPrefix"
                                                 }
                                             }
                                         ]
@@ -243,28 +235,13 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template",
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template",
                         {
-                            "QSS3BucketName": {
-                                "Ref": "QSS3BucketName"
-                            },
-                            "QSS3KeyPrefix": {
+                            "QSS3Region": {
                                 "Fn::If": [
-                                    "IfQSS3KeyPrefixEndWithSlash",
-                                    {
-                                        "Ref": "QSS3KeyPrefix"
-                                    },
-                                    {
-                                        "Fn::Join": [
-                                            "/",
-                                            [
-                                                {
-                                                    "Ref": "QSS3KeyPrefix"
-                                                },
-                                                ""
-                                            ]
-                                        ]
-                                    }
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
                                 ]
                             }
                         }
@@ -307,28 +284,13 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template",
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template",
                         {
-                            "QSS3BucketName": {
-                                "Ref": "QSS3BucketName"
-                            },
-                            "QSS3KeyPrefix": {
+                            "QSS3Region": {
                                 "Fn::If": [
-                                    "IfQSS3KeyPrefixEndWithSlash",
-                                    {
-                                        "Ref": "QSS3KeyPrefix"
-                                    },
-                                    {
-                                        "Fn::Join": [
-                                            "/",
-                                            [
-                                                {
-                                                    "Ref": "QSS3KeyPrefix"
-                                                },
-                                                ""
-                                            ]
-                                        ]
-                                    }
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
                                 ]
                             }
                         }

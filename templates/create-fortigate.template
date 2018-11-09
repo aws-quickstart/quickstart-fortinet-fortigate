@@ -3,8 +3,11 @@
     "Description": "Deploys a FortiGate EC2 instance to a subnet using a given FortiGate AMI, security group, and instance profile. **WARNING!** This template is designed for being called within FortiGate AutoScale Solution only but not compatible with any other Cloud Formation template. Do not directly use it anywhere else.",
     "Parameters": {
         "CustomTagValue": {
-            "Type": "String",
-            "Description": "A custom tag value."
+            "AllowedPattern": "^([a-zA-Z0-9+\\-.,_:/@ *\\\\\"'\\[\\]\\{\\}]*)?$",
+            "ConstraintDescription": "tag values can only contain [a-zA-Z0-9+\\-._:/@ *\\\\\"'\\[\\]\\{\\}]",
+            "Default": "FortiGate-NAT-Gateway",
+            "Description": "(Optional) A custom tag value added to the EC2 instance.",
+            "Type": "String"
         },
         "FortiGateInstanceType": {
             "Type": "String",
@@ -23,23 +26,37 @@
         },
         "FortiGateSecurityGroupId": {
             "Type": "String",
-            "Description": "The security group id which is to attach to this FortiGate instance if you want to use an existing one instead of creating new one."
+            "Description": "The security group id which is attached to this FortiGate instance."
         },
         "SubnetId1": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The subnet Id for the network interface #1"
+            "Description": "The subnet ID for the network interface #1"
         },
         "SubnetId2": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The subnet Id for the network interface #2"
+            "Description": "The subnet ID for the network interface #2"
         },
         "FortiGateImageId": {
             "Type": "String",
-            "Description": "FortiGate Official AMI Id."
+            "Description": "FortiGate Official AMI ID."
         },
         "InstanceProfile": {
             "Type": "String",
-            "Description": "The security group id which is to attach to this FortiGate instance if you want to use an existing one instead of creating new one."
+            "Description": "The instance profile that passes a proper IAM role to the FortiGate EC2 instance."
+        }
+    },
+    "Conditions":{
+        "IfAddCustomTag": {
+            "Fn::Not": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "CustomTagValue"
+                        },
+                        ""
+                    ]
+                }
+            ]
         }
     },
     "Resources": {
@@ -64,7 +81,13 @@
                                 "-",
                                 [
                                     {
-                                        "Ref": "CustomTagValue"
+                                        "Fn::If": [
+                                            "IfAddCustomTag",
+                                            {
+                                                "Ref": "CustomTagValue"
+                                            },
+                                            "FortiGate-NAT-Gateway"
+                                        ]
                                     },
                                     "fgt",
                                     "eni0",
@@ -99,7 +122,13 @@
                                 "-",
                                 [
                                     {
-                                        "Ref": "CustomTagValue"
+                                        "Fn::If": [
+                                            "IfAddCustomTag",
+                                            {
+                                                "Ref": "CustomTagValue"
+                                            },
+                                            "FortiGate-NAT-Gateway"
+                                        ]
                                     },
                                     "fgt",
                                     "eni1",
@@ -169,7 +198,13 @@
                     {
                         "Key": "Name",
                         "Value": {
-                            "Ref": "CustomTagValue"
+                            "Fn::If": [
+                                "IfAddCustomTag",
+                                {
+                                    "Ref": "CustomTagValue"
+                                },
+                                "FortiGate-NAT-Gateway"
+                            ]
                         }
                     }
                 ],
