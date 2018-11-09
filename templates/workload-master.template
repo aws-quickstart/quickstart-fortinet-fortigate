@@ -15,14 +15,14 @@
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Default": "aws-quickstart",
-            "Description": "The S3 bucket you have created for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. The bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but should not start or end with a hyphen."
+            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
         },
         "QSS3KeyPrefix": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Default": "quickstart-fortinet-fortigate",
-            "Description": "The S3 key name prefix used to simulate a folder for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes."
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
         },
         "AvailabilityZones": {
             "Description": "The list of Availability Zones to use for the subnets in the VPC. The Quick Start uses two Availability Zones from your list and preserves the logical order you specify.",
@@ -93,7 +93,7 @@
             "MinValue": 60,
             "MaxValue": 3600,
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
-            "Description": "FortiGate instance lifecycle expiry entry (in second). Minimum is 60. Maximum is 3600."
+            "Description": "FortiGate instance lifecycle expiry entry (in seconds). Minimum is 60. Maximum is 3600."
         },
         "ScalingPolicyOptions": {
             "Type": "String",
@@ -110,7 +110,7 @@
             "MinValue": 60,
             "MaxValue": 3600,
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
-            "Description": "Auto-Scaling group waits for the cool-down period (in second) to complete before resuming scaling activities. Minimum is 60. Maximum is 3600."
+            "Description": "Auto-Scaling group waits for the cooldown period (in seconds) to complete before resuming scaling activities. Minimum is 60. Maximum is 3600."
         },
         "FortiGateAsgDesiredCapacity": {
             "Type": "Number",
@@ -138,7 +138,7 @@
             "Default": 300,
             "MinValue": 60,
             "ConstraintDescription": "must be a valid number not less than 60.",
-            "Description": "The length of time (in second) that Auto-Scaling waits before checking an instance's health status. Minimum is 60."
+            "Description": "The length of time (in seconds) that Auto-Scaling waits before checking an instance's health status. Minimum is 60."
         },
         "FortiGateAsgScaleInThreshold": {
             "Type": "Number",
@@ -161,7 +161,7 @@
             "Default": 3,
             "MinValue": 3,
             "ConstraintDescription": "must be a valid number not less than 3.",
-            "Description": "Healthy threshold for the FortiGate Auto-Scaling Group. The number of consecutive health check failures required before considering a FortiGate instance unhealthy. Minimum is 3."
+            "Description": "The number of consecutive health check failures required before considering a FortiGate instance unhealthy. Minimum is 3."
         },
         "BalanceWebTrafficOverPort": {
             "Type": "Number",
@@ -184,7 +184,7 @@
         },
         "InternalLoadBalancerDnsName": {
             "Type": "String",
-            "Description": "DNS Name of the Elastic Load Balancer which is used in the private subnets. Specify if only you use your own one."
+            "Description": "(Optional)DNS Name of the Elastic Load Balancer which is used in the private subnets. Specify if only you use your own one."
         },
         "FortiGatePskSecret": {
             "Type": "String",
@@ -462,16 +462,7 @@
             "ParameterGroups": [
                 {
                     "Label": {
-                        "default": "Quick Start Configuration"
-                    },
-                    "Parameters": [
-                        "QSS3BucketName",
-                        "QSS3KeyPrefix"
-                    ]
-                },
-                {
-                    "Label": {
-                        "default": "Network Configuration"
+                        "default": "Network configuration"
                     },
                     "Parameters": [
                         "AvailabilityZones",
@@ -484,7 +475,7 @@
                 },
                 {
                     "Label": {
-                        "default": "FortiGate Configuration"
+                        "default": "FortiGate configuration"
                     },
                     "Parameters": [
                         "CustomIdentifier",
@@ -497,7 +488,7 @@
                 },
                 {
                     "Label": {
-                        "default": "FortiGate Auto-Scaling Group Configuration"
+                        "default": "FortiGate auto-scaling group configuration"
                     },
                     "Parameters": [
                         "ExpireLifecycleEntry",
@@ -514,7 +505,7 @@
                 },
                 {
                     "Label": {
-                        "default": "Load Balancing Configuration"
+                        "default": "Load balancing configuration"
                     },
                     "Parameters": [
                         "InternalLoadBalancingOptions",
@@ -524,14 +515,20 @@
                 },
                 {
                     "Label": {
-                        "default": "Lambda Function and API Gateway Configuration"
+                        "default": "Lambda function and API Gateway configuration"
                     },
                     "Parameters": [
-                        "LambdaDeploymentMethod",
-                        "QSS3BucketName",
-                        "QSS3KeyPrefix",
                         "ApiGwStageName",
                         "ApiGwResource"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "AWS Quick Start configuration"
+                    },
+                    "Parameters": [
+                        "QSS3BucketName",
+                        "QSS3KeyPrefix"
                     ]
                 }
             ],
@@ -612,7 +609,7 @@
                     "default": "Internal ELB options"
                 },
                 "InternalLoadBalancerDnsName": {
-                    "default": "Internal ELB dns name"
+                    "default": "Internal ELB DNS name"
                 },
                 "FortiGateAdminPort": {
                     "default": "Admin port"
@@ -622,6 +619,9 @@
                 },
                 "KeyPairName": {
                     "default": "Key pair name"
+                },
+                "FortiGatePskSecret": {
+                    "default": "FortiGate PSK secret"
                 }
             }
         }
