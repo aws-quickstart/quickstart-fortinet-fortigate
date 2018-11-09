@@ -76,30 +76,6 @@
                 },
                 "us-gov-west-1"
             ]
-        },
-        "IfQSS3KeyPrefixEndWithSlash": {
-            "Fn::Not": [
-                {
-                    "Fn::Equals": [
-                        {
-                            "Fn::Select": [
-                                0,
-                                {
-                                    "Fn::Split": [
-                                        "/",
-                                        {
-                                            "Ref": "QSS3KeyPrefix"
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            "Ref": "QSS3KeyPrefix"
-                        }
-                    ]
-                }
-            ]
         }
     },
     "Resources": {

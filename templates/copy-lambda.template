@@ -1,4 +1,3 @@
----
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   This template creates an S3 bucket in the same region where the stack is
@@ -17,42 +16,32 @@ Parameters:
       cannot start or end with a hyphen (-).
     Type: String
   QSS3KeyPrefix:
-    AllowedPattern: '^[0-9a-zA-Z-/]*[/]$'
+    AllowedPattern: '^[0-9a-zA-Z-/]*$'
     ConstraintDescription: >-
       Quick Start key prefix can include numbers, lowercase letters, uppercase
-      letters, hyphens (-), and forward slash (/). must end with a forward slash (/).
-    Default: /
+      letters, hyphens (-), and forward slash (/).
+    Default: fortigate-quickstart/
     Description: >-
       S3 key prefix for the Quick Start assets. Quick Start key prefix can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
     Type: String
-  Objects:
-    AllowedPattern: '^(([0-9a-zA-Z-/.])*[,]?)+$'
-    ConstraintDescription: >-
-      Objects can include comma delimited filenames of numbers, lowercase letters, uppercase
-      letters, hyphens (-), and dot (.).
-    Default: lambda.zip
-    Description: >-
-      A comma delimited filepath of S3 objects in a bucket. (e.g. path/to/filename1, path/to/filename2, path/to/filename3 ...).
-      Each filename can include numbers, lowercase letters, uppercase letters, hyphens (-),
-      and dot (.).
-    Type: String
 Resources:
   CopyObjects:
     Properties:
-      ServiceToken: !GetAtt
+      ServiceToken: !GetAtt 
         - CopyObjectsFunction
         - Arn
       DestBucket: !Ref LambdaZipsBucket
-      Objects: !Ref Objects
+      Objects:
+        - functions/packages/lambda.zip
       SourceBucket: !Ref QSS3BucketName
       Prefix: !Ref QSS3KeyPrefix
     Type: 'AWS::CloudFormation::CustomResource'
   CopyObjectsFunction:
     Properties:
       Code:
-        ZipFile: !Join
+        ZipFile: !Join 
           - |+
 
           - - import json
@@ -64,7 +53,7 @@ Resources:
             - ''
             - 'def copy_objects(source_bucket, dest_bucket, prefix, objects):'
             - '    s3 = boto3.client(''s3'')'
-            - '    for o in objects.split('',''):'
+            - '    for o in objects:'
             - '        key = prefix + o'
             - '        copy_source = {'
             - '            ''Bucket'': source_bucket,'
@@ -129,7 +118,7 @@ Resources:
             - ''
       Description: Copies objects from a source S3 bucket to a destination S3 bucket
       Handler: index.handler
-      Role: !GetAtt
+      Role: !GetAtt 
         - CopyObjectsRole
         - Arn
       Runtime: python2.7
@@ -180,14 +169,14 @@ Resources:
   CleanUpS3Bucket:
     Properties:
       DestBucket: !Ref LambdaZipsBucket
-      ServiceToken: !GetAtt
+      ServiceToken: !GetAtt 
         - CleanUpS3BucketFunction
         - Arn
     Type: 'AWS::CloudFormation::CustomResource'
   CleanUpS3BucketFunction:
     Properties:
       Code:
-        ZipFile: !Join
+        ZipFile: !Join 
           - |+
 
           - - import json
@@ -274,7 +263,7 @@ Resources:
             - ''
       Description: Empty the S3 Bucket
       Handler: index.handler
-      Role: !GetAtt
+      Role: !GetAtt 
         - S3CleanUpRole
         - Arn
       Runtime: python2.7
@@ -306,7 +295,7 @@ Resources:
                   - 's3:GetBucketVersioning'
                 Effect: Allow
                 Resource:
-                  - !GetAtt
+                  - !GetAtt 
                     - LambdaZipsBucket
                     - Arn
                   - !Sub 'arn:aws:s3:::*'

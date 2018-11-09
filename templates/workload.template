@@ -195,30 +195,6 @@
                 "us-gov-west-1"
             ]
         },
-        "IfQSS3KeyPrefixEndWithSlash": {
-            "Fn::Not": [
-                {
-                    "Fn::Equals": [
-                        {
-                            "Fn::Select": [
-                                0,
-                                {
-                                    "Fn::Split": [
-                                        "/",
-                                        {
-                                            "Ref": "QSS3KeyPrefix"
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            "Ref": "QSS3KeyPrefix"
-                        }
-                    ]
-                }
-            ]
-        },
         "IfAddNewInternalLoadBalancer": {
             "Fn::Equals": [
                 {
@@ -389,25 +365,8 @@
                         "Ref": "QSS3BucketName"
                     },
                     "QSS3KeyPrefix": {
-                        "Fn::If": [
-                            "IfQSS3KeyPrefixEndWithSlash",
-                            {
-                                "Ref": "QSS3KeyPrefix"
-                            },
-                            {
-                                "Fn::Join": [
-                                    "/",
-                                    [
-                                        {
-                                            "Ref": "QSS3KeyPrefix"
-                                        },
-                                        ""
-                                    ]
-                                ]
-                            }
-                        ]
-                    },
-                    "Objects": "scripts/fortigate-autoscale-lambda.zip"
+                        "Ref": "QSS3KeyPrefix"
+                    }
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
@@ -923,26 +882,10 @@
                     },
                     "S3Key": {
                         "Fn::Sub": [
-                            "${QSS3KeyPrefix}scripts/fortigate-autoscale-lambda.zip",
+                            "${QSS3KeyPrefix}functions/packages/lambda.zip",
                             {
                                 "QSS3KeyPrefix": {
-                                    "Fn::If": [
-                                        "IfQSS3KeyPrefixEndWithSlash",
-                                        {
-                                            "Ref": "QSS3KeyPrefix"
-                                        },
-                                        {
-                                            "Fn::Join": [
-                                                "/",
-                                                [
-                                                    {
-                                                        "Ref": "QSS3KeyPrefix"
-                                                    },
-                                                    ""
-                                                ]
-                                            ]
-                                        }
-                                    ]
+                                    "Ref": "QSS3KeyPrefix"
                                 }
                             }
                         ]
@@ -1061,23 +1004,7 @@
                                 "${QSS3KeyPrefix}assets",
                                 {
                                     "QSS3KeyPrefix": {
-                                        "Fn::If": [
-                                            "IfQSS3KeyPrefixEndWithSlash",
-                                            {
-                                                "Ref": "QSS3KeyPrefix"
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "/",
-                                                    [
-                                                        {
-                                                            "Ref": "QSS3KeyPrefix"
-                                                        },
-                                                        ""
-                                                    ]
-                                                ]
-                                            }
-                                        ]
+                                        "Ref": "QSS3KeyPrefix"
                                     }
                                 }
                             ]
@@ -1285,23 +1212,7 @@
                                                     "Ref": "QSS3BucketName"
                                                 },
                                                 "QSS3KeyPrefix": {
-                                                    "Fn::If": [
-                                                        "IfQSS3KeyPrefixEndWithSlash",
-                                                        {
-                                                            "Ref": "QSS3KeyPrefix"
-                                                        },
-                                                        {
-                                                            "Fn::Join": [
-                                                                "/",
-                                                                [
-                                                                    {
-                                                                        "Ref": "QSS3KeyPrefix"
-                                                                    },
-                                                                    ""
-                                                                ]
-                                                            ]
-                                                        }
-                                                    ]
+                                                    "Ref": "QSS3KeyPrefix"
                                                 }
                                             }
                                         ]
@@ -1570,23 +1481,7 @@
                                                     "Ref": "QSS3BucketName"
                                                 },
                                                 "keyprefix": {
-                                                    "Fn::If": [
-                                                        "IfQSS3KeyPrefixEndWithSlash",
-                                                        {
-                                                            "Ref": "QSS3KeyPrefix"
-                                                        },
-                                                        {
-                                                            "Fn::Join": [
-                                                                "/",
-                                                                [
-                                                                    {
-                                                                        "Ref": "QSS3KeyPrefix"
-                                                                    },
-                                                                    ""
-                                                                ]
-                                                            ]
-                                                        }
-                                                    ]
+                                                    "Ref": "QSS3KeyPrefix"
                                                 }
                                             }
                                         ]
