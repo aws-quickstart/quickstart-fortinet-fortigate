@@ -385,6 +385,74 @@
                 "TimeoutInMinutes": "10"
             }
         },
+        "StackCreateAPIGateway": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "Parameters": {
+                    "CustomIdentifier": {
+                        "Ref": "CustomIdentifier"
+                    },
+                    "APIGatewayName": {
+                        "Fn::Join": [
+                            "-",
+                            [
+                                {
+                                    "Ref": "CustomIdentifier"
+                                },
+                                "FortiGate-AutoScale-APIGateway",
+                                {
+                                    "Fn::Select": [
+                                        0,
+                                        {
+                                            "Fn::Split": [
+                                                "-",
+                                                {
+                                                    "Fn::Select": [
+                                                        2,
+                                                        {
+                                                            "Fn::Split": [
+                                                                "/",
+                                                                {
+                                                                    "Ref": "AWS::StackId"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        ]
+                    },
+                    "VpcEndpointId": {
+                        "Ref": "VpcEndpointApiGw"
+                    },
+                    "LambdaFunctionArn": {
+                        "Fn::GetAtt": [
+                            "LambdaFunctionFgtAsg",
+                            "Arn"
+                        ]
+                    }
+                },
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-api-gateway.template",
+                        {
+                            "QSS3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "TimeoutInMinutes": "10"
+            }
+        },
         "FgtAsgSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
@@ -460,6 +528,36 @@
                 },
                 "IpProtocol": "-1",
                 "CidrIp": "0.0.0.0/0"
+            }
+        },
+        "VpcEndpointApiGw": {
+            "Type": "AWS::EC2::VPCEndpoint",
+            "Properties": {
+                "VpcEndpointType": "Interface",
+                "VpcId": {
+                    "Ref": "VpcId"
+                },
+                "PrivateDnsEnabled": true,
+                "ServiceName": {
+                    "Fn::Sub": [
+                        "com.amazonaws.${region}.execute-api",
+                        {
+                            "region": {
+                                "Ref": "AWS::Region"
+                            }
+                        }
+                    ]
+                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "FgtAsgSecurityGroup"
+                    }
+                ],
+                "SubnetIds": [
+                    {
+                        "Ref": "PublicSubnet1"
+                    }
+                ]
             }
         },
         "StackCreateFortiGateNatGateway": {
@@ -599,7 +697,10 @@
                                                     "Ref": "AWS::Region"
                                                 },
                                                 "api": {
-                                                    "Ref": "ApiGatewayFgtAsg"
+                                                    "Fn::GetAtt": [
+                                                        "StackCreateAPIGateway",
+                                                        "Outputs.APIGatewayId"
+                                                    ]
                                                 },
                                                 "stage": "prod",
                                                 "resource": "complete"
@@ -903,7 +1004,7 @@
                                     {
                                         "Ref": "CustomIdentifier"
                                     },
-                                    "agwFgt",
+                                    "FortiGate-AutoScale-APIGateway",
                                     {
                                         "Fn::Select": [
                                             0,
@@ -1068,103 +1169,7 @@
                 "StackCreateDynamoDBTable"
             ]
         },
-        "ApiGatewayFgtAsg": {
-            "Type": "AWS::ApiGateway::RestApi",
-            "Properties": {
-                "Name": {
-                    "Fn::Join": [
-                        "-",
-                        [
-                            {
-                                "Ref": "CustomIdentifier"
-                            },
-                            "agwFgt",
-                            {
-                                "Fn::Select": [
-                                    0,
-                                    {
-                                        "Fn::Split": [
-                                            "-",
-                                            {
-                                                "Fn::Select": [
-                                                    2,
-                                                    {
-                                                        "Fn::Split": [
-                                                            "/",
-                                                            {
-                                                                "Ref": "AWS::StackId"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    ]
-                },
-                "EndpointConfiguration": {
-                    "Types": [
-                        "PRIVATE"
-                    ]
-                },
-                "Policy": {
-                    "Fn::Sub": [
-                        "{\\\"Version\\\":\\\"2012-10-17\\\",\\\"Statement\\\":[{\\\"Effect\\\":\\\"Allow\\\",\\\"Principal\\\":\\\"*\\\",\\\"Action\\\":\\\"execute-api:Invoke\\\",\\\"Resource\\\":\\\"execute-api:\\/*\\\",\\\"Condition\\\":{\\\"StringEquals\\\":{\\\"aws:sourceVpce\\\":\\\"${vpce}\\\"}}}]}",
-                        {
-                            "vpce": {
-                                "Ref": "VpcEndpointApiGw"
-                            }
-                        }
-                    ]
-                }
-            }
-        },
-        "ApiGwDeploymentFgtAsg": {
-            "DependsOn": [
-                "ApiGwMethodFgtAsgComplete",
-                "ApiGwMethodFgtAsgGetConfig"
-            ],
-            "Type": "AWS::ApiGateway::Deployment",
-            "Properties": {
-                "RestApiId": {
-                    "Ref": "ApiGatewayFgtAsg"
-                },
-                "StageName": "prod"
-            }
-        },
-        "VpcEndpointApiGw": {
-            "Type": "AWS::EC2::VPCEndpoint",
-            "Properties": {
-                "VpcEndpointType": "Interface",
-                "VpcId": {
-                    "Ref": "VpcId"
-                },
-                "PrivateDnsEnabled": true,
-                "ServiceName": {
-                    "Fn::Sub": [
-                        "com.amazonaws.${region}.execute-api",
-                        {
-                            "region": {
-                                "Ref": "AWS::Region"
-                            }
-                        }
-                    ]
-                },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "FgtAsgSecurityGroup"
-                    }
-                ],
-                "SubnetIds": [
-                    {
-                        "Ref": "PublicSubnet1"
-                    }
-                ]
-            }
-        },
+
         "IamInstanceProfileFgt": {
             "Type": "AWS::IAM::InstanceProfile",
             "Properties": {
@@ -1224,108 +1229,6 @@
                         "PolicyName": "aws-quick-start-s3-policy"
                     }
                 ]
-            }
-        },
-        "ApiGwResFgtAsgComplete": {
-            "Type": "AWS::ApiGateway::Resource",
-            "Properties": {
-                "RestApiId": {
-                    "Ref": "ApiGatewayFgtAsg"
-                },
-                "PathPart": "complete",
-                "ParentId": {
-                    "Fn::GetAtt": [
-                        "ApiGatewayFgtAsg",
-                        "RootResourceId"
-                    ]
-                }
-            }
-        },
-        "ApiGwMethodFgtAsgComplete": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-                "ResourceId": {
-                    "Ref": "ApiGwResFgtAsgComplete"
-                },
-                "RestApiId": {
-                    "Ref": "ApiGatewayFgtAsg"
-                },
-                "AuthorizationType": "NONE",
-                "HttpMethod": "POST",
-                "Integration": {
-                    "Type": "AWS_PROXY",
-                    "IntegrationHttpMethod": "POST",
-                    "Uri": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "arn:aws:apigateway:",
-                                {
-                                    "Ref": "AWS::Region"
-                                },
-                                ":lambda:path/2015-03-31/functions/",
-                                {
-                                    "Fn::GetAtt": [
-                                        "LambdaFunctionFgtAsg",
-                                        "Arn"
-                                    ]
-                                },
-                                "/invocations"
-                            ]
-                        ]
-                    }
-                }
-            }
-        },
-        "ApiGwResFgtAsgGetConfig": {
-            "Type": "AWS::ApiGateway::Resource",
-            "Properties": {
-                "RestApiId": {
-                    "Ref": "ApiGatewayFgtAsg"
-                },
-                "PathPart": "get-config",
-                "ParentId": {
-                    "Fn::GetAtt": [
-                        "ApiGatewayFgtAsg",
-                        "RootResourceId"
-                    ]
-                }
-            }
-        },
-        "ApiGwMethodFgtAsgGetConfig": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-                "ResourceId": {
-                    "Ref": "ApiGwResFgtAsgGetConfig"
-                },
-                "RestApiId": {
-                    "Ref": "ApiGatewayFgtAsg"
-                },
-                "AuthorizationType": "NONE",
-                "HttpMethod": "GET",
-                "Integration": {
-                    "Type": "AWS_PROXY",
-                    "IntegrationHttpMethod": "POST",
-                    "Uri": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "arn:aws:apigateway:",
-                                {
-                                    "Ref": "AWS::Region"
-                                },
-                                ":lambda:path/2015-03-31/functions/",
-                                {
-                                    "Fn::GetAtt": [
-                                        "LambdaFunctionFgtAsg",
-                                        "Arn"
-                                    ]
-                                },
-                                "/invocations"
-                            ]
-                        ]
-                    }
-                }
             }
         },
         "IamRoleLfFgtAsg": {
@@ -1590,19 +1493,16 @@
                                 "Ref": "AWS::AccountId"
                             },
                             "api": {
-                                "Ref": "ApiGatewayFgtAsg"
+                                "Fn::GetAtt": [
+                                    "StackCreateAPIGateway",
+                                    "Outputs.APIGatewayId"
+                                ]
                             }
                         }
                     ]
                 }
             },
             "DependsOn": [
-                "ApiGatewayFgtAsg",
-                "ApiGwDeploymentFgtAsg",
-                "ApiGwResFgtAsgGetConfig",
-                "ApiGwMethodFgtAsgGetConfig",
-                "ApiGwResFgtAsgComplete",
-                "ApiGwMethodFgtAsgComplete",
                 "LambdaFunctionFgtAsg"
             ]
         },
