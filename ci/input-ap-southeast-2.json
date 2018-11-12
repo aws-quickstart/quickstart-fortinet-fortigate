@@ -61,7 +61,7 @@
     },
     {
         "ParameterKey": "FortiGateInstanceType",
-        "ParameterValue": "c5.large"
+        "ParameterValue": "t2.small"
     },
     {
         "ParameterKey": "FortiGatePskSecret",

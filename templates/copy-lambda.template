@@ -1,4 +1,3 @@
----
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   This template creates an S3 bucket in the same region where the stack is
@@ -30,7 +29,7 @@ Parameters:
 Resources:
   CopyObjects:
     Properties:
-      ServiceToken: !GetAtt
+      ServiceToken: !GetAtt 
         - CopyObjectsFunction
         - Arn
       DestBucket: !Ref LambdaZipsBucket
@@ -42,7 +41,7 @@ Resources:
   CopyObjectsFunction:
     Properties:
       Code:
-        ZipFile: !Join
+        ZipFile: !Join 
           - |+
 
           - - import json
@@ -119,7 +118,7 @@ Resources:
             - ''
       Description: Copies objects from a source S3 bucket to a destination S3 bucket
       Handler: index.handler
-      Role: !GetAtt
+      Role: !GetAtt 
         - CopyObjectsRole
         - Arn
       Runtime: python2.7
@@ -170,14 +169,14 @@ Resources:
   CleanUpS3Bucket:
     Properties:
       DestBucket: !Ref LambdaZipsBucket
-      ServiceToken: !GetAtt
+      ServiceToken: !GetAtt 
         - CleanUpS3BucketFunction
         - Arn
     Type: 'AWS::CloudFormation::CustomResource'
   CleanUpS3BucketFunction:
     Properties:
       Code:
-        ZipFile: !Join
+        ZipFile: !Join 
           - |+
 
           - - import json
@@ -264,7 +263,7 @@ Resources:
             - ''
       Description: Empty the S3 Bucket
       Handler: index.handler
-      Role: !GetAtt
+      Role: !GetAtt 
         - S3CleanUpRole
         - Arn
       Runtime: python2.7
@@ -296,7 +295,7 @@ Resources:
                   - 's3:GetBucketVersioning'
                 Effect: Allow
                 Resource:
-                  - !GetAtt
+                  - !GetAtt 
                     - LambdaZipsBucket
                     - Arn
                   - !Sub 'arn:aws:s3:::*'

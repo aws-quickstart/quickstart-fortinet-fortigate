@@ -1,0 +1,25 @@
+# project-specific
+**/dist
+**/local
+**/local*
+
+# npm
+**/node_modules
+**/npm-debug.log
+**/package-lock.json
+
+# istanbul javascript test coverage
+**/.nyc_output
+
+# visual studio code
+**/.vscode
+**/*.code-workspace
+
+# azure function
+azure_funcapp/host.json
+
+# aws_cloudformation
+autoscale_params.txt
+
+# macOS
+.DS_Store

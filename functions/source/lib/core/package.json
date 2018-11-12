@@ -1,0 +1,32 @@
+{
+  "name": "fortigate-autoscale-core",
+  "version": "1.0.0-preview",
+  "description": "FortiGate Autoscale Module - Core",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "files_to_deploy": [
+    "*.js",
+    "package.json"
+  ],
+  "devDependencies": {
+    "eslint": "^5.4.0",
+    "eslint-plugin-mocha": "^5.2.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.0.1",
+    "request": "^2.87.0"
+  },
+  "scripts": {
+    "pretest": "eslint --fix .",
+    "deploy": "dpl",
+    "build": "scripts/make_dist.js",
+    "test": "nyc mocha --recursive './test/mocha/*.js'"
+  },
+  "author": "fortinet",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fortinet/fortigate-autoscale"
+  }
+}
