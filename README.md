@@ -10,11 +10,11 @@ This Quick Start deploys an automatically scaled group of Fortigate instances pr
 
 The Quick Start offers two deployment options:
 
- - [Deploying BIG-IP VE into a new virtual private cloud (VPC) on AWS](){:target="_blank"}
- - [Deploying BIG-IP VE into an existing VPC on AWS](){:target="_blank"}
+ - [Deploying BIG-IP VE into a new virtual private cloud (VPC) on AWS]()
+ - [Deploying BIG-IP VE into an existing VPC on AWS]()
 
 You can also use the AWS CloudFormation templates as a starting point for your own implementation.
 
 ![Architecture diagram](Architecture.png)
 
-To post feedback, submit feature ideas, or report bugs, use the Issues section of this GitHub repo. If you'd like to submit code for this Quick Start, please review the AWS Quick Start Contributor's Kit.
+To post feedback, submit feature ideas, or report bugs, use the Issues section of this GitHub repo. If you'd like to submit code for this Quick Start, please review the [AWS Quick Start Contributor's Kit](https://aws-quickstart.github.io/).
