@@ -1,4 +1,4 @@
-# quickstart-fortinet-fortigate-autoscale
+# quickstart-fortinet-fortigate
 
 ## Fortinet FortiGate Auto Scaling Baseline on the AWS Cloud
 
