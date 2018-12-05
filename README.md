@@ -1,12 +1,12 @@
 # quickstart-fortinet-fortigate-autoscale
 
-## Fortinet FortiGate Auto Scaling on the AWS Cloud
+## Fortinet FortiGate Auto Scaling Baseline on the AWS Cloud
 
-This Quick Start deploys FortiGate Auto Scaling, a next-generation firewall (NGFW) from Fortinet, on the Amazon Web Services (AWS) Cloud in about 30 minutes.
+This Quick Start deploys FortiGate Auto Scaling, a next-generation firewall (NGFW) from Fortinet, on the Amazon Web Services (AWS) Cloud in about 15 minutes.
 
-FortiGate next-generation firewalls (NGFWs) provide high performance, multi-layered advanced security, and better visibility to protect against cyber-attacks while reducing complexity. FortiGate firewalls are purpose-built with security processors to enable the industry’s best threat protection and performance for SSL-encrypted traffic.
+FortiGate mid-range next-generation firewalls (NGFWs) provide high performance, multi-layered advanced security, and better visibility to protect against cyber attacks while reducing complexity. FortiGate firewalls are purpose-built with security processors to enable the industry’s best threat protection and performance for Secure Sockets Layer (SSL)-encrypted traffic.
 
-This Quick Start deploys an automatically scaled group of FortiGate instances provisioned, which provide intrusion protection, web filtering, and threat detection to protect your services from cyber attacks. The Quick Start uses AWS CloudFormation templates to build the AWS infrastructure and to deploy the FortiGates to protect your workloads.
+This Quick Start deploys an automatically scaled group of FortiGate instances, which provide intrusion protection, web filtering, and threat detection to protect your services from cyber attacks. The Quick Start uses AWS CloudFormation templates to build the AWS infrastructure and to deploy the FortiGates to protect your workloads.
 
 The Quick Start offers two deployment options:
 
@@ -16,5 +16,7 @@ The Quick Start offers two deployment options:
 You can also use the AWS CloudFormation templates as a starting point for your own implementation.
 
 ![Architecture diagram](Architecture.png)
+
+For architectural details, step-by-step instructions, and customization options, see the (deployment guide)(https://fwd.aws/xjzgv). 
 
 To post feedback, submit feature ideas, or report bugs, use the Issues section of this GitHub repo. If you'd like to submit code for this Quick Start, please review the [AWS Quick Start Contributor's Kit](https://aws-quickstart.github.io/).
