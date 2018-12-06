@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "FortiGate Autoscale Solution (Existing VPC). This template deploys Fortinet FortiGate cluster into an existing VPC with a Multi-AZ Autoscale group with Lambda and LifecycleHook. Please see the Quick Start documentation for more details. **WARNING** You will be billed for the FortiGate On-Demand instances and related AWS resources if you create a stack from this template.",
+    "Description": "FortiGate Autoscale Solution (Existing VPC). This template deploys Fortinet FortiGate cluster into an existing VPC with a Multi-AZ Autoscale group with Lambda and LifecycleHook. Please see the Quick Start documentation for more details. **WARNING** You will be billed for the FortiGate On-Demand instances and related AWS resources if you create a stack from this template. (qs-1p3pr46rg)",
     "Parameters": {
         "QSS3BucketName": {
             "Type": "String",
