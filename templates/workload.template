@@ -245,7 +245,7 @@
         },
         "AWSAMIRegionMap": {
             "AMI": {
-                "FGTVM64PAYG603": "aws-marketplace/FortiGate-VM64-AWSONDEMAND build0200 (6.0.3) GA-3124a694-441c-4ff1-8bf7-4d153be424a6-ami-09dba22e5db2d4fb5.4"
+                "FGTVM64PAYG603": "FortiGate-VM64-AWSONDEMAND build0268 (6.0.5) GA-3124a694-441c-4ff1-8bf7-4d153be424a6-ami-0072f781cee3b2a26.4"
             },
             "ap-northeast-1": {
                 "FGTVM64PAYG603": "ami-0bd9e6e0020928ef9"
