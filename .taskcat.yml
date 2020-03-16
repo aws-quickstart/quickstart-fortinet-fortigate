@@ -47,6 +47,7 @@ tests:
       PublicSubnet2CIDR: 10.0.2.0/24
       QSS3BucketName: $[taskcat_autobucket]
       QSS3KeyPrefix: quickstart-fortinet-fortigate/
+      QSS3BucketRegion: $[taskcat_current_region]
       VPCCIDR: 10.0.0.0/16
     regions:
     - us-east-1
@@ -91,6 +92,7 @@ tests:
       PublicSubnet2CIDR: 10.0.2.0/24
       QSS3BucketName: $[taskcat_autobucket]
       QSS3KeyPrefix: quickstart-fortinet-fortigate/
+      QSS3BucketRegion: $[taskcat_current_region]
       VPCCIDR: 10.0.0.0/16
     regions:
     - ap-southeast-2
