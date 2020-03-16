@@ -1,49 +1,42 @@
-AWSTemplateFormatVersion: 2010-09-09
-Description: >-
-  This template creates an S3 bucket in the same region where the stack is
-  launched and copy the Lambda functions code from original bucket to the new
-  bucket. (qs-1op312ie1)
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This template creates an S3 bucket in the same region where the stack
+  is launched and copy the Lambda functions code from original bucket to the new bucket.
+  (qs-1op312ie1)
 Parameters:
   QSS3BucketName:
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: >-
-      Quick Start bucket name can include numbers, lowercase letters, uppercase
-      letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
     Default: aws-quickstart
-    Description: >-
-      S3 bucket name for the Quick Start assets. Quick Start bucket name can
-      include numbers, lowercase letters, uppercase letters, and hyphens (-). It
-      cannot start or end with a hyphen (-).
+    Description: S3 bucket name for the Quick Start assets. Quick Start bucket name
+      can include numbers, lowercase letters, uppercase letters, and hyphens (-).
+      It cannot start or end with a hyphen (-).
     Type: String
   QSS3KeyPrefix:
-    AllowedPattern: '^[0-9a-zA-Z-/]*$'
-    ConstraintDescription: >-
-      Quick Start key prefix can include numbers, lowercase letters, uppercase
-      letters, hyphens (-), and forward slash (/).
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and forward slash (/).
     Default: fortigate-quickstart/
-    Description: >-
-      S3 key prefix for the Quick Start assets. Quick Start key prefix can
-      include numbers, lowercase letters, uppercase letters, hyphens (-), and
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
     Type: String
 Resources:
   CopyObjects:
     Properties:
-      ServiceToken: !GetAtt
-        - CopyObjectsFunction
-        - Arn
-      DestBucket: !Ref LambdaZipsBucket
+      ServiceToken: !GetAtt 'CopyObjectsFunction.Arn'
+      DestBucket: !Ref 'LambdaZipsBucket'
       Objects:
         - functions/packages/lambda.zip
-      SourceBucket: !Ref QSS3BucketName
-      Prefix: !Ref QSS3KeyPrefix
-    Type: 'AWS::CloudFormation::CustomResource'
+      SourceBucket: !Ref 'QSS3BucketName'
+      Prefix: !Ref 'QSS3KeyPrefix'
+    Type: AWS::CloudFormation::CustomResource
   CopyObjectsFunction:
     Properties:
       Code:
         ZipFile: !Join
-          - |+
-
+          - "\n"
           - - import json
             - import logging
             - import threading
@@ -59,7 +52,8 @@ Resources:
             - '            ''Bucket'': source_bucket,'
             - '            ''Key'': key'
             - '        }'
-            - '        s3.copy_object(CopySource=copy_source, Bucket=dest_bucket, Key=key)'
+            - '        s3.copy_object(CopySource=copy_source, Bucket=dest_bucket,
+              Key=key)'
             - ''
             - ''
             - 'def delete_objects(bucket):'
@@ -80,7 +74,8 @@ Resources:
             - '            except:'
             - '                pass'
             - '            print("deleting objects")'
-            - '            client.delete_objects(Bucket=bucket,     Delete={''Objects'': objects})'
+            - '            client.delete_objects(Bucket=bucket,     Delete={''Objects'':
+              objects})'
             - '           # objects = []'
             - '        except:'
             - '            pass'
@@ -89,13 +84,16 @@ Resources:
             - ''
             - ''
             - 'def timeout(event, context):'
-            - '    logging.error(''Execution is about to time out, sending failure response to CloudFormation'')'
+            - '    logging.error(''Execution is about to time out, sending failure
+              response to CloudFormation'')'
             - '    cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)'
             - ''
             - ''
             - 'def handler(event, context):'
-            - '    # make sure we send a failure to CloudFormation if the function is going to timeout'
-            - '    timer = threading.Timer((context.get_remaining_time_in_millis() / 1000.00) - 0.5, timeout, args=[event, context])'
+            - '    # make sure we send a failure to CloudFormation if the function
+              is going to timeout'
+            - '    timer = threading.Timer((context.get_remaining_time_in_millis()
+              / 1000.00) - 0.5, timeout, args=[event, context])'
             - '    timer.start()'
             - ''
             - '    print((''Received event: %s'' % json.dumps(event)))'
@@ -118,67 +116,62 @@ Resources:
             - ''
       Description: Copies objects from a source S3 bucket to a destination S3 bucket
       Handler: index.handler
-      Role: !GetAtt
-        - CopyObjectsRole
-        - Arn
+      Role: !GetAtt 'CopyObjectsRole.Arn'
       Runtime: python3.7
       Timeout: 240
-    Type: 'AWS::Lambda::Function'
+    Type: AWS::Lambda::Function
   CopyObjectsRole:
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-          - Action: 'sts:AssumeRole'
+          - Action: sts:AssumeRole
             Effect: Allow
             Principal:
               Service: lambda.amazonaws.com
-        Version: 2012-10-17
+        Version: '2012-10-17'
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Path: /
       Policies:
         - PolicyDocument:
             Statement:
               - Action:
-                  - 's3:GetObject'
+                  - s3:GetObject
                 Effect: Allow
                 Resource:
                   - !Sub 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
               - Action:
-                  - 's3:PutObject'
-                  - 's3:DeleteObject'
-                  - 's3:GetObject'
-                  - 's3:ListBucket'
-                  - 's3:ListBucketVersions'
-                  - 's3:DeleteObjectVersion'
-                  - 's3:GetObjectVersion'
-                  - 's3:GetBucketVersioning'
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:GetObject
+                  - s3:ListBucket
+                  - s3:ListBucketVersions
+                  - s3:DeleteObjectVersion
+                  - s3:GetObjectVersion
+                  - s3:GetBucketVersioning
                 Effect: Allow
                 Resource:
                   - !Sub 'arn:aws:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}*'
                   - !Sub 'arn:aws:s3:::${LambdaZipsBucket}'
-            Version: 2012-10-17
+            Version: '2012-10-17'
           PolicyName: object-copier
-    Type: 'AWS::IAM::Role'
+    Type: AWS::IAM::Role
   LambdaZipsBucket:
     Properties:
       Tags: []
       VersioningConfiguration:
         Status: Enabled
-    Type: 'AWS::S3::Bucket'
+    Type: AWS::S3::Bucket
   CleanUpS3Bucket:
     Properties:
-      DestBucket: !Ref LambdaZipsBucket
-      ServiceToken: !GetAtt
-        - CleanUpS3BucketFunction
-        - Arn
-    Type: 'AWS::CloudFormation::CustomResource'
+      DestBucket: !Ref 'LambdaZipsBucket'
+      ServiceToken: !GetAtt 'CleanUpS3BucketFunction.Arn'
+    Type: AWS::CloudFormation::CustomResource
   CleanUpS3BucketFunction:
     Properties:
       Code:
         ZipFile: !Join
-          - |+
-
+          - "\n"
           - - import json
             - import logging
             - import threading
@@ -197,7 +190,8 @@ Resources:
             - '            for k in page[''Contents'']:'
             - '                objects.append({''Key'': k[''Key'']})'
             - '                print("deleting objects")'
-            - '                client.delete_objects(Bucket=bucket, Delete={''Objects'': objects})'
+            - '                client.delete_objects(Bucket=bucket, Delete={''Objects'':
+              objects})'
             - '                objects = []'
             - '        except:'
             - '            pass'
@@ -220,7 +214,8 @@ Resources:
             - '            except:'
             - '                pass'
             - '            print("deleting objects")'
-            - '            client.delete_objects(Bucket=bucket, Delete={''Objects'': objects})'
+            - '            client.delete_objects(Bucket=bucket, Delete={''Objects'':
+              objects})'
             - '           # objects = []'
             - '        except:'
             - '            pass'
@@ -229,13 +224,16 @@ Resources:
             - ''
             - ''
             - 'def timeout(event, context):'
-            - '    logging.error(''Execution is about to time out, sending failure response to CloudFormation'')'
+            - '    logging.error(''Execution is about to time out, sending failure
+              response to CloudFormation'')'
             - '    cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)'
             - ''
             - ''
             - 'def handler(event, context):'
-            - '    # make sure we send a failure to CloudFormation if the function is going to timeout'
-            - '    timer = threading.Timer((context.get_remaining_time_in_millis() / 1000.00) - 0.5, timeout, args=[event, context])'
+            - '    # make sure we send a failure to CloudFormation if the function
+              is going to timeout'
+            - '    timer = threading.Timer((context.get_remaining_time_in_millis()
+              / 1000.00) - 0.5, timeout, args=[event, context])'
             - '    timer.start()'
             - ''
             - '    print((''Received event: %s'' % json.dumps(event)))'
@@ -263,46 +261,42 @@ Resources:
             - ''
       Description: Empty the S3 Bucket
       Handler: index.handler
-      Role: !GetAtt
-        - S3CleanUpRole
-        - Arn
+      Role: !GetAtt 'S3CleanUpRole.Arn'
       Runtime: python3.7
       Timeout: 240
-    Type: 'AWS::Lambda::Function'
+    Type: AWS::Lambda::Function
   S3CleanUpRole:
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-          - Action: 'sts:AssumeRole'
+          - Action: sts:AssumeRole
             Effect: Allow
             Principal:
               Service: lambda.amazonaws.com
-        Version: 2012-10-17
+        Version: '2012-10-17'
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Path: /
       Policies:
         - PolicyDocument:
             Statement:
               - Action:
-                  - 's3:PutObject'
-                  - 's3:DeleteObject'
-                  - 's3:GetObject'
-                  - 's3:ListBucket'
-                  - 's3:ListBucketVersions'
-                  - 's3:DeleteObjectVersion'
-                  - 's3:GetObjectVersion'
-                  - 's3:GetBucketVersioning'
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:GetObject
+                  - s3:ListBucket
+                  - s3:ListBucketVersions
+                  - s3:DeleteObjectVersion
+                  - s3:GetObjectVersion
+                  - s3:GetBucketVersioning
                 Effect: Allow
                 Resource:
-                  - !GetAtt
-                    - LambdaZipsBucket
-                    - Arn
+                  - !GetAtt 'LambdaZipsBucket.Arn'
                   - !Sub 'arn:aws:s3:::*'
-            Version: 2012-10-17
+            Version: '2012-10-17'
           PolicyName: Empty-bucket
-    Type: 'AWS::IAM::Role'
+    Type: AWS::IAM::Role
 Outputs:
   LambdaZipsBucket:
     Description: S3 Bucket for the Lambda Function Code
-    Value: !Ref LambdaZipsBucket
+    Value: !Ref 'LambdaZipsBucket'
