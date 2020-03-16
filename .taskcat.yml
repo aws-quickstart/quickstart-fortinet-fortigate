@@ -40,7 +40,7 @@ tests:
       FortiGatePskSecret: $[taskcat_genpass_8]
       InternalLoadBalancerDnsName: fgtqsg-asg
       InternalLoadBalancingOptions: add a new internal load balancer
-      KeyPairName: $[taskcat_getkeypair]
+      KeyPairName: taskcat-test
       PrivateSubnet1CIDR: 10.0.1.0/24
       PrivateSubnet2CIDR: 10.0.3.0/24
       PublicSubnet1CIDR: 10.0.0.0/24
@@ -84,7 +84,7 @@ tests:
       FortiGatePskSecret: $[taskcat_genpass_8]
       InternalLoadBalancerDnsName: fgtqsg-asg
       InternalLoadBalancingOptions: add a new internal load balancer
-      KeyPairName: $[taskcat_getkeypair]
+      KeyPairName: taskcat-test
       PrivateSubnet1CIDR: 10.0.1.0/24
       PrivateSubnet2CIDR: 10.0.3.0/24
       PublicSubnet1CIDR: 10.0.0.0/24

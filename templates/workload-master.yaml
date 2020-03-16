@@ -5,6 +5,105 @@ Description: >-
   Please see the Quick Start documentation for more details. **WARNING** You will
   be billed for the FortiGate On-Demand instances and related AWS resources if you
   create a stack from this template. (qs-1p3pr46rl)
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Network configuration
+        Parameters:
+          - AvailabilityZones
+          - VPCCIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+      - Label:
+          default: FortiGate configuration
+        Parameters:
+          - CustomIdentifier
+          - FortiGateInstanceType
+          - FortiGatePskSecret
+          - FortiGateAdminPort
+          - FortiGateAdminCidr
+          - KeyPairName
+      - Label:
+          default: FortiGate auto-scaling group configuration
+        Parameters:
+          - ExpireLifecycleEntry
+          - FortiGateAsgDesiredCapacity
+          - FortiGateAsgMinSize
+          - FortiGateAsgMaxSize
+          - FortiGateAsgHealthCheckGracePeriod
+          - FortiGateAsgCooldown
+          - FortiGateAsgScaleOutThreshold
+          - FortiGateAsgScaleInThreshold
+          - FortiGateElbTgHealthyThreshold
+      - Label:
+          default: Load balancing configuration
+        Parameters:
+          - InternalLoadBalancingOptions
+          - InternalLoadBalancerDnsName
+          - BalanceWebTrafficOverPort
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+    ParameterLabels:
+      CustomIdentifier:
+        default: Resource name prefix
+      AvailabilityZones:
+        default: Availability Zones
+      VPCCIDR:
+        default: VPC CIDR
+      PublicSubnet1CIDR:
+        default: Public subnet 1 CIDR
+      PublicSubnet2CIDR:
+        default: Public subnet 2 CIDR
+      PrivateSubnet1CIDR:
+        default: Private subnet 1 CIDR
+      PrivateSubnet2CIDR:
+        default: Private subnet 2 CIDR
+      FortiGateInstanceType:
+        default: Instance type
+      LambdaDeploymentMethod:
+        default: Deployment method
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
+      ExpireLifecycleEntry:
+        default: Instance lifecycle expiry
+      FortiGateAsgCooldown:
+        default: Scaling cooldown period
+      FortiGateAsgDesiredCapacity:
+        default: Desired capacity
+      FortiGateAsgMinSize:
+        default: Minimum group size
+      FortiGateAsgMaxSize:
+        default: Maximum group size
+      FortiGateAsgHealthCheckGracePeriod:
+        default: Health check grace period
+      FortiGateAsgScaleInThreshold:
+        default: Scale-in threshold
+      FortiGateAsgScaleOutThreshold:
+        default: Scale-out threshold
+      FortiGateElbTgHealthyThreshold:
+        default: Healthy threshold
+      BalanceWebTrafficOverPort:
+        default: Web service traffic port
+      InternalLoadBalancingOptions:
+        default: Internal ELB options
+      InternalLoadBalancerDnsName:
+        default: Internal ELB DNS name
+      FortiGateAdminPort:
+        default: Admin port
+      FortiGateAdminCidr:
+        default: Admin CIDR block
+      KeyPairName:
+        default: Key pair name
+      FortiGatePskSecret:
+        default: FortiGate PSK secret
 Parameters:
   CustomIdentifier:
     Type: String
@@ -273,102 +372,3 @@ Resources:
             - s3-us-gov-west-1
             - s3
       TimeoutInMinutes: 30
-Metadata:
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      - Label:
-          default: Network configuration
-        Parameters:
-          - AvailabilityZones
-          - VPCCIDR
-          - PublicSubnet1CIDR
-          - PublicSubnet2CIDR
-          - PrivateSubnet1CIDR
-          - PrivateSubnet2CIDR
-      - Label:
-          default: FortiGate configuration
-        Parameters:
-          - CustomIdentifier
-          - FortiGateInstanceType
-          - FortiGatePskSecret
-          - FortiGateAdminPort
-          - FortiGateAdminCidr
-          - KeyPairName
-      - Label:
-          default: FortiGate auto-scaling group configuration
-        Parameters:
-          - ExpireLifecycleEntry
-          - FortiGateAsgDesiredCapacity
-          - FortiGateAsgMinSize
-          - FortiGateAsgMaxSize
-          - FortiGateAsgHealthCheckGracePeriod
-          - FortiGateAsgCooldown
-          - FortiGateAsgScaleOutThreshold
-          - FortiGateAsgScaleInThreshold
-          - FortiGateElbTgHealthyThreshold
-      - Label:
-          default: Load balancing configuration
-        Parameters:
-          - InternalLoadBalancingOptions
-          - InternalLoadBalancerDnsName
-          - BalanceWebTrafficOverPort
-      - Label:
-          default: AWS Quick Start configuration
-        Parameters:
-          - QSS3BucketName
-          - QSS3KeyPrefix
-    ParameterLabels:
-      CustomIdentifier:
-        default: Resource name prefix
-      AvailabilityZones:
-        default: Availability Zones
-      VPCCIDR:
-        default: VPC CIDR
-      PublicSubnet1CIDR:
-        default: Public subnet 1 CIDR
-      PublicSubnet2CIDR:
-        default: Public subnet 2 CIDR
-      PrivateSubnet1CIDR:
-        default: Private subnet 1 CIDR
-      PrivateSubnet2CIDR:
-        default: Private subnet 2 CIDR
-      FortiGateInstanceType:
-        default: Instance type
-      LambdaDeploymentMethod:
-        default: Deployment method
-      QSS3BucketName:
-        default: Quick Start S3 bucket name
-      QSS3KeyPrefix:
-        default: Quick Start S3 key prefix
-      ExpireLifecycleEntry:
-        default: Instance lifecycle expiry
-      FortiGateAsgCooldown:
-        default: Scaling cooldown period
-      FortiGateAsgDesiredCapacity:
-        default: Desired capacity
-      FortiGateAsgMinSize:
-        default: Minimum group size
-      FortiGateAsgMaxSize:
-        default: Maximum group size
-      FortiGateAsgHealthCheckGracePeriod:
-        default: Health check grace period
-      FortiGateAsgScaleInThreshold:
-        default: Scale-in threshold
-      FortiGateAsgScaleOutThreshold:
-        default: Scale-out threshold
-      FortiGateElbTgHealthyThreshold:
-        default: Healthy threshold
-      BalanceWebTrafficOverPort:
-        default: Web service traffic port
-      InternalLoadBalancingOptions:
-        default: Internal ELB options
-      InternalLoadBalancerDnsName:
-        default: Internal ELB DNS name
-      FortiGateAdminPort:
-        default: Admin port
-      FortiGateAdminCidr:
-        default: Admin CIDR block
-      KeyPairName:
-        default: Key pair name
-      FortiGatePskSecret:
-        default: FortiGate PSK secret
