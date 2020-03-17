@@ -377,26 +377,28 @@ Resources:
               - !Split
                 - /
                 - !Ref 'AWS::StackId'
-      TemplateURL: !Sub
-        - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-db-table.template'
-        - QSS3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-      TimeoutInMinutes: '10'
+      TemplateURL:
+        !Sub
+          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-db-table.yaml'
+          - QSS3Region: !If
+              - GovCloudCondition
+              - s3-us-gov-west-1
+              - s3
+      TimeoutInMinutes: 10
   StackCopyLambda:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         QSS3BucketName: !Ref 'QSS3BucketName'
         QSS3KeyPrefix: !Ref 'QSS3KeyPrefix'
-      TemplateURL: !Sub
-        - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/copy-lambda.template'
-        - QSS3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-      TimeoutInMinutes: '10'
+      TemplateURL:
+        !Sub
+          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/copy-lambda.yaml'
+          - QSS3Region: !If
+              - GovCloudCondition
+              - s3-us-gov-west-1
+              - s3
+      TimeoutInMinutes: 10
   StackCreateAPIGateway:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -417,13 +419,11 @@ Resources:
                     - !Ref 'AWS::StackId'
         VpcEndpointId: !Ref 'VpcEndpointApiGw'
         LambdaFunctionArn: !GetAtt 'LambdaFunctionFgtAsg.Arn'
-      TemplateURL: !Sub
-        - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-api-gateway.template'
-        - QSS3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-      TimeoutInMinutes: '10'
+      TemplateURL:
+        !Sub
+          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-api-gateway.yaml'
+          - QSS3Region: !If [GovCloudCondition, s3-us-gov-west-1, s3]
+      TimeoutInMinutes: 10
   FgtAsgSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -440,16 +440,16 @@ Resources:
     Properties:
       GroupId: !Ref 'FgtAsgSecurityGroup'
       IpProtocol: tcp
-      FromPort: '22'
-      ToPort: '22'
+      FromPort: 22
+      ToPort: 22
       CidrIp: !Ref 'FortiGateAdminCidr'
   FgtAsgSecurityGroupIngress1:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       GroupId: !Ref 'FgtAsgSecurityGroup'
       IpProtocol: tcp
-      FromPort: '541'
-      ToPort: '541'
+      FromPort: 541
+      ToPort: 541
       CidrIp: !Ref 'FortiGateAdminCidr'
   FgtAsgSecurityGroupIngressAdminAccess:
     Type: AWS::EC2::SecurityGroupIngress
@@ -501,13 +501,11 @@ Resources:
         FortiGateAdminCidr: !Ref 'FortiGateAdminCidr'
         KeyPairName: !Ref 'KeyPairName'
         FortiGateAdminPort: !Ref 'FortiGateAdminPort'
-      TemplateURL: !Sub
-        - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-nat-fgt-master.template'
-        - QSS3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-      TimeoutInMinutes: '10'
+      TemplateURL:
+        !Sub
+          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-nat-fgt-master.yaml'
+          - QSS3Region: !If [GovCloudCondition, s3-us-gov-west-1, s3]
+      TimeoutInMinutes: 10
   NatGateway1RouteAttachmentNew:
     Type: AWS::EC2::Route
     Properties:
@@ -604,7 +602,7 @@ Resources:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref 'FortiGateScalingGroup'
-      ScalingAdjustment: '-1'
+      ScalingAdjustment: -1
     DependsOn:
       - FortiGateScalingGroup
   ScaleOutPolicy:
@@ -612,13 +610,13 @@ Resources:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref 'FortiGateScalingGroup'
-      ScalingAdjustment: '1'
+      ScalingAdjustment: 1
     DependsOn:
       - FortiGateScalingGroup
   AlarmCpuUtilHigh:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      EvaluationPeriods: '1'
+      EvaluationPeriods: 1
       Statistic: Average
       Threshold: !Ref 'FortiGateAsgScaleOutThreshold'
       AlarmDescription: Alarm if CPU too high or metric disappears indicating instance
@@ -635,7 +633,7 @@ Resources:
   AlarmCpuUtilLow:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      EvaluationPeriods: '1'
+      EvaluationPeriods: 1
       Statistic: Average
       Threshold: !Ref 'FortiGateAsgScaleInThreshold'
       AlarmDescription: Alarm if CPU too low or metric disappears indicating instance

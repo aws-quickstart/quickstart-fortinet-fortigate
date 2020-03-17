@@ -33,8 +33,8 @@ Resources:
         - AttributeName: asgName
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref 'CustomIdentifier'
@@ -54,8 +54,8 @@ Resources:
         - AttributeName: actionName
           KeyType: RANGE
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref 'CustomIdentifier'
@@ -71,8 +71,8 @@ Resources:
         - AttributeName: instanceId
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref 'CustomIdentifier'
@@ -88,8 +88,8 @@ Resources:
         - AttributeName: configName
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref 'CustomIdentifier'

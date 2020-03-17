@@ -136,12 +136,11 @@ Resources:
         SubnetId2: !Ref 'SubnetId2'
         FortiGateImageId: !Ref 'FortiGateImageId'
         InstanceProfile: !Ref 'IamInstanceProfileFgt'
-      TemplateURL: !Sub
-        - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template'
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-      TimeoutInMinutes: '10'
+      TemplateURL:
+        !Sub
+          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.yaml'
+          - QSS3Region: !If [GovCloudCondition, s3-us-gov-west-1, s3]
+      TimeoutInMinutes: 10
   StackCreateFortiGateInstance2:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -156,12 +155,9 @@ Resources:
         FortiGateImageId: !Ref 'FortiGateImageId'
         InstanceProfile: !Ref 'IamInstanceProfileFgt'
       TemplateURL: !Sub
-        - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template'
-        - QSS3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-      TimeoutInMinutes: '5'
+        - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.yaml'
+        - QSS3Region: !If [GovCloudCondition, s3-us-gov-west-1, s3]
+      TimeoutInMinutes: 5
 Outputs:
   InstanceId1:
     Description: 'The instance ID of the FortiGate NAT Gateway #1.'

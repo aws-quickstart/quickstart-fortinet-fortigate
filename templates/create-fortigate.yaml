@@ -52,7 +52,7 @@ Resources:
       Description: 'FortiGate NIC: port1'
       GroupSet:
         - !Ref 'FortiGateSecurityGroupId'
-      SourceDestCheck: 'false'
+      SourceDestCheck: false
       SubnetId: !Ref 'SubnetId1'
       Tags:
         - Key: Name
@@ -71,7 +71,7 @@ Resources:
       Description: 'FortiGate NIC: port2'
       GroupSet:
         - !Ref 'FortiGateSecurityGroupId'
-      SourceDestCheck: 'false'
+      SourceDestCheck: false
       SubnetId: !Ref 'SubnetId2'
       Tags:
         - Key: Name
@@ -107,7 +107,7 @@ Resources:
           DeviceIndex: '1'
       ImageId: !Ref 'FortiGateImageId'
       InstanceType: !Ref 'FortiGateInstanceType'
-      Monitoring: 'true'
+      Monitoring: true
       Tags:
         - Key: Name
           Value: !If
