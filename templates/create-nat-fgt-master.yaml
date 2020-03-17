@@ -138,7 +138,6 @@ Resources:
         InstanceProfile: !Ref 'IamInstanceProfileFgt'
       TemplateURL: !Sub
         - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template'
-        - QSS3Region: !If
             - GovCloudCondition
             - s3-us-gov-west-1
             - s3
