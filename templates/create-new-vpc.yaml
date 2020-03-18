@@ -1,5 +1,36 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: This template creates a new VPC to deploy the FortiGate Autoscale Solution.
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Quick Start Configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+          - QSS3BucketRegion
+      - Label:
+          default: Network Configuration
+        Parameters:
+          - AvailabilityZones
+          - VPCCIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+    ParameterLabels:
+      AvailabilityZones:
+        default: Availability Zones
+      VPCCIDR:
+        default: VPC CIDR
+      PublicSubnet1CIDR:
+        default: Public Subnet 1 CIDR
+      PublicSubnet2CIDR:
+        default: Public Subnet 2 CIDR
+      PrivateSubnet1CIDR:
+        default: Private Subnet 1 CIDR
+      PrivateSubnet2CIDR:
+        default: Private Subnet 2 CIDR
 Parameters:
   QSS3BucketName:
     Type: String
@@ -24,6 +55,10 @@ Parameters:
       assets, if you decide to customize or extend the Quick Start for your own use.
       This prefix can include numbers, lowercase letters, uppercase letters, hyphens,
       and forward slashes.
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: "The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value."
+    Type: String
   AvailabilityZones:
     Description: The list of Availability Zones to use for the subnets in the VPC.
       The Quick Start uses two Availability Zones from your list and preserves the
@@ -219,36 +254,6 @@ Resources:
     DependsOn:
       - FgtPrivateSubnet2RouteTable
       - PrivateSubnet2
-Metadata:
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      - Label:
-          default: Quick Start Configuration
-        Parameters:
-          - QSS3BucketName
-          - QSS3KeyPrefix
-      - Label:
-          default: Network Configuration
-        Parameters:
-          - AvailabilityZones
-          - VPCCIDR
-          - PublicSubnet1CIDR
-          - PublicSubnet2CIDR
-          - PrivateSubnet1CIDR
-          - PrivateSubnet2CIDR
-    ParameterLabels:
-      AvailabilityZones:
-        default: Availability Zones
-      VPCCIDR:
-        default: VPC CIDR
-      PublicSubnet1CIDR:
-        default: Public Subnet 1 CIDR
-      PublicSubnet2CIDR:
-        default: Public Subnet 2 CIDR
-      PrivateSubnet1CIDR:
-        default: Private Subnet 1 CIDR
-      PrivateSubnet2CIDR:
-        default: Private Subnet 2 CIDR
 Outputs:
   FtgAsgVpc:
     Description: VPC ID

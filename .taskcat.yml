@@ -40,13 +40,14 @@ tests:
       FortiGatePskSecret: $[taskcat_genpass_8]
       InternalLoadBalancerDnsName: fgtqsg-asg
       InternalLoadBalancingOptions: add a new internal load balancer
-      KeyPairName: $[taskcat_getkeypair]
+      KeyPairName: taskcat-test
       PrivateSubnet1CIDR: 10.0.1.0/24
       PrivateSubnet2CIDR: 10.0.3.0/24
       PublicSubnet1CIDR: 10.0.0.0/24
       PublicSubnet2CIDR: 10.0.2.0/24
       QSS3BucketName: $[taskcat_autobucket]
       QSS3KeyPrefix: quickstart-fortinet-fortigate/
+      QSS3BucketRegion: $[taskcat_current_region]
       VPCCIDR: 10.0.0.0/16
     regions:
     - us-east-1
@@ -84,13 +85,14 @@ tests:
       FortiGatePskSecret: $[taskcat_genpass_8]
       InternalLoadBalancerDnsName: fgtqsg-asg
       InternalLoadBalancingOptions: add a new internal load balancer
-      KeyPairName: $[taskcat_getkeypair]
+      KeyPairName: taskcat-test
       PrivateSubnet1CIDR: 10.0.1.0/24
       PrivateSubnet2CIDR: 10.0.3.0/24
       PublicSubnet1CIDR: 10.0.0.0/24
       PublicSubnet2CIDR: 10.0.2.0/24
       QSS3BucketName: $[taskcat_autobucket]
       QSS3KeyPrefix: quickstart-fortinet-fortigate/
+      QSS3BucketRegion: $[taskcat_current_region]
       VPCCIDR: 10.0.0.0/16
     regions:
     - ap-southeast-2

@@ -49,6 +49,7 @@ Metadata:
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
+          - QSS3BucketRegion
     ParameterLabels:
       CustomIdentifier:
         default: Resource name prefix
@@ -72,6 +73,8 @@ Metadata:
         default: Quick Start S3 bucket name
       QSS3KeyPrefix:
         default: Quick Start S3 key prefix
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket region
       ExpireLifecycleEntry:
         default: Instance lifecycle expiry
       FortiGateAsgCooldown:
@@ -133,6 +136,10 @@ Parameters:
     Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
       can include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: "The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value."
+    Type: String
   AvailabilityZones:
     Description: The list of Availability Zones to use for the subnets in the VPC.
       The Quick Start uses two Availability Zones from your list and preserves the
@@ -307,9 +314,7 @@ Parameters:
     ConstraintDescription: must specify an admin access key pair for FortiGate instances.
     Description: Amazon EC2 Key Pair for admin access.
 Conditions:
-  GovCloudCondition: !Equals
-    - !Ref 'AWS::Region'
-    - us-gov-west-1
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 Resources:
   StackCreateNewVPC:
     Type: AWS::CloudFormation::Stack
@@ -317,6 +322,7 @@ Resources:
       Parameters:
         QSS3BucketName: !Ref 'QSS3BucketName'
         QSS3KeyPrefix: !Ref 'QSS3KeyPrefix'
+        QSS3BucketRegion: !Ref 'QSS3BucketRegion'
         AvailabilityZones: !Join
           - ','
           - !Ref 'AvailabilityZones'
@@ -327,8 +333,9 @@ Resources:
         PrivateSubnet2CIDR: !Ref 'PrivateSubnet2CIDR'
       TemplateURL:
         !Sub
-          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-new-vpc.yaml'
-          - QSS3Region: !If [GovCloudCondition, s3-us-gov-west-1, s3]
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-new-vpc.yaml'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       TimeoutInMinutes: 5
   StackDeployFgtAsgSolution:
     Type: AWS::CloudFormation::Stack
@@ -336,6 +343,7 @@ Resources:
       Parameters:
         QSS3BucketName: !Ref 'QSS3BucketName'
         QSS3KeyPrefix: !Ref 'QSS3KeyPrefix'
+        QSS3BucketRegion: !Ref 'QSS3BucketRegion'
         CustomIdentifier: !Ref 'CustomIdentifier'
         VpcId: !GetAtt 'StackCreateNewVPC.Outputs.FtgAsgVpc'
         VPCCIDR: !Ref 'VPCCIDR'
@@ -364,6 +372,7 @@ Resources:
         KeyPairName: !Ref 'KeyPairName'
       TemplateURL:
         !Sub
-          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/workload.yaml'
-          - QSS3Region: !If [GovCloudCondition, s3-us-gov-west-1, s3]
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/workload.yaml'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       TimeoutInMinutes: 30

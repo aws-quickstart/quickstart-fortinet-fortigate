@@ -22,16 +22,25 @@ Parameters:
       can include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
     Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: "The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value."
+    Type: String
+Conditions:
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 Resources:
   CopyObjects:
+    Type: AWS::CloudFormation::CustomResource
     Properties:
       ServiceToken: !GetAtt 'CopyObjectsFunction.Arn'
       DestBucket: !Ref 'LambdaZipsBucket'
       Objects:
         - functions/packages/lambda.zip
-      SourceBucket: !Ref 'QSS3BucketName'
+      SourceBucket: !If
+          - UsingDefaultBucket
+          - !Sub '${QSS3BucketName}-${AWS::Region}'
+          - !Ref 'QSS3BucketName'
       Prefix: !Ref 'QSS3KeyPrefix'
-    Type: AWS::CloudFormation::CustomResource
   CopyObjectsFunction:
     Properties:
       Code:
@@ -134,12 +143,14 @@ Resources:
       Path: /
       Policies:
         - PolicyDocument:
+            Version: '2012-10-17'
             Statement:
               - Action:
                   - s3:GetObject
+                Resource: !Sub
+                  - arn:${AWS::Partition}:s3:::${S3Bucket}/${QSS3KeyPrefix}*
+                  - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
                 Effect: Allow
-                Resource:
-                  - !Sub 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
               - Action:
                   - s3:PutObject
                   - s3:DeleteObject
@@ -153,7 +164,6 @@ Resources:
                 Resource:
                   - !Sub 'arn:aws:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}*'
                   - !Sub 'arn:aws:s3:::${LambdaZipsBucket}'
-            Version: '2012-10-17'
           PolicyName: object-copier
     Type: AWS::IAM::Role
   LambdaZipsBucket:
