@@ -51,6 +51,7 @@ Metadata:
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
+          - QSS3BucketRegion
     ParameterLabels:
       CustomIdentifier:
         default: Resource name prefix
@@ -74,6 +75,8 @@ Metadata:
         default: Quick Start S3 bucket name
       QSS3KeyPrefix:
         default: Quick Start S3 key prefix
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket region
       ExpireLifecycleEntry:
         default: Instance lifecycle expiry
       FortiGateAsgCooldown:
@@ -128,6 +131,10 @@ Parameters:
     Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
       can include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: "The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value."
+    Type: String
   CustomIdentifier:
     Type: String
     Default: fgtASG
@@ -298,9 +305,7 @@ Parameters:
     Type: AWS::EC2::KeyPair::KeyName
     Description: Amazon EC2 Key Pair for admin access.
 Conditions:
-  GovCloudCondition: !Equals
-    - !Ref 'AWS::Region'
-    - us-gov-west-1
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   IfAddNewInternalLoadBalancer: !Equals
     - !Ref 'InternalLoadBalancingOptions'
     - add a new internal load balancer
@@ -379,11 +384,9 @@ Resources:
                 - !Ref 'AWS::StackId'
       TemplateURL:
         !Sub
-          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-db-table.yaml'
-          - QSS3Region: !If
-              - GovCloudCondition
-              - s3-us-gov-west-1
-              - s3
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-db-table.yaml'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       TimeoutInMinutes: 10
   StackCopyLambda:
     Type: AWS::CloudFormation::Stack
@@ -391,13 +394,12 @@ Resources:
       Parameters:
         QSS3BucketName: !Ref 'QSS3BucketName'
         QSS3KeyPrefix: !Ref 'QSS3KeyPrefix'
+        QSS3BucketRegion: !Ref 'QSS3BucketRegion'
       TemplateURL:
         !Sub
-          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/copy-lambda.yaml'
-          - QSS3Region: !If
-              - GovCloudCondition
-              - s3-us-gov-west-1
-              - s3
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/copy-lambda.yaml'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       TimeoutInMinutes: 10
   StackCreateAPIGateway:
     Type: AWS::CloudFormation::Stack
@@ -421,8 +423,9 @@ Resources:
         LambdaFunctionArn: !GetAtt 'LambdaFunctionFgtAsg.Arn'
       TemplateURL:
         !Sub
-          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-api-gateway.yaml'
-          - QSS3Region: !If [GovCloudCondition, s3-us-gov-west-1, s3]
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-api-gateway.yaml'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       TimeoutInMinutes: 10
   FgtAsgSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -484,6 +487,7 @@ Resources:
       Parameters:
         QSS3BucketName: !Ref 'QSS3BucketName'
         QSS3KeyPrefix: !Ref 'QSS3KeyPrefix'
+        QSS3BucketRegion: !Ref 'QSS3BucketRegion'
         CustomIdentifier: !Ref 'CustomIdentifier'
         VpcId: !Ref 'VpcId'
         SubnetId1: !Ref 'PublicSubnet1'
@@ -503,8 +507,9 @@ Resources:
         FortiGateAdminPort: !Ref 'FortiGateAdminPort'
       TemplateURL:
         !Sub
-          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-nat-fgt-master.yaml'
-          - QSS3Region: !If [GovCloudCondition, s3-us-gov-west-1, s3]
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-nat-fgt-master.yaml'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       TimeoutInMinutes: 10
   NatGateway1RouteAttachmentNew:
     Type: AWS::EC2::Route
@@ -766,9 +771,8 @@ Resources:
               - Action:
                   - s3:GetObject
                 Resource: !Sub
-                  - arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*
-                  - QSS3BucketName: !Ref 'QSS3BucketName'
-                    QSS3KeyPrefix: !Ref 'QSS3KeyPrefix'
+                  - arn:${AWS::Partition}:s3:::${S3Bucket}/${QSS3KeyPrefix}*
+                  - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
                 Effect: Allow
           PolicyName: aws-quick-start-s3-policy
   IamRoleLfFgtAsg:

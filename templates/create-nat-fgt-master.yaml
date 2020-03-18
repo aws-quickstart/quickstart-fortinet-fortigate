@@ -18,6 +18,10 @@ Parameters:
     Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
       can include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: "The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value."
+    Type: String
   CustomIdentifier:
     Type: String
     MaxLength: '10'
@@ -71,9 +75,7 @@ Parameters:
     Description: 'A port number for FortiGate administration. Default to 8443. Do
       not use: 443, 541, 514, 703.'
 Conditions:
-  GovCloudCondition: !Equals
-    - !Ref 'AWS::Region'
-    - us-gov-west-1
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 Resources:
   sgFortiGateInstance:
     Type: AWS::EC2::SecurityGroup
@@ -113,9 +115,8 @@ Resources:
               - Action:
                   - s3:GetObject
                 Resource: !Sub
-                  - arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*
-                  - QSS3BucketName: !Ref 'QSS3BucketName'
-                    QSS3KeyPrefix: !Ref 'QSS3KeyPrefix'
+                  - arn:${AWS::Partition}:s3:::${S3Bucket}/${QSS3KeyPrefix}*
+                  - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
                 Effect: Allow
           PolicyName: aws-quick-start-s3-policy
   IamInstanceProfileFgt:
@@ -138,8 +139,15 @@ Resources:
         InstanceProfile: !Ref 'IamInstanceProfileFgt'
       TemplateURL:
         !Sub
-          - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.yaml'
-          - QSS3Region: !If [GovCloudCondition, s3-us-gov-west-1, s3]
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-fortigate.yaml'
+          - S3Region: !If
+              - UsingDefaultBucket
+              - !Ref 'AWS::Region'
+              - !Ref QSS3BucketRegion
+            S3Bucket: !If
+              - UsingDefaultBucket
+              - !Sub '${QSS3BucketName}-${AWS::Region}'
+              - !Ref QSS3BucketName
       TimeoutInMinutes: 10
   StackCreateFortiGateInstance2:
     Type: AWS::CloudFormation::Stack
@@ -155,8 +163,15 @@ Resources:
         FortiGateImageId: !Ref 'FortiGateImageId'
         InstanceProfile: !Ref 'IamInstanceProfileFgt'
       TemplateURL: !Sub
-        - 'https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.yaml'
-        - QSS3Region: !If [GovCloudCondition, s3-us-gov-west-1, s3]
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-fortigate.yaml'
+        - S3Region: !If
+            - UsingDefaultBucket
+            - !Ref 'AWS::Region'
+            - !Ref QSS3BucketRegion
+          S3Bucket: !If
+            - UsingDefaultBucket
+            - !Sub '${QSS3BucketName}-${AWS::Region}'
+            - !Ref QSS3BucketName
       TimeoutInMinutes: 5
 Outputs:
   InstanceId1:

@@ -1,7 +1,7 @@
 [
     {
         "ParameterKey": "KeyPairName",
-        "ParameterValue": "taskcat"
+        "ParameterValue": "taskcat-test"
     },
     {
         "ParameterKey": "AvailabilityZones",
@@ -93,7 +93,7 @@
     },
     {
         "ParameterKey": "QSS3BucketName",
-        "ParameterValue": "$[taskcat_autobucket]"
+        "ParameterValue": "qs-testing-ameighta"
     },
     {
         "ParameterKey": "QSS3KeyPrefix",
