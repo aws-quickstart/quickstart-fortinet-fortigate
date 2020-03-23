@@ -27,7 +27,7 @@ tests:
 #    - sa-east-1
   quickstart-fortigate-test:
     parameter_input: input.json
-    template_file: workload-master.yaml
+    template_file: workload-master.template.yaml
     regions:
     - us-east-1
     - us-east-2
@@ -42,7 +42,7 @@ tests:
     - eu-west-1
     - eu-west-2
   quickstart-fortigate-test-ap-southeast-2:
-    parameter_input: input-ap-southeast-2.json
+    parameter_input: input-ap-southeast-2.template.json
     template_file: workload-master.yaml
     regions:
     - ap-southeast-2

@@ -64,7 +64,7 @@ tests:
     - eu-west-2
     - eu-west-3
     s3_bucket: ''
-    template: templates/workload-master.yaml
+    template: templates/workload-master.template.yaml
   quickstart-fortigate-test-ap-southeast-2:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
@@ -97,4 +97,4 @@ tests:
     regions:
     - ap-southeast-2
     s3_bucket: ''
-    template: templates/workload-master.yaml
+    template: templates/workload-master.template.yaml
