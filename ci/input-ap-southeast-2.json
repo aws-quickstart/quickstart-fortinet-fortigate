@@ -1,7 +1,7 @@
 [
     {
         "ParameterKey": "KeyPairName",
-        "ParameterValue": "taskcat-test"
+        "ParameterValue": "taskcat"
     },
     {
         "ParameterKey": "AvailabilityZones",
@@ -16,12 +16,12 @@
         "ParameterValue": "fgtASG"
     },
     {
-        "ParameterKey": "ExpireLifecycleEntry",
+        "ParameterKey": "LifecycleHookTimeout",
         "ParameterValue": "300"
     },
     {
         "ParameterKey": "FortiGateAdminCidr",
-        "ParameterValue": "10.0.0.0/16"
+        "ParameterValue": "0.0.0.0/0"
     },
     {
         "ParameterKey": "FortiGateAdminPort",
@@ -93,7 +93,7 @@
     },
     {
         "ParameterKey": "QSS3BucketName",
-        "ParameterValue": "qs-testing-ameighta"
+        "ParameterValue": "$[taskcat_autobucket]"
     },
     {
         "ParameterKey": "QSS3KeyPrefix",
