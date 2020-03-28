@@ -302,16 +302,24 @@
         },
         "FortiAnalyzerAutoscaleAdminUsername": {
             "Type": "String",
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "Default": "",
+            "AllowedPattern": "^$|^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which the FortiGate Autoscale uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling Group. The naming requirement conforms to the FortiAnalyzer naming policy. This name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
         },
         "FortiAnalyzerAutoscaleAdminPassword": {
             "Type": "String",
             "NoEcho": true,
-            "MinLength": 8,
+            "Default": "",
             "MaxLength": 128,
             "Description": "The password for the 'Autoscale admin' above. The password requirement conforms to the FortiAnalyzer password policy. Please see the documentation for more information if you need to enable KMS encryption. Min length is 8 and Max length 128."
+        },
+        "FortiAnalyzerCustomPrivateIpAddress": {
+            "Type": "String",
+            "Default": "",
+            "AllowedPattern": "^$|^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}$",
+            "ConstraintDescription": "must be a valid IPv4 format.",
+            "Description": "The custom private IP address to be used by the FortiAnalyzer. The FortiAnalyzer custom private IP must be within the Autoscale subnet 1 CIDR range."
         },
         "IntegratedNatGatewayOptions": {
             "Type": "String",
@@ -339,6 +347,14 @@
                         ""
                     ]
                 }
+            ]
+        },
+        "IfIntegrateFortiAnalyzer": {
+            "Fn::Equals": [
+                {
+                    "Ref": "FortiAnalyzerIntegrationOptions"
+                },
+                "yes"
             ]
         }
     },
@@ -595,10 +611,31 @@
                         ]
                     },
                     "FortiAnalyzerAutoscaleAdminUsername": {
-                        "Ref": "FortiAnalyzerAutoscaleAdminUsername"
+                        "Fn::If": [
+                            "IfIntegrateFortiAnalyzer",
+                            {
+                                "Ref": "FortiAnalyzerAutoscaleAdminUsername"
+                            },
+                            "This-Parameter-Will-Be-Ignored-Programmatically"
+                        ]
                     },
                     "FortiAnalyzerAutoscaleAdminPassword": {
-                        "Ref": "FortiAnalyzerAutoscaleAdminPassword"
+                        "Fn::If": [
+                            "IfIntegrateFortiAnalyzer",
+                            {
+                                "Ref": "FortiAnalyzerAutoscaleAdminPassword"
+                            },
+                            "This-Parameter-Will-Be-Ignored-Programmatically"
+                        ]
+                    },
+                    "FortiAnalyzerCustomPrivateIpAddress": {
+                        "Fn::If": [
+                            "IfIntegrateFortiAnalyzer",
+                            {
+                                "Ref": "FortiAnalyzerCustomPrivateIpAddress"
+                            },
+                            "0.0.0.0"
+                        ]
                     },
                     "IntegratedNatGatewayOptions": {
                         "Ref": "IntegratedNatGatewayOptions"
@@ -706,6 +743,7 @@
                         "FortiAnalyzerIntegrationOptions",
                         "FortiAnalyzerInstanceType",
                         "FortiAnalyzerVersion",
+                        "FortiAnalyzerCustomPrivateIpAddress",
                         "FortiAnalyzerAutoscaleAdminUsername",
                         "FortiAnalyzerAutoscaleAdminPassword"
                     ]
@@ -843,6 +881,9 @@
                 },
                 "FortiAnalyzerVersion": {
                     "default": "FortiAnalyzer version"
+                },
+                "FortiAnalyzerCustomPrivateIpAddress": {
+                    "default": "FortiAnalyzer private IP"
                 },
                 "FortiAnalyzerAutoscaleAdminUsername": {
                     "default": "Autoscale admin username"

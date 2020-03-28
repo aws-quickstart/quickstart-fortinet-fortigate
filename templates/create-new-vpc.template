@@ -555,6 +555,30 @@
                     ""
                 ]
             }
+        },
+        "PublicSubnet1Cidr": {
+            "Description": "Public Subnet 1 CIDR",
+            "Value": {
+                "Ref": "PublicSubnet1Cidr"
+            }
+        },
+        "PublicSubnet2Cidr": {
+            "Description": "Public Subnet 2 CIDR",
+            "Value": {
+                "Ref": "PublicSubnet2Cidr"
+            }
+        },
+        "PrivateSubnet1Cidr": {
+            "Description": "Private Subnet 1 CIDR",
+            "Value": {
+                "Ref": "PrivateSubnet1Cidr"
+            }
+        },
+        "PrivateSubnet2Cidr": {
+            "Description": "Private Subnet 2 CIDR",
+            "Value": {
+                "Ref": "PrivateSubnet2Cidr"
+            }
         }
     }
 }

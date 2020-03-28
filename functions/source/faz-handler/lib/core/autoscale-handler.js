@@ -781,7 +781,9 @@ module.exports = class AutoscaleHandler {
             );
 
             // trigger device pre-authorization (via fortianalyzer device manager)
-            await this.authorizeDevice();
+            if (this._settings['enable-fortianalyzer-integration'] === 'true') {
+                await this.authorizeDevice();
+            }
 
             masterIp = this._masterInfo ? this._masterInfo.primaryPrivateIpAddress : null;
             // if slave finds master is pending, don't update master ip to the health check record
@@ -1427,7 +1429,7 @@ module.exports = class AutoscaleHandler {
                     description = 'The Id of the Transit Gateway outbound route table.';
                     break;
                 case 'enablehybridlicensing':
-                    keyName = '';
+                    keyName = 'enable-hybrid-licensing';
                     description = 'Toggle ON / OFF the hybrid licensing feature.';
                     editable = false;
                     break;

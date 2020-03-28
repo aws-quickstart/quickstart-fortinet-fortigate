@@ -289,6 +289,12 @@
             "MaxLength": 128,
             "Description": "The password for the 'Autoscale admin' above. The password requirement conforms to the FortiAnalyzer password policy. Please see the documentation for more information if you need to enable KMS encryption. Min length is 8 and Max length 128."
         },
+        "FortiAnalyzerCustomPrivateIpAddress": {
+            "Type": "String",
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}$",
+            "ConstraintDescription": "must be a valid IPv4 format.",
+            "Description": "The static private IP address allocated for the FortiAnalyzer in the designated subnet."
+        },
         "IntegratedNatGatewayOptions": {
             "Type": "String",
             "AllowedValues": ["yes", "no"],
@@ -409,7 +415,7 @@
             "AMI": {
                 "FGTVM64BYOL623": "aws-marketplace/FortiGate-VM64-AWS build1066 (6.2.3) GA-e5936f4a-0d69-479f-919c-d5e158bd4d12-ami-00364bb191729739b.4",
                 "FGTVM64PAYG623": "aws-marketplace/FortiGate-VM64-AWSONDEMAND build1066 (6.2.3) GA-3124a694-441c-4ff1-8bf7-4d153be424a6-ami-07d8d9716be7d7aa1.4",
-                "FAZVM64PAYG623": "aws-marketplace/FortiAnalyzer VM64-AWSOnDemand build1235 (6.2.3) GA-137ae5b3-1f45-4ebd-81bf-93687e21d93e-ami-0750d39819d7caa42.4"
+                "FAZVM64PAYG623": "156079085218/FortiAnalyzer VM64-AWSOnDemand build1235 (6.2.3) GA-137ae5b3-1f45-4ebd-81bf-93687e21d93e-ami-0750d39819d7caa42.4"
             },
             "ap-northeast-1": {
                 "FGTVM64BYOL623": "ami-02b216ce42200bd6a",
@@ -493,7 +499,7 @@
             "us-west-2": {
                 "FGTVM64BYOL623": "ami-04fc0698575eb8a17",
                 "FGTVM64PAYG623": "ami-00f25d8bf4aaa4613",
-                "FAZVM64PAYG623": "ami-0b7bfc2604bf63d33"
+                "FAZVM64PAYG623": "ami-0b02922e75e652b14"
             },
             "ap-east-1": {
                 "FGTVM64BYOL623": "ami-6f41041e",
@@ -1075,7 +1081,16 @@
                             }
                         ]
                     },
-                    "ProductCodePayg": ""
+                    "ProductCodePayg": "",
+                    "LicensingModel": {
+                        "Fn::If": [
+                            "IfPAYGOnly",
+                            "PAYG-Only",
+                            {
+                                "Fn::If": ["IfBYOLOnly", "BYOL-Only", "Hybrid"]
+                            }
+                        ]
+                    }
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
@@ -1307,7 +1322,16 @@
                     "Fn::If": ["IfIntegrateFortiAnalyzer", "true", "false"]
                 },
                 "FazHandlerName": {
-                    "Fn::GetAtt": ["StackCreateFortiAnalyzer", "Outputs.FazHandlerFunctionName"]
+                    "Fn::If": [
+                        "IfIntegrateFortiAnalyzer",
+                        {
+                            "Fn::GetAtt": [
+                                "StackCreateFortiAnalyzer",
+                                "Outputs.FazHandlerFunctionName"
+                            ]
+                        },
+                        ""
+                    ]
                 },
                 "EnableIntegratedEgressNatGateway": {
                     "Fn::If": ["IfUseIntegratedEgressNatGw", "true", "false"]
@@ -1389,10 +1413,22 @@
                         "Ref": "KeyPairName"
                     },
                     "AutoscaleAdminUsername": {
-                        "Ref": "FortiAnalyzerAutoscaleAdminUsername"
+                        "Fn::If": [
+                            "IfIntegrateFortiAnalyzer",
+                            {
+                                "Ref": "FortiAnalyzerAutoscaleAdminUsername"
+                            },
+                            ""
+                        ]
                     },
                     "AutoscaleAdminPassword": {
-                        "Ref": "FortiAnalyzerAutoscaleAdminPassword"
+                        "Fn::If": [
+                            "IfIntegrateFortiAnalyzer",
+                            {
+                                "Ref": "FortiAnalyzerAutoscaleAdminPassword"
+                            },
+                            ""
+                        ]
                     },
                     "ProductAMI": {
                         "Fn::FindInMap": [
@@ -1409,6 +1445,15 @@
                                     }
                                 ]
                             }
+                        ]
+                    },
+                    "CustomPrivateIpAddress": {
+                        "Fn::If": [
+                            "IfIntegrateFortiAnalyzer",
+                            {
+                                "Ref": "FortiAnalyzerCustomPrivateIpAddress"
+                            },
+                            ""
                         ]
                     }
                 },
