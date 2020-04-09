@@ -997,7 +997,7 @@
                     "default": "FortiAnalyzer version"
                 },
                 "FortiAnalyzerCustomPrivateIpAddress": {
-                    "default": "FortiAnalyzer private IP"
+                    "default": "FortiAnalyzer private IP address"
                 },
                 "FortiAnalyzerAutoscaleAdminUsername": {
                     "default": "Autoscale admin username"
