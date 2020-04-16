@@ -383,16 +383,16 @@
                     "VPCCIDR": {
                         "Ref": "VPCCIDR"
                     },
-                    "PublicSubnet1Cidr": {
+                    "PublicSubnet1CIDR": {
                         "Ref": "PublicSubnet1CIDR"
                     },
-                    "PublicSubnet2Cidr": {
+                    "PublicSubnet2CIDR": {
                         "Ref": "PublicSubnet2CIDR"
                     },
-                    "PrivateSubnet1Cidr": {
+                    "PrivateSubnet1CIDR": {
                         "Ref": "PrivateSubnet1CIDR"
                     },
-                    "PrivateSubnet2Cidr": {
+                    "PrivateSubnet2CIDR": {
                         "Ref": "PrivateSubnet2CIDR"
                     },
                     "PairWithPrivateSubnet": "yes",
