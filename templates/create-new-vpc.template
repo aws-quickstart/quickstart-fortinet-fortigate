@@ -6,7 +6,7 @@
             "Description": "The list of Availability Zones to use for the subnets in the VPC. The FortiGate Autoscale solution uses two Availability Zones from your list and preserves the logical order you specify.",
             "Type": "List<AWS::EC2::AvailabilityZone::Name>"
         },
-        "VpcCidr": {
+        "VPCCIDR": {
             "Type": "String",
             "Default": "10.0.0.0/16",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
@@ -75,7 +75,7 @@
             "Type": "AWS::EC2::VPC",
             "Properties": {
                 "CidrBlock": {
-                    "Ref": "VpcCidr"
+                    "Ref": "VPCCIDR"
                 },
                 "InstanceTenancy": "default",
                 "EnableDnsSupport": "true",
@@ -484,16 +484,16 @@
         }
     },
     "Outputs": {
-        "VpcId": {
+        "VPCID": {
             "Description": "VPC ID",
             "Value": {
                 "Ref": "FgtAsgVpc"
             }
         },
-        "VpcCidr": {
+        "VPCCIDR": {
             "Description": "VPC CIDR",
             "Value": {
-                "Ref": "VpcCidr"
+                "Ref": "VPCCIDR"
             }
         },
         "PublicSubnet1Id": {

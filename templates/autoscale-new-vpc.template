@@ -254,7 +254,7 @@
             "Default": "add a new internal load balancer",
             "AllowedValues": [
                 "add a new internal load balancer",
-                "use a load balancer specified below",
+                "use the load balancer specified below",
                 "do not need one"
             ],
             "ConstraintDescription": "must choose from the provided options.",
@@ -328,7 +328,7 @@
             "Default": "",
             "AllowedPattern": "^$|^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}$",
             "ConstraintDescription": "must be a valid IPv4 format.",
-            "Description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Auto Scaling subnet 1 CIDR range."
+            "Description": "The custom private IP address to be used by the FortiAnalyzer. The FortiAnalyzer custom private IP must be within the Auto Scaling subnet 1 CIDR range."
         },
         "IntegratedNATGatewayOptions": {
             "Type": "String",
@@ -380,7 +380,7 @@
                             }
                         ]
                     },
-                    "VpcCidr": {
+                    "VPCCIDR": {
                         "Ref": "VPCCIDR"
                     },
                     "PublicSubnet1Cidr": {
@@ -574,11 +574,11 @@
                             }
                         ]
                     },
-                    "VpcCidr": {
-                        "Fn::GetAtt": ["StackCreateNewVPC", "Outputs.VpcCidr"]
+                    "VPCCIDR": {
+                        "Fn::GetAtt": ["StackCreateNewVPC", "Outputs.VPCCIDR"]
                     },
-                    "VpcId": {
-                        "Fn::GetAtt": ["StackCreateNewVPC", "Outputs.VpcId"]
+                    "VPCID": {
+                        "Fn::GetAtt": ["StackCreateNewVPC", "Outputs.VPCID"]
                     },
                     "PublicSubnet1": {
                         "Fn::GetAtt": ["StackCreateNewVPC", "Outputs.PublicSubnet1Id"]
@@ -660,7 +660,7 @@
                     "FortiGateAdminPort": {
                         "Ref": "FortiGateAdminPort"
                     },
-                    "FortiGateAdminCidr": {
+                    "FortiGateAdminCIDR": {
                         "Ref": "FortiGateAdminCIDR"
                     },
                     "KeyPairName": {
@@ -693,7 +693,7 @@
                     "InternalTargetGroupHealthCheckPath": {
                         "Ref": "InternalTargetGroupHealthCheckPath"
                     },
-                    "InternalLoadBalancerDnsName": {
+                    "InternalLoadBalancerDNSName": {
                         "Ref": "InternalLoadBalancerDNSName"
                     },
                     "GetLicenseGracePeriod": {
@@ -746,7 +746,7 @@
                             "This-Parameter-Will-Be-Ignored-Programmatically"
                         ]
                     },
-                    "FortiAnalyzerCustomPrivateIpAddress": {
+                    "FortiAnalyzerCustomPrivateIPAddress": {
                         "Fn::If": [
                             "IfIntegrateFortiAnalyzer",
                             {
@@ -755,7 +755,7 @@
                             "0.0.0.0"
                         ]
                     },
-                    "IntegratedNatGatewayOptions": {
+                    "IntegratedNATGatewayOptions": {
                         "Ref": "IntegratedNATGatewayOptions"
                     }
                 },

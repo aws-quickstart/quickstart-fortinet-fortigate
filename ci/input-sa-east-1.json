@@ -72,7 +72,7 @@
         "ParameterValue": "add a new internal load balancer"
     },
     {
-        "ParameterKey": "InternalLoadBalancerDnsName",
+        "ParameterKey": "InternalLoadBalancerDNSName",
         "ParameterValue": "fgtqsg-asg"
     },
     {

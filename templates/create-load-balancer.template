@@ -55,7 +55,7 @@
             "ConstraintDescription": "must be a valid number not less than 2.",
             "Description": "The number of consecutive health check failures required before considering a FortiGate instance unhealthy. Minimum is 3."
         },
-        "VpcId": {
+        "VPCID": {
             "Type": "AWS::EC2::VPC::Id",
             "Description": "The existing VPC ID where you can register target from."
         },
@@ -199,7 +199,7 @@
                     "Ref": "FgtTargetGroupHealthCheckThreshold"
                 },
                 "VpcId": {
-                    "Ref": "VpcId"
+                    "Ref": "VPCID"
                 },
                 "TargetGroupAttributes": [
                     {
@@ -358,7 +358,7 @@
                 },
                 "HealthCheckPort": "traffic-port",
                 "VpcId": {
-                    "Ref": "VpcId"
+                    "Ref": "VPCID"
                 },
                 "Tags": [
                     {
@@ -431,7 +431,7 @@
                         "default": "FortiGate load balancer configuration"
                     },
                     "Parameters": [
-                        "VpcId",
+                        "VPCID",
                         "FgtSubnetIds",
                         "TrafficProtocol",
                         "TrafficPort",
@@ -465,7 +465,7 @@
                 "FgtTargetGroupHealthCheckThreshold": {
                     "default": "Healthy threshold"
                 },
-                "VpcId": {
+                "VPCID": {
                     "default": "VPC ID"
                 },
                 "FgtSubnetIds": {
@@ -496,7 +496,7 @@
                 "Ref": "FgtTargetGroup"
             }
         },
-        "InternalLoadBalancerDnsName": {
+        "InternalLoadBalancerDNSName": {
             "Description": "FortiGate protected service load balancer DNS Name",
             "Value": {
                 "Fn::GetAtt": ["InternalLoadBalancer", "DNSName"]

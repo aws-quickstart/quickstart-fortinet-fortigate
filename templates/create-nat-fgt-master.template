@@ -21,7 +21,7 @@
             "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
             "Description": "An identifier as resource name prefix. Must be at most 10 characters long and only contain uppercase, lowercase letters, and numbers."
         },
-        "VpcId": {
+        "VPCID": {
             "Type": "AWS::EC2::VPC::Id",
             "Description": "Enter a valid VPC ID to deploy. The VPC must have the option 'DNS hostnames' enabled."
         },
@@ -55,7 +55,7 @@
             "Type": "String",
             "Description": "Instance Type."
         },
-        "FortiGateAdminCidr": {
+        "FortiGateAdminCIDR": {
             "Type": "String",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format and 0.0.0.0/0 is not recommended.",
@@ -97,7 +97,7 @@
                     {
                         "IpProtocol": "tcp",
                         "CidrIp": {
-                            "Ref": "FortiGateAdminCidr"
+                            "Ref": "FortiGateAdminCIDR"
                         },
                         "FromPort": 22,
                         "ToPort": 22
@@ -105,7 +105,7 @@
                     {
                         "IpProtocol": "tcp",
                         "CidrIp": {
-                            "Ref": "FortiGateAdminCidr"
+                            "Ref": "FortiGateAdminCIDR"
                         },
                         "FromPort": {
                             "Ref": "FortiGateAdminPort"
@@ -128,7 +128,7 @@
                     }
                 ],
                 "VpcId": {
-                    "Ref": "VpcId"
+                    "Ref": "VPCID"
                 }
             }
         },

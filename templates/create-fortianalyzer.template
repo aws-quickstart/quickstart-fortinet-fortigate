@@ -36,7 +36,7 @@
             "Type": "String",
             "Description": "The DynamoDB table ARN list that this stack needs to access to. This parameter should be passed down from the caller stack for consistency."
         },
-        "VpcId": {
+        "VPCID": {
             "Type": "AWS::EC2::VPC::Id",
             "Description": "Enter a valid VPC ID to deploy. The VPC must have the option 'DNS hostnames' enabled."
         },
@@ -198,7 +198,7 @@
                     }
                 ],
                 "VpcId": {
-                    "Ref": "VpcId"
+                    "Ref": "VPCID"
                 }
             }
         },

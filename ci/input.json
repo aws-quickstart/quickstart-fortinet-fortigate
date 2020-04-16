@@ -144,7 +144,7 @@
         "ParameterValue": "/"
     },
     {
-        "ParameterKey": "InternalLoadBalancerDnsName",
+        "ParameterKey": "InternalLoadBalancerDNSName",
         "ParameterValue": ""
     },
     {
