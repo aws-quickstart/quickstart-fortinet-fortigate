@@ -2,13 +2,13 @@
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "Deploys and configures FortiGates to the selected subnets in a VPC",
     "Parameters": {
-        "S3BucketName": {
+        "QSS3BucketName": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Deployment resource S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Description": "Name of the S3 bucket that contains the FortiGate Autoscale deployment package. Can only contain numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
         },
-        "S3KeyPrefix": {
+        "QSS3KeyPrefix": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Deployment package S3 key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
@@ -161,13 +161,13 @@
                                     "Action": ["s3:GetObject"],
                                     "Resource": {
                                         "Fn::Sub": [
-                                            "arn:aws:s3:::${S3BucketName}/${S3KeyPrefix}*",
+                                            "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
                                             {
-                                                "S3BucketName": {
-                                                    "Ref": "S3BucketName"
+                                                "QSS3BucketName": {
+                                                    "Ref": "QSS3BucketName"
                                                 },
-                                                "S3KeyPrefix": {
-                                                    "Ref": "S3KeyPrefix"
+                                                "QSS3KeyPrefix": {
+                                                    "Ref": "QSS3KeyPrefix"
                                                 }
                                             }
                                         ]
@@ -176,7 +176,7 @@
                                 }
                             ]
                         },
-                        "PolicyName": "aws-quick-start-s3-policy"
+                        "PolicyName": "fortigate-autoscale-s3-access-policy"
                     }
                 ]
             }
@@ -228,7 +228,7 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/create-fortigate.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
@@ -276,7 +276,7 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/create-fortigate.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
@@ -292,13 +292,13 @@
         "InstanceId1": {
             "Description": "The instance ID of the FortiGate NAT Gateway #1.",
             "Value": {
-                "Fn::GetAtt": ["StackCreateFortiGateInstance1", "Outputs.InstanceId"]
+                "Fn::GetAtt": ["StackCreateFortiGateInstance1", "Outputs."]
             }
         },
         "InstanceId1PublicIp": {
             "Description": "The public IP address of the FortiGate NAT Gateway #1.",
             "Value": {
-                "Fn::GetAtt": ["StackCreateFortiGateInstance1", "Outputs.PublicIp"]
+                "Fn::GetAtt": ["StackCreateFortiGateInstance1", "Outputs.PublicIP"]
             }
         },
         "InstanceId1PrivateIp": {
@@ -322,13 +322,13 @@
         "InstanceId2": {
             "Description": "The instance ID of the FortiGate NAT Gateway #2.",
             "Value": {
-                "Fn::GetAtt": ["StackCreateFortiGateInstance2", "Outputs.InstanceId"]
+                "Fn::GetAtt": ["StackCreateFortiGateInstance2", "Outputs.InstanceID"]
             }
         },
         "InstanceId2PublicIp": {
             "Description": "The public IP address of the FortiGate NAT Gateway #2.",
             "Value": {
-                "Fn::GetAtt": ["StackCreateFortiGateInstance2", "Outputs.PublicIp"]
+                "Fn::GetAtt": ["StackCreateFortiGateInstance2", "Outputs.PublicIP"]
             }
         },
         "InstanceId2PrivateIp": {

@@ -254,13 +254,13 @@
         }
     },
     "Outputs": {
-        "InstanceId": {
+        "InstanceID": {
             "Description": "The instance ID of the created FortiGate.",
             "Value": {
                 "Ref": "ec2InstanceFortiGate"
             }
         },
-        "PublicIp": {
+        "PublicIP": {
             "Description": "The public IP of the created FortiGate.",
             "Value": {
                 "Fn::GetAtt": ["ec2InstanceFortiGate", "PublicIp"]

@@ -17,19 +17,19 @@
             "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
             "Description": "An alternative name prefix to be used on a resource that the 'Resource tag prefix' cannot apply to. Can only contain numbers, lowercase letters, and uppercase letters. Max length is 10."
         },
-        "S3BucketName": {
+        "QSS3BucketName": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
-            "ConstraintDescription": "Deployment resource S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "Name of the S3 bucket that contains the FortiGate Autoscale deployment package. Can only contain numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+            "ConstraintDescription": "Quick Start S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Description": "S3 bucket name for the Quick Start assets. Can only contain numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
         },
-        "S3KeyPrefix": {
+        "QSS3KeyPrefix": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
-            "ConstraintDescription": "Deployment package S3 key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Description": "Name of the S3 folder that stores the FortiGate Autoscale deployment resources. Can only contain numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). If provided, it must end with a forward slash (/)."
+            "ConstraintDescription": "Quick Start S3 key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Description": "S3 key prefix for the Quick Start assets. Can only contain numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). If provided, it must end with a forward slash (/)."
         },
-        "UniqueId": {
+        "UniqueID": {
             "Type": "String",
             "MaxLength": "8",
             "AllowedPattern": "[A-Za-z0-9]+",
@@ -38,41 +38,41 @@
         },
         "VPCID": {
             "Type": "AWS::EC2::VPC::Id",
-            "Description": "The ID of the existing VPC where FortiGate Autoscale will be deployed. The VPC must have the option 'DNS hostnames' enabled and each of the two AZs in the VPC must have at least 1 public subnet and at least 1 private subnet."
+            "Description": "The ID of the existing VPC where Fortinet FortiGate Auto Scaling will be deployed. The VPC must have the option 'DNS hostnames' enabled and each of the two Availability Zones in the VPC must have at least 1 public subnet and at least 1 private subnet."
         },
         "VPCCIDR": {
             "Type": "String",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format.",
-            "Description": "The CIDR block of the selected existing VPC. This can be found in parentheses in the VPC ID parameter selection."
+            "Description": "The CIDR block of the selected existing VPC in which FortiGate Autoscale will be deployed. This can be found in parentheses in the VPC ID parameter selection."
         },
         "PublicSubnet1": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The ID of the public subnet 1 located in Availability Zone 1 of the selected existing VPC."
+            "Description": "The ID of the public subnet 1 located in Availability Zone 1 of the selected existing VPC. The FortiGate Autoscale instances will be deployed here."
         },
         "PublicSubnet2": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The ID of the public subnet 2 located in Availability Zone 2 of the selected existing VPC."
+            "Description": "The ID of the public subnet 2 located in Availability Zone 2 of the selected existing VPC. The FortiGate Autoscale instances will be deployed here."
         },
         "PrivateSubnet1": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The ID of the private subnet 1 located in Availability Zone 1 of the selected existing VPC. This subnet will be protected by the FortiGates in the public subnet of the same AZ."
+            "Description": "The ID of the private subnet 1 located in Availability Zone 1 of the selected existing VPC. This subnet will be protected by the FortiGates in the public subnet of the same Availability Zone."
         },
         "PrivateSubnet2": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The ID of the private subnet 2 located in Availability Zone 2 of the selected existing VPC. This subnet will be protected by the FortiGates in the public subnet of the same AZ."
+            "Description": "The ID of the private subnet 2 located in Availability Zone 2 of the selected existing VPC. This subnet will be protected by the FortiGates in the public subnet of the same Availability Zone."
         },
         "PrivateSubnetRouteTable": {
             "Type": "String",
-            "Description": "Route table ID associated with the two private subnets."
+            "Description": "The ID of the route table associated with the two private subnets."
         },
         "FortiGateInstanceType": {
             "Type": "String",
-            "Description": "Instance type for the FortiGates in the Auto Scaling group. There are t2.small and compute-optimized instances such as c4 and c5 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/."
+            "Description": "The instance type for the FortiGates in the Auto Scaling group. There are t2.small and compute-optimized instances such as c4 and c5 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/."
         },
         "FortiOSVersion": {
             "Type": "String",
-            "Description": "FortiOS version."
+            "Description": "The FortiOS version supported by FortiGate Autoscale."
         },
         "LifecycleHookTimeout": {
             "Type": "Number",
@@ -80,7 +80,7 @@
             "MinValue": 60,
             "MaxValue": 3600,
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
-            "Description": "The amount of time (in seconds) that can elapse before the FortiGate Autoscale lifecycle hook times out. Minimum is 60. Maximum is 3600."
+            "Description": "The amount of time (in seconds) that can elapse before the Auto Scaling group lifecycle hook times out. Minimum is 60. Maximum is 3600."
         },
         "FgtAsgCooldown": {
             "Type": "Number",
@@ -95,42 +95,42 @@
             "Default": 2,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "The number of FortiGate instances the BYOL Auto Scaling group should have at any time. For High Availability in BYOL-only and Hybrid use cases, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for PAYG-only, and >= 2 for BYOL-only or hybrid licensing."
+            "Description": "The number of FortiGate instances the BYOL Auto Scaling group should have at any time. For High Availability in BYOL-only and Hybrid use cases, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing."
         },
         "FgtAsgMinSizeByol": {
             "Type": "Number",
             "Default": 2,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "Minimum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for PAYG-only, and >= 2 for BYOL-only or hybrid licensing."
+            "Description": "Minimum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing."
         },
         "FgtAsgMaxSizeByol": {
             "Type": "Number",
             "Default": 2,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "Maximum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for PAYG-only, and >= 2 for BYOL-only or hybrid licensing. This number must be greater than or equal to the Minimum group size (BYOL)."
+            "Description": "Maximum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing. This number must be greater than or equal to the Minimum group size (BYOL)."
         },
         "FgtAsgDesiredCapacityPayg": {
             "Type": "Number",
             "Default": 0,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "The number of FortiGate instances the PAYG Auto Scaling group should have at any time. For High Availability in a PAYG-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, >= 2 for PAYG-only, and >= 0 for hybrid licensing."
+            "Description": "The number of FortiGate instances the On-Demand Auto Scaling group should have at any time. For High Availability in a On-Demand-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing."
         },
         "FgtAsgMinSizePayg": {
             "Type": "Number",
             "Default": 0,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "Minimum number of FortiGate instances in the PAYG Auto Scaling group. For specific use cases, set to 0 for BYOL-only, >= 2 for PAYG-only, and >= 0 for hybrid licensing."
+            "Description": "Minimum number of FortiGate instances in the On-Demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing."
         },
         "FgtAsgMaxSizePayg": {
             "Type": "Number",
             "Default": 6,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "Maximum number of FortiGate instances in the PAYG Auto Scaling group. For specific use cases, set to 0 for BYOL-only, >= 2 for PAYG-only, and >= 0 for hybrid licensing. This number must be greater than or equal to the Minimum group size (PAYG)."
+            "Description": "Maximum number of FortiGate instances in the On-Demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing. This number must be greater than or equal to the Minimum group size (On-Demand)."
         },
         "FgtAsgHealthCheckGracePeriod": {
             "Type": "Number",
@@ -159,7 +159,7 @@
             "Type": "String",
             "NoEcho": true,
             "MaxLength": "128",
-            "Description": "A secret key for the FortiGate instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Max length is 128."
+            "Description": "The secret key used by the FortiGate instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Max length is 128."
         },
         "FortiGateAdminPort": {
             "Type": "Number",
@@ -167,18 +167,18 @@
             "MinValue": 1,
             "MaxValue": 65535,
             "ConstraintDescription": "must be a valid port number between 1 and 65535.",
-            "Description": "A port number for FortiGate administration. Minimum is 1. Maximum is 65535. Do not use the FortiGate reserved ports 443, 541, 514, or 703."
+            "Description": "The port number for FortiGate administration. Minimum is 1. Maximum is 65535. Do not use the FortiGate reserved ports 443, 541, 514, or 703."
         },
         "FortiGateAdminCIDR": {
             "Type": "String",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
-            "ConstraintDescription": "must be a valid CIDR block format and 0.0.0.0/0 is highly not recommended.",
-            "Description": "CIDR block for external admin management access. **WARNING!** 0.0.0.0/0 accepts connections from any IP address. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses."
+            "ConstraintDescription": "must be a valid CIDR block format and 0.0.0.0/0 is not recommended.",
+            "Description": "The CIDR block for external admin management access. **WARNING!** 0.0.0.0/0 accepts connections from any IP address. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses."
         },
         "KeyPairName": {
             "Type": "AWS::EC2::KeyPair::KeyName",
             "ConstraintDescription": "must specify an admin access key pair for FortiGate instances.",
-            "Description": "Amazon EC2 Key Pair for admin access."
+            "Description": "The Amazon EC2 Key Pair for admin access."
         },
         "MasterElectionTimeout": {
             "Type": "Number",
@@ -215,7 +215,7 @@
             "Default": "HTTPS",
             "AllowedValues": ["HTTP", "HTTPS", "TCP"],
             "ConstraintDescription": "value must be chosen from the provided options.",
-            "Description": "Use this protocol to load balance traffic."
+            "Description": "The protocol used to load balance traffic."
         },
         "LoadBalancingTrafficPort": {
             "Type": "Number",
@@ -223,7 +223,7 @@
             "MinValue": 1,
             "MaxValue": 65535,
             "ConstraintDescription": "must be a valid port number between 1 and 65535.",
-            "Description": "Balance web service traffic over this port if the internal web-service load balancer is enabled. Minimum is 1. Maximum is 65535."
+            "Description": "The port number used to balance web service traffic if the internal web service load balancer is enabled. Minimum is 1. Maximum is 65535."
         },
         "LoadBalancingHealthCheckThreshold": {
             "Type": "Number",
@@ -241,7 +241,7 @@
                 "do not need one"
             ],
             "ConstraintDescription": "must choose from the provided options.",
-            "Description": "Add an optional pre-defined load balancer to route traffic to web service in the private subnets. You can optionally use your own one or decide to not need one."
+            "Description": "(Optional) The pre-defined load balancer to route traffic to web service in the private subnets."
         },
         "InternalTargetGroupHealthCheckPath": {
             "Type": "String",
@@ -249,12 +249,12 @@
             "AllowedPattern": "^/[0-9a-zA-Z-/]*$",
             "MaxLength": 1024,
             "ConstraintDescription": "This path must begin with a '/' character, and can be at most 1024 characters in length.",
-            "Description": "Optional. The destination path for health checks. This path must begin with a '/' character, and can be at most 1024 characters in length."
+            "Description": "(Optional) The destination path for health checks. This path must begin with a '/' character, and can be at most 1024 characters in length."
         },
         "InternalLoadBalancerDNSName": {
             "Type": "String",
             "Default": "",
-            "Description": "Optional. Specify the DNS Name of an existing internal load balancer used to route traffic from a FortiGate to targets in a specified target group. Leave it blank if you don't use an existing load balancer."
+            "Description": "(Optional) The DNS name of an existing internal load balancer used to route traffic from a FortiGate to targets in a specified target group. Leave it blank if you don't use an existing load balancer."
         },
         "GetLicenseGracePeriod": {
             "Type": "Number",
@@ -266,28 +266,28 @@
         "FortiAnalyzerIntegrationOptions": {
             "Type": "String",
             "AllowedValues": ["yes", "no"],
-            "Description": "Incorporate FortiAnalyzer into the FortiGate Autoscale to use extended features including storing logs into FortiAnalyzer."
+            "Description": "Choose 'yes' to incorporate FortiAnalyzer into FortiGate Autoscale to use extended features that include storing logs into FortiAnalyzer."
         },
         "FortiAnalyzerInstanceType": {
             "Type": "String",
-            "Description": "Instance type to launch as FortiAnalyzer On-Demand instances. There are t2.small and compute-optimized instances such as m4 and c4 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/"
+            "Description": "The instance type to launch as FortiAnalyzer On-Demand instances. There are t2.small and compute-optimized instances such as m4 and c4 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/"
         },
         "FortiAnalyzerVersion": {
             "Type": "String",
-            "Description": "FortiAnalyzer version."
+            "Description": "The FortiAnalyzer version supported by FortiGate Autoscale."
         },
         "FortiAnalyzerAutoscaleAdminUsername": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which the FortiGate Autoscale uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling Group. The naming requirement conforms to the FortiAnalyzer naming policy. This name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+            "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which FortiGate Autoscale uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-)."
         },
         "FortiAnalyzerAutoscaleAdminPassword": {
             "Type": "String",
             "NoEcho": true,
             "MinLength": 8,
             "MaxLength": 128,
-            "Description": "The password for the 'Autoscale admin' above. The password requirement conforms to the FortiAnalyzer password policy. Please see the documentation for more information if you need to enable KMS encryption. Min length is 8 and Max length 128."
+            "Description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
         },
         "FortiAnalyzerCustomPrivateIPAddress": {
             "Type": "String",
@@ -298,7 +298,7 @@
         "IntegratedNATGatewayOptions": {
             "Type": "String",
             "AllowedValues": ["yes", "no"],
-            "Description": "Make the master FortiGate in the Auto Scaling group as the NAT Gateway for egress traffic from the protected private subnets."
+            "Description": "Choose 'yes' to set the master FortiGate in the Auto Scaling group as the NAT gateway for egress traffic from the protected private subnets."
         }
     },
     "Conditions": {
@@ -413,102 +413,102 @@
         },
         "AWSAMIRegionMap": {
             "AMI": {
-                "FGTVM64BYOL623": "aws-marketplace/FortiGate-VM64-AWS build1066 (6.2.3) GA-e5936f4a-0d69-479f-919c-d5e158bd4d12-ami-00364bb191729739b.4",
-                "FGTVM64PAYG623": "aws-marketplace/FortiGate-VM64-AWSONDEMAND build1066 (6.2.3) GA-3124a694-441c-4ff1-8bf7-4d153be424a6-ami-07d8d9716be7d7aa1.4",
-                "FAZVM64PAYG623": "156079085218/FortiAnalyzer VM64-AWSOnDemand build1235 (6.2.3) GA-137ae5b3-1f45-4ebd-81bf-93687e21d93e-ami-0750d39819d7caa42.4"
+                "FGTVM64BYOL623": "aws-marketplace/FortiGate-VM64-AWS build8404 (6.2.3) GA-e5936f4a-0d69-479f-919c-d5e158bd4d12-ami-01c5698f7658a8322.4",
+                "FGTVM64PAYG623": "aws-marketplace/FortiGate-VM64-AWSONDEMAND build8404 (6.2.3) GA-3124a694-441c-4ff1-8bf7-4d153be424a6-ami-0462507a813be3282.4",
+                "FAZVM64PAYG623": "aws-marketplace/FortiAnalyzer VM64-AWSOnDemand build1235 (6.2.3) GA-137ae5b3-1f45-4ebd-81bf-93687e21d93e-ami-0750d39819d7caa42.4"
             },
             "ap-northeast-1": {
-                "FGTVM64BYOL623": "ami-02b216ce42200bd6a",
-                "FGTVM64PAYG623": "ami-00de99b513c2f852c",
+                "FGTVM64BYOL623": "ami-0bc8cacacf3dfcfc8",
+                "FGTVM64PAYG623": "ami-0444162d604179bf6",
                 "FAZVM64PAYG623": "ami-0b0dd518b763ae923"
             },
             "ap-northeast-2": {
-                "FGTVM64BYOL623": "ami-03e10bf695135056e",
-                "FGTVM64PAYG623": "ami-04e318d96c99ea8c0",
+                "FGTVM64BYOL623": "ami-0a2a06f3cbde68482",
+                "FGTVM64PAYG623": "ami-065b67d14c722617a",
                 "FAZVM64PAYG623": "ami-03365fee895cc8522"
             },
             "ap-south-1": {
-                "FGTVM64BYOL623": "ami-007c03d473e55daa2",
-                "FGTVM64PAYG623": "ami-043bb481ef1af8740",
+                "FGTVM64BYOL623": "ami-053b6c12f13183b41",
+                "FGTVM64PAYG623": "ami-0f6693857523585b8",
                 "FAZVM64PAYG623": "ami-0b18b7bfbda2f5793"
             },
             "ap-southeast-1": {
-                "FGTVM64BYOL623": "ami-0786cffca939042d8",
-                "FGTVM64PAYG623": "ami-0178ca1a0dbfe62c7",
+                "FGTVM64BYOL623": "ami-039c20a560db91564",
+                "FGTVM64PAYG623": "ami-0155fb808596ae522",
                 "FAZVM64PAYG623": "ami-063a043576683a8cd"
             },
             "ap-southeast-2": {
-                "FGTVM64BYOL623": "ami-003c22d372f903dc6",
-                "FGTVM64PAYG623": "ami-05708d1e433accc2a",
+                "FGTVM64BYOL623": "ami-0fce8cb38dad71632",
+                "FGTVM64PAYG623": "ami-0b67711c6be07aa0b",
                 "FAZVM64PAYG623": "ami-0d1060f02fae9ea3b"
             },
             "ca-central-1": {
-                "FGTVM64BYOL623": "ami-004936b7904788393",
-                "FGTVM64PAYG623": "ami-04165f7ee507c0cad",
+                "FGTVM64BYOL623": "ami-047aac44951feb9fb",
+                "FGTVM64PAYG623": "ami-099941e57393c2225",
                 "FAZVM64PAYG623": "ami-002bde3b72a43df1f"
             },
             "eu-central-1": {
-                "FGTVM64BYOL623": "ami-0bde30b21653b5903",
-                "FGTVM64PAYG623": "ami-00bf5257dfad78d20",
+                "FGTVM64BYOL623": "ami-050d93bdbc31fcc64",
+                "FGTVM64PAYG623": "ami-0c380ca68f2b1f6e8",
                 "FAZVM64PAYG623": "ami-0223b59251aa9f807"
             },
             "eu-north-1": {
-                "FGTVM64BYOL623": "ami-091620f61be5bad55",
-                "FGTVM64PAYG623": "ami-0a9fe3da1f94dc557",
+                "FGTVM64BYOL623": "ami-071a868b96c93d6da",
+                "FGTVM64PAYG623": "ami-0d49417aa3a3912e1",
                 "FAZVM64PAYG623": "ami-0dbf09daca24aa6bf"
             },
             "eu-west-1": {
-                "FGTVM64BYOL623": "ami-011224dfab21c9d08",
-                "FGTVM64PAYG623": "ami-0255eb9792084e4ac",
+                "FGTVM64BYOL623": "ami-013de57d4a8680ade",
+                "FGTVM64PAYG623": "ami-0874d1d29263b27ff",
                 "FAZVM64PAYG623": "ami-05f96f24754bb4e00"
             },
             "eu-west-2": {
-                "FGTVM64BYOL623": "ami-0c5e79337e1c595ea",
-                "FGTVM64PAYG623": "ami-0666078c010cb391a",
+                "FGTVM64BYOL623": "ami-0aad5e076fa22e8c4",
+                "FGTVM64PAYG623": "ami-04eba63bb19dbeebe",
                 "FAZVM64PAYG623": "ami-0125f10e7400d460d"
             },
             "eu-west-3": {
-                "FGTVM64BYOL623": "ami-0857a38f3352c6082",
-                "FGTVM64PAYG623": "ami-02859c7a250c53024",
+                "FGTVM64BYOL623": "ami-092a7d4eb40332b32",
+                "FGTVM64PAYG623": "ami-0c104a0848b644152",
                 "FAZVM64PAYG623": "ami-00e2f34ab8b6b16f9"
             },
             "sa-east-1": {
-                "FGTVM64BYOL623": "ami-025f083b78a0fc34f",
-                "FGTVM64PAYG623": "ami-043440e0fa85b7c9f",
+                "FGTVM64BYOL623": "ami-0feee4be0b03e070d",
+                "FGTVM64PAYG623": "ami-04de901f24e8532db",
                 "FAZVM64PAYG623": "ami-0d9fdeb8c498541b6"
             },
             "us-east-1": {
-                "FGTVM64BYOL623": "ami-00785474df0ceb957",
-                "FGTVM64PAYG623": "ami-09de0b07172ea3af1",
+                "FGTVM64BYOL623": "ami-056b8cbed90f235f7",
+                "FGTVM64PAYG623": "ami-027f258cda3df62de",
                 "FAZVM64PAYG623": "ami-097ebd38f91b7a4de"
             },
             "us-east-2": {
-                "FGTVM64BYOL623": "ami-009564e7a8002c522",
-                "FGTVM64PAYG623": "ami-03194de4065cca447",
+                "FGTVM64BYOL623": "ami-02dfca9796bfaff10",
+                "FGTVM64PAYG623": "ami-05a4ac8312f7911b9",
                 "FAZVM64PAYG623": "ami-046abcd4e8711920b"
             },
             "us-gov-west-1": {
-                "FGTVM64BYOL623": "ami-10a64461",
-                "FGTVM64PAYG623": "ami-475cbf36"
+                "FGTVM64BYOL623": "ami-23b28442",
+                "FGTVM64PAYG623": "ami-c4d9efa5"
             },
             "us-west-1": {
-                "FGTVM64BYOL623": "ami-076d45ee950157d79",
-                "FGTVM64PAYG623": "ami-059bf3b352703af0b",
+                "FGTVM64BYOL623": "ami-012fa84a251f3e63f",
+                "FGTVM64PAYG623": "ami-0f54d37e47fa994a0",
                 "FAZVM64PAYG623": "ami-0086e6c996c6b1d3a"
             },
             "us-west-2": {
-                "FGTVM64BYOL623": "ami-04fc0698575eb8a17",
-                "FGTVM64PAYG623": "ami-00f25d8bf4aaa4613",
-                "FAZVM64PAYG623": "ami-0b02922e75e652b14"
+                "FGTVM64BYOL623": "ami-00efdd54f8b4755da",
+                "FGTVM64PAYG623": "ami-02b9cc036cab1071d",
+                "FAZVM64PAYG623": "ami-0b7bfc2604bf63d33"
             },
             "ap-east-1": {
-                "FGTVM64BYOL623": "ami-6f41041e",
-                "FGTVM64PAYG623": "ami-b64702c7",
+                "FGTVM64BYOL623": "ami-0bfc475f9b1de6da9",
+                "FGTVM64PAYG623": "ami-0437be57fc361c67b",
                 "FAZVM64PAYG623": "ami-62420713"
             },
             "me-south-1": {
-                "FGTVM64BYOL623": "ami-04d00a1b72cc745c1",
-                "FGTVM64PAYG623": "ami-0083de45e17edc133",
+                "FGTVM64BYOL623": "ami-0063dcdb7c00646a5",
+                "FGTVM64PAYG623": "ami-0fcd028d7d86a0695",
                 "FAZVM64PAYG623": "ami-0af628a19f5cb6382"
             }
         },
@@ -913,7 +913,7 @@
                     "FgtTargetGroupHealthCheckThreshold": {
                         "Ref": "LoadBalancingHealthCheckThreshold"
                     },
-                    "VpcId": {
+                    "VPCID": {
                         "Ref": "VPCID"
                     },
                     "FgtSubnetIds": {
@@ -935,7 +935,7 @@
                     "InternalTargetGroupHealthCheckPath": {
                         "Ref": "InternalTargetGroupHealthCheckPath"
                     },
-                    "InternalLoadBalancingSubnetIds": {
+                    "InternalLoadBalancingSubnetIDs": {
                         "Fn::Join": [
                             ",",
                             [
@@ -982,12 +982,12 @@
                         "Ref": "ResourceTagPrefix"
                     },
                     "UniqueId": {
-                        "Ref": "UniqueId"
+                        "Ref": "UniqueID"
                     },
-                    "AsgSubnet1Id": {
+                    "AsgSubnet1ID": {
                         "Ref": "PublicSubnet1"
                     },
-                    "AsgSubnet2Id": {
+                    "AsgSubnet2ID": {
                         "Ref": "PublicSubnet2"
                     },
                     "ELBV2TargetGroupARNs": "",
@@ -1003,7 +1003,7 @@
                     "SecurityGroupId": {
                         "Ref": "FgtAsgSecurityGroup"
                     },
-                    "APIGatewayId": {
+                    "APIGatewayID": {
                         "Fn::GetAtt": [
                             "StackCreateFortiGateAutoScaleHandler",
                             "Outputs.ApiGatewayId"
@@ -1094,16 +1094,16 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/create-hybrid-auto-scaling-group.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-hybrid-auto-scaling-group.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
                             },
-                            "S3BucketName": {
-                                "Ref": "S3BucketName"
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
                             },
-                            "S3KeyPrefix": {
-                                "Ref": "S3KeyPrefix"
+                            "QSS3KeyPrefix": {
+                                "Ref": "QSS3KeyPrefix"
                             }
                         }
                     ]
@@ -1159,24 +1159,24 @@
                 "CustomIdentifier": {
                     "Ref": "CustomIdentifier"
                 },
-                "UniqueId": {
-                    "Ref": "UniqueId"
+                "UniqueID": {
+                    "Ref": "UniqueID"
                 },
                 "AssetStorageName": {
-                    "Ref": "S3BucketName"
+                    "Ref": "QSS3BucketName"
                 },
                 "AssetStorageKeyPrefix": {
                     "Fn::Join": [
                         "",
                         [
                             {
-                                "Ref": "S3KeyPrefix"
+                                "Ref": "QSS3KeyPrefix"
                             },
                             "assets"
                         ]
                     ]
                 },
-                "FortiGateAutoscaleVpcId": {
+                "FortiGateAutoscaleVPCID": {
                     "Ref": "VPCID"
                 },
                 "FortiGateAutoscaleSubnet1": {
@@ -1286,7 +1286,7 @@
                 "FortiGateAutoscaleElbDns": {
                     "Fn::GetAtt": [
                         "StackCreateLoadBalancingComponents",
-                        "Outputs.FgtLoadBalancerDnsName"
+                        "Outputs.FgtLoadBalancerDNSName"
                     ]
                 },
                 "FortiGateAutoscaleTargetGroupArn": {
@@ -1350,11 +1350,11 @@
             "Condition": "IfIntegrateFortiAnalyzer",
             "Properties": {
                 "Parameters": {
-                    "S3BucketName": {
-                        "Ref": "S3BucketName"
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
                     },
-                    "S3KeyPrefix": {
-                        "Ref": "S3KeyPrefix"
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
                     },
                     "ResourceTagPrefix": {
                         "Ref": "ResourceTagPrefix"
@@ -1362,7 +1362,7 @@
                     "CustomIdentifier": {
                         "Ref": "CustomIdentifier"
                     },
-                    "UniqueId": {
+                    "UniqueID": {
                         "Fn::Select": [
                             0,
                             {
@@ -1388,16 +1388,16 @@
                     "DdbTableArnList": {
                         "Fn::GetAtt": ["StackCreateDynamoDBTable", "Outputs.TableArnList"]
                     },
-                    "VpcId": {
+                    "VPCID": {
                         "Ref": "VPCID"
                     },
                     "VPCCIDR": {
                         "Ref": "VPCCIDR"
                     },
                     "VPCEndpoint": {
-                        "Ref": "FgtAsgVpcEndpoint"
+                        "Ref": "FgtAsgVPCEndpoint"
                     },
-                    "SubnetId": {
+                    "SubnetID": {
                         "Ref": "PublicSubnet1"
                     },
                     "InstanceType": {
@@ -1406,7 +1406,7 @@
                     "FortiAnalyzerVersion": {
                         "Ref": "FortiAnalyzerVersion"
                     },
-                    "AdminCidr": {
+                    "AdminCIDR": {
                         "Ref": "FortiGateAdminCIDR"
                     },
                     "KeyPairName": {
@@ -1447,7 +1447,7 @@
                             }
                         ]
                     },
-                    "CustomPrivateIpAddress": {
+                    "CustomPrivateIPAddress": {
                         "Fn::If": [
                             "IfIntegrateFortiAnalyzer",
                             {
@@ -1459,16 +1459,16 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/create-fortianalyzer.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortianalyzer.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
                             },
-                            "S3BucketName": {
-                                "Ref": "S3BucketName"
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
                             },
-                            "S3KeyPrefix": {
-                                "Ref": "S3KeyPrefix"
+                            "QSS3KeyPrefix": {
+                                "Ref": "QSS3KeyPrefix"
                             }
                         }
                     ]
@@ -1566,11 +1566,11 @@
                     "Label": {
                         "default": "Resource tagging configuration"
                     },
-                    "Parameters": ["ResourceTagPrefix", "CustomIdentifier", "UniqueId"]
+                    "Parameters": ["ResourceTagPrefix", "CustomIdentifier", "UniqueID"]
                 },
                 {
                     "Label": {
-                        "default": "Network configuration"
+                        "default": "VPC network configuration"
                     },
                     "Parameters": [
                         "VPCCIDR",
@@ -1598,7 +1598,7 @@
                 },
                 {
                     "Label": {
-                        "default": "FortiGate auto scaling group configuration"
+                        "default": "FortiGate Auto Scaling group configuration"
                     },
                     "Parameters": [
                         "FgtAsgDesiredCapacityByol",
@@ -1653,17 +1653,17 @@
                 },
                 {
                     "Label": {
-                        "default": "Deployment resources configuration"
+                        "default": "AWS Quick Start configuration"
                     },
-                    "Parameters": ["S3BucketName", "S3KeyPrefix"]
+                    "Parameters": ["QSS3BucketName", "QSS3KeyPrefix"]
                 }
             ],
             "ParameterLabels": {
-                "S3BucketName": {
-                    "default": "S3 bucket name"
+                "QSS3BucketName": {
+                    "default": "QSS3 bucket name"
                 },
-                "S3KeyPrefix": {
-                    "default": "S3 resource folder"
+                "QSS3KeyPrefix": {
+                    "default": "QSS3 resource folder"
                 },
                 "ResourceTagPrefix": {
                     "default": "Resource tag prefix"
@@ -1671,23 +1671,23 @@
                 "CustomIdentifier": {
                     "default": "Resource name prefix"
                 },
-                "UniqueId": {
+                "UniqueID": {
                     "default": "Unique ID"
                 },
                 "VPCCIDR": {
                     "default": "VPC CIDR"
                 },
                 "PublicSubnet1": {
-                    "default": "Autoscale subnet 1 Id"
+                    "default": "Public subnet 1 ID"
                 },
                 "PublicSubnet2": {
-                    "default": "Autoscale subnet 2 Id"
+                    "default": "Public subnet 2 ID"
                 },
                 "PrivateSubnet1": {
-                    "default": "Private subnet 1 Id"
+                    "default": "Private subnet 1 ID"
                 },
                 "PrivateSubnet2": {
-                    "default": "Private subnet 2 Id"
+                    "default": "Private subnet 2 ID"
                 },
                 "PrivateSubnetRouteTable": {
                     "default": "Private subnet route table"
@@ -1714,13 +1714,13 @@
                     "default": "Maximum group size (BYOL)"
                 },
                 "FgtAsgDesiredCapacityPayg": {
-                    "default": "Desired capacity (PAYG)"
+                    "default": "Desired capacity (On-Demand)"
                 },
                 "FgtAsgMinSizePayg": {
-                    "default": "Minimum group size (PAYG)"
+                    "default": "Minimum group size (On-Demand)"
                 },
                 "FgtAsgMaxSizePayg": {
-                    "default": "Maximum group size (PAYG)"
+                    "default": "Maximum group size (On-Demand)"
                 },
                 "FgtAsgHealthCheckGracePeriod": {
                     "default": "Health check grace period"
@@ -1799,7 +1799,7 @@
     },
     "Outputs": {
         "FgtLicensingModel": {
-            "Description": "The FortiGate licensing model in the Auto Scaling group(s) for the initial deployment of this stack. (Options: PAYG-Only, BYOL-Only, Hybrid)",
+            "Description": "The FortiGate licensing model in the Auto Scaling group(s) for the initial deployment of this stack. (Options: On-Demand-Only, BYOL-Only, Hybrid)",
             "Value": {
                 "Fn::If": [
                     "IfPAYGOnly",

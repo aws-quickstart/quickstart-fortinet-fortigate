@@ -2,13 +2,13 @@
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "This template creates a FortiGate Autoscale Handler Lambda function and an API Gateway.",
     "Parameters": {
-        "S3BucketName": {
+        "QSS3BucketName": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Deployment resource S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Description": "S3 bucket name for the Deployment package. Bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
         },
-        "S3KeyPrefix": {
+        "QSS3KeyPrefix": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Deployment package S3 key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
@@ -28,7 +28,7 @@
             "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
             "Description": "An alternative name prefix. This shorter version of prefix is used on a resource that Resource tag prefix cannot apply to. Must be at most 10 characters long and only contain uppercase, lowercase letters, and numbers. Max length is 10."
         },
-        "UniqueId": {
+        "UniqueID": {
             "Type": "String",
             "MaxLength": "8",
             "AllowedPattern": "[A-Za-z0-9]+",
@@ -96,26 +96,26 @@
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
-                    "S3BucketName": {
-                        "Ref": "S3BucketName"
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
                     },
-                    "S3KeyPrefix": {
-                        "Ref": "S3KeyPrefix"
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
                     },
                     "ObjectPaths": "functions/packages/fgt-asg-handler.zip"
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/copy-objects.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/copy-objects.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
                             },
-                            "S3BucketName": {
-                                "Ref": "S3BucketName"
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
                             },
-                            "S3KeyPrefix": {
-                                "Ref": "S3KeyPrefix"
+                            "QSS3KeyPrefix": {
+                                "Ref": "QSS3KeyPrefix"
                             }
                         }
                     ]
@@ -466,10 +466,10 @@
                                             "arn:aws:s3:::${bucketname}/${keyprefix}assets/configset/*",
                                             {
                                                 "bucketname": {
-                                                    "Ref": "S3BucketName"
+                                                    "Ref": "QSS3BucketName"
                                                 },
                                                 "keyprefix": {
-                                                    "Ref": "S3KeyPrefix"
+                                                    "Ref": "QSS3KeyPrefix"
                                                 }
                                             }
                                         ]
@@ -567,7 +567,7 @@
                                 "Ref": "CustomIdentifier"
                             },
                             {
-                                "Ref": "UniqueId"
+                                "Ref": "UniqueID"
                             },
                             "fortigate-autoscale-handler"
                         ]
@@ -628,7 +628,7 @@
                                 "Ref": "CustomIdentifier"
                             },
                             {
-                                "Ref": "UniqueId"
+                                "Ref": "UniqueID"
                             },
                             "fortigate-autoscale-cloud-formation-service"
                         ]
@@ -716,7 +716,7 @@
                                 "Ref": "CustomIdentifier"
                             },
                             {
-                                "Ref": "UniqueId"
+                                "Ref": "UniqueID"
                             },
                             "fortigate-autoscale-byol-license"
                         ]

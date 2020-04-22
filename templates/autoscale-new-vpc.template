@@ -21,18 +21,18 @@
             "Type": "String",
             "Default": "aws-quickstart",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
-            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+            "ConstraintDescription": "Quick Start S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Description": "S3 bucket name for the Quick Start assets. Can only contain numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
         },
         "QSS3KeyPrefix": {
             "Type": "String",
             "Default": "quickstart-fortinet-fortigate/",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
-            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+            "ConstraintDescription": "Quick Start S3 key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Description": "S3 key prefix for the Quick Start assets. Can only contain numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). If provided, it must end with a forward slash (/)."
         },
         "AvailabilityZones": {
-            "Description": "The list of Availability Zones to use for the subnets in the VPC. The Fortinet FortiGate Auto Scaling solution uses two Availability Zones from your list and preserves the logical order you specify.",
+            "Description": "The list of Availability Zones to use for the subnets in the VPC. The Quick Start uses two Availability Zones from your list and preserves the logical order you specify.",
             "Type": "List<AWS::EC2::AvailabilityZone::Name>"
         },
         "VPCCIDR": {
@@ -47,14 +47,14 @@
             "Default": "192.168.0.0/24",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format.",
-            "Description": "The CIDR block for the subnet located in Availability Zone 1 where the Fortinet FortiGate Auto Scaling instances will be deployed to."
+            "Description": "The CIDR block for the public subnet located in Availability Zone 1 where the Fortinet FortiGate Auto Scaling instances will be deployed to."
         },
         "PublicSubnet2CIDR": {
             "Type": "String",
             "Default": "192.168.1.0/24",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format.",
-            "Description": "The CIDR block for the subnet located in Availability Zone 2 where the Fortinet FortiGate Auto Scaling instances will be deployed to."
+            "Description": "The CIDR block for the public subnet located in Availability Zone 2 where the Fortinet FortiGate Auto Scaling instances will be deployed to."
         },
         "PrivateSubnet1CIDR": {
             "Type": "String",
@@ -133,7 +133,7 @@
             "Default": 0,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "The number of FortiGate instances the On-Demand Auto Scaling group should have at any time. For High Availability in a On-Demand-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing."
+            "Description": "The number of FortiGate instances the On-Demand Auto Scaling group should have at any time. For High Availability in an On-Demand-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing."
         },
         "FgtAsgMinSizePayg": {
             "Type": "Number",
@@ -211,7 +211,7 @@
             "MinValue": 30,
             "MaxValue": 90,
             "ConstraintDescription": "must be a valid number between 30 and 90.",
-            "Description": "The length of time (in seconds) that a FortiGate instance waits between sending heartbeat requests to the Autoscale handler. Minimum is 30. Maximum is 90."
+            "Description": "The length of time (in seconds) that a FortiGate instance waits between sending heartbeat requests to the FortiGate Autoscale handler. Minimum is 30. Maximum is 90."
         },
         "HeartBeatLossCount": {
             "Type": "Number",
@@ -225,7 +225,7 @@
             "Type": "Number",
             "Default": 2,
             "MinValue": 0,
-            "Description": "The maximum amount of time (in seconds) allowed for network latency of the FortiGate heartbeat arriving at the Autoscale handler. Minimum is 0."
+            "Description": "The maximum amount of time (in seconds) allowed for network latency of the FortiGate heartbeat arriving at the FortiGate Autoscale handler. Minimum is 0."
         },
         "LoadBalancingTrafficProtocol": {
             "Type": "String",
@@ -240,7 +240,7 @@
             "MinValue": 1,
             "MaxValue": 65535,
             "ConstraintDescription": "must be a valid port number between 1 and 65535.",
-            "Description": "The port number used to balance web service traffic if the internal web-service load balancer is enabled. Minimum is 1. Maximum is 65535."
+            "Description": "The port number used to balance web service traffic if the internal web service load balancer is enabled. Minimum is 1. Maximum is 65535."
         },
         "LoadBalancingHealthCheckThreshold": {
             "Type": "Number",
@@ -258,7 +258,7 @@
                 "do not need one"
             ],
             "ConstraintDescription": "must choose from the provided options.",
-            "Description": "(Optional) The pre-defined load balancer to route traffic to web service in the private subnets. You can optionally use your own one or decide to not need one."
+            "Description": "(Optional) The pre-defined load balancer to route traffic to web service in the private subnets."
         },
         "InternalTargetGroupHealthCheckPath": {
             "Type": "String",
@@ -271,7 +271,7 @@
         "InternalLoadBalancerDNSName": {
             "Type": "String",
             "Default": "",
-            "Description": "(Optional) The DNS Name of an existing internal load balancer used to route traffic from a FortiGate to targets in a specified target group. Leave it blank if you don't use an existing load balancer."
+            "Description": "(Optional) The DNS name of an existing internal load balancer used to route traffic from a FortiGate to targets in a specified target group. Leave it blank if you don't use an existing load balancer."
         },
         "GetLicenseGracePeriod": {
             "Type": "Number",
@@ -285,7 +285,7 @@
             "Default": "yes",
             "AllowedValues": ["yes", "no"],
             "ConstraintDescription": "must choose from the provided options.",
-            "Description": "Choose yes to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer."
+            "Description": "Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer."
         },
         "FortiAnalyzerInstanceType": {
             "Type": "String",
@@ -321,20 +321,20 @@
             "NoEcho": true,
             "Default": "",
             "MaxLength": 128,
-            "Description": "The password for the Autoscale admin username. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
+            "Description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
         },
         "FortiAnalyzerCustomPrivateIPAddress": {
             "Type": "String",
             "Default": "",
             "AllowedPattern": "^$|^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}$",
             "ConstraintDescription": "must be a valid IPv4 format.",
-            "Description": "The custom private IP address to be used by the FortiAnalyzer. The FortiAnalyzer custom private IP must be within the Auto Scaling subnet 1 CIDR range."
+            "Description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored."
         },
         "IntegratedNATGatewayOptions": {
             "Type": "String",
             "Default": "yes",
             "AllowedValues": ["yes", "no"],
-            "Description": "Choose yes to set the master FortiGate in the Auto Scaling group as the NAT gateway for egress traffic from the protected private subnets."
+            "Description": "Choose 'yes' to set the master FortiGate in the Auto Scaling group as the NAT gateway for egress traffic from the protected private subnets."
         }
     },
     "Conditions": {
@@ -465,10 +465,10 @@
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
                             },
-                            "S3BucketName": {
+                            "QSS3BucketName": {
                                 "Ref": "QSS3BucketName"
                             },
-                            "S3KeyPrefix": {
+                            "QSS3KeyPrefix": {
                                 "Ref": "QSS3KeyPrefix"
                             }
                         }
@@ -481,10 +481,10 @@
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
-                    "S3BucketName": {
+                    "QSS3BucketName": {
                         "Ref": "QSS3BucketName"
                     },
-                    "S3KeyPrefix": {
+                    "QSS3KeyPrefix": {
                         "Ref": "QSS3KeyPrefix"
                     },
                     "ResourceTagPrefix": {
@@ -551,7 +551,7 @@
                     "CustomIdentifier": {
                         "Ref": "CustomIdentifier"
                     },
-                    "UniqueId": {
+                    "UniqueID": {
                         "Fn::Select": [
                             0,
                             {
@@ -788,7 +788,7 @@
                     },
                     "Parameters": [
                         "AvailabilityZones",
-                        "VpcCIDR",
+                        "VPCCIDR",
                         "PublicSubnet1CIDR",
                         "PublicSubnet2CIDR",
                         "PrivateSubnet1CIDR",
@@ -882,20 +882,20 @@
                 "AvailabilityZones": {
                     "default": "Availability Zones"
                 },
-                "VpcCIDR": {
+                "VPCCIDR": {
                     "default": "VPC CIDR"
                 },
                 "PublicSubnet1CIDR": {
-                    "default": "Auto Scaling subnet 1 CIDR"
+                    "default": "Public subnet 1 CIDR"
                 },
                 "PublicSubnet2CIDR": {
-                    "default": "Auto Scaling subnet 2 CIDR"
+                    "default": "Public subnet 2 CIDR"
                 },
                 "PrivateSubnet1CIDR": {
-                    "default": "Protected subnet 1 CIDR"
+                    "default": "Private subnet 1 CIDR"
                 },
                 "PrivateSubnet2CIDR": {
-                    "default": "Protected subnet 2 CIDR"
+                    "default": "Private subnet 2 CIDR"
                 },
                 "FortiGateInstanceType": {
                     "default": "Instance type"
@@ -1088,7 +1088,7 @@
                 "Ref": "FortiOSVersion"
             }
         },
-        "UniqueId": {
+        "UniqueID": {
             "Description": "An automatically generated random string as a unique ID for all resources in the deployment stack and nested stacks.",
             "Value": {
                 "Fn::Select": [

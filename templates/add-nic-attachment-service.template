@@ -2,13 +2,13 @@
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "A service to handle additional network interface attachment / detachment to an EC2 instance in a given VPC.",
     "Parameters": {
-        "S3BucketName": {
+        "QSS3BucketName": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Deployment resource S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Description": "S3 bucket name for the Deployment package. Bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
         },
-        "S3KeyPrefix": {
+        "QSS3KeyPrefix": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Deployment package S3 key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
@@ -28,7 +28,7 @@
             "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
             "Description": "An alternative name prefix. This shorter version of prefix is used on a resource that Resource tag prefix cannot apply to. Must be at most 10 characters long and only contain uppercase, lowercase letters, and numbers. Max length is 10."
         },
-        "UniqueId": {
+        "UniqueID": {
             "Type": "String",
             "MaxLength": "8",
             "AllowedPattern": "[A-Za-z0-9]+",
@@ -55,26 +55,26 @@
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
-                    "S3BucketName": {
-                        "Ref": "S3BucketName"
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
                     },
-                    "S3KeyPrefix": {
-                        "Ref": "S3KeyPrefix"
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
                     },
                     "ObjectPaths": "functions/packages/nic-attachment.zip"
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/copy-objects.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/copy-objects.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
                             },
-                            "S3BucketName": {
-                                "Ref": "S3BucketName"
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
                             },
-                            "S3KeyPrefix": {
-                                "Ref": "S3KeyPrefix"
+                            "QSS3KeyPrefix": {
+                                "Ref": "QSS3KeyPrefix"
                             }
                         }
                     ]
@@ -106,7 +106,7 @@
                                 "Ref": "CustomIdentifier"
                             },
                             {
-                                "Ref": "UniqueId"
+                                "Ref": "UniqueID"
                             },
                             "fortigate-nic-attachment-service-provider"
                         ]
@@ -164,7 +164,7 @@
                                 "Ref": "CustomIdentifier"
                             },
                             {
-                                "Ref": "UniqueId"
+                                "Ref": "UniqueID"
                             },
                             "fortigate-nic-attachment-service"
                         ]

@@ -2,33 +2,33 @@
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "Deploys a FortiAnalyzer to a selected subnet and configures all FortiGates to connect to it.",
     "Parameters": {
-        "S3BucketName": {
+        "QSS3BucketName": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+            "Description": "S3 bucket name for the Quick Start assets. Can only contain numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
         },
-        "S3KeyPrefix": {
+        "QSS3KeyPrefix": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
-            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+            "ConstraintDescription": "Quick Start S3 key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Description": "S3 key prefix for the Quick Start assets. Can only contain numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). If provided, it must end with a forward slash (/)."
         },
         "ResourceTagPrefix": {
             "Type": "String",
             "AllowedPattern": "[0-9a-zA-Z@.#-]+",
             "MaxLength": 64,
             "ConstraintDescription": "Resource tag prefix can include numbers, lowercase letters, uppercase letters, ampersat(@) , hyphens (-), period (.), and hash (#). Max length is 64.",
-            "Description": "A prefix for tag key ResourceGroup on all resources. It's also used as the name prefix of all applicable resources. Can only contain numbers, lowercase letters, uppercase letters, ampersat(@) , hyphens (-), period (.), and hash (#). Max length is 64."
+            "Description": "The ResourceGroup Tag Key used on all resources and as the name prefix of all applicable resources. Can only contain numbers, lowercase letters, uppercase letters, ampersat(@), hyphens (-), period (.), and hash (#). Max length is 64."
         },
         "CustomIdentifier": {
             "Type": "String",
             "MaxLength": "10",
             "AllowedPattern": "[A-Za-z0-9]+",
             "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
-            "Description": "An identifier as resource name prefix. Must be at most 10 characters long and only contain uppercase, lowercase letters, and numbers."
+            "Description": "An alternative name prefix to be used on a resource that the 'Resource tag prefix' cannot apply to. Can only contain numbers, lowercase letters, and uppercase letters. Max length is 10."
         },
-        "UniqueId": {
+        "UniqueID": {
             "Type": "String",
             "Description": "The unique ID assigned to DynamoDB table in this solution. This parameter should be passed down from the caller stack for consistency."
         },
@@ -37,72 +37,72 @@
             "Description": "The DynamoDB table ARN list that this stack needs to access to. This parameter should be passed down from the caller stack for consistency."
         },
         "VPCID": {
-            "Type": "AWS::EC2::VPC::Id",
-            "Description": "Enter a valid VPC ID to deploy. The VPC must have the option 'DNS hostnames' enabled."
+            "Type": "AWS::EC2::VPC::ID",
+            "Description": "The ID of the existing VPC where FortiGate Autoscale will be deployed. The VPC must have the option 'DNS hostnames' enabled and each of the two Availability Zones in the VPC must have at least 1 public subnet and at least 1 private subnet."
         },
         "VPCCIDR": {
             "Type": "String",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format.",
-            "Description": "The CIDR block for the VPC where the FortiAnalyzer is deployed."
+            "Description": "The CIDR block for the VPC where the FortiAnalyzer will be deployed."
         },
         "VPCEndpoint": {
             "Type": "String",
-            "Description": "The VPCEndpoint for calling the service through API Gateway."
+            "Description": "The VPCEndpoint for calling the service through the API Gateway."
         },
         "SubnetId": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "The subnet ID to deploy the FortiAnalyzer."
+            "Description": "The ID of the subnet where FortiAnalyzer will be deployed."
         },
         "InstanceType": {
             "Type": "String",
-            "Description": "Instance Type. This parameter should be passed down from the caller stack for consistency."
+            "Description": "Instance type. This parameter should be passed down from the caller stack for consistency."
         },
         "FortiAnalyzerVersion": {
             "Type": "String",
             "AllowedPattern": "[A-Za-z0-9]+",
             "Description": "FortiAnalyzer version. This parameter should be passed down from the caller stack for consistency. Should contain characters and digits only, and should not include dot (.) or hyphen (-)."
         },
-        "AdminCidr": {
+        "AdminCIDR": {
             "Type": "String",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
             "ConstraintDescription": "must be a valid CIDR block format and 0.0.0.0/0 is not recommended.",
             "MinLength": 9,
-            "Description": "CIDR block for external admin management access. **WARNING!** The default value 0.0.0.0/0 accepts connections from any IP address. Please consider hanging it to match your needs."
+            "Description": "The CIDR block for external admin management access. **WARNING!** The default value 0.0.0.0/0 accepts connections from any IP address. Please consider changing it to match your needs."
         },
         "KeyPairName": {
             "Type": "AWS::EC2::KeyPair::KeyName",
-            "Description": "Amazon EC2 Key Pair for admin access."
+            "Description": "The Amazon EC2 Key Pair for admin access."
         },
         "AutoscaleAdminUsername": {
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which the FortiGate Autoscale uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling Group. The naming requirement conforms to the FortiAnalyzer naming policy. This name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+            "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which FortiGate Autoscale uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-)."
         },
         "AutoscaleAdminPassword": {
             "Type": "String",
             "NoEcho": true,
             "MinLength": 8,
             "MaxLength": 128,
-            "Description": "The password for the 'Autoscale admin' above. The password requirement conforms to the FortiAnalyzer password policy. Please see the documentation for more information if you need to enable KMS encryption. Min length is 8 and Max length 128."
+            "Description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
         },
         "ProductAMI": {
             "Type": "String",
-            "Description": "The AMI for the product created with EC2 Instance in this stack."
+            "Description": "The AMI for the product created with the EC2 instance in this stack."
         },
-        "CustomPrivateIpAddress": {
+        "CustomPrivateIPAddress": {
             "Type": "String",
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}$",
             "ConstraintDescription": "must be a valid IPv4 format.",
             "Description": "The static private IP address allocated for the FortiAnalyzer in the designated subnet."
         },
-        "UseElasticIp": {
+        "UseElasticIP": {
             "Type": "String",
             "Default": "yes",
             "AllowedValues": ["yes", "no"],
             "ConstraintDescription": "must be a valid option from the list.",
-            "Description": "Use an Elastic IP as the public IP of each created FortiAnalyzer."
+            "Description": "Use an Elastic IP address as the public IP address of each created FortiAnalyzer."
         }
     },
     "Mappings": {},
@@ -127,18 +127,18 @@
                 }
             ]
         },
-        "IfNoCustomPrivateIpAddress": {
+        "IfNoCustomPrivateIPAddress": {
             "Fn::Equals": [
                 {
-                    "Ref": "CustomPrivateIpAddress"
+                    "Ref": "CustomPrivateIPAddress"
                 },
                 ""
             ]
         },
-        "IfUseEip": {
+        "IfUseEIP": {
             "Fn::Equals": [
                 {
-                    "Ref": "UseElasticIp"
+                    "Ref": "UseElasticIP"
                 },
                 "yes"
             ]
@@ -153,7 +153,7 @@
                     {
                         "IpProtocol": "tcp",
                         "CidrIp": {
-                            "Ref": "AdminCidr"
+                            "Ref": "AdminCIDR"
                         },
                         "FromPort": 22,
                         "ToPort": 22
@@ -161,7 +161,7 @@
                     {
                         "IpProtocol": "tcp",
                         "CidrIp": {
-                            "Ref": "AdminCidr"
+                            "Ref": "AdminCIDR"
                         },
                         "FromPort": 443,
                         "ToPort": 443
@@ -231,13 +231,13 @@
                                     "Action": ["s3:GetObject"],
                                     "Resource": {
                                         "Fn::Sub": [
-                                            "arn:aws:s3:::${S3BucketName}/${S3KeyPrefix}*",
+                                            "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
                                             {
-                                                "S3BucketName": {
-                                                    "Ref": "S3BucketName"
+                                                "QSS3BucketName": {
+                                                    "Ref": "QSS3BucketName"
                                                 },
-                                                "S3KeyPrefix": {
-                                                    "Ref": "S3KeyPrefix"
+                                                "QSS3KeyPrefix": {
+                                                    "Ref": "QSS3KeyPrefix"
                                                 }
                                             }
                                         ]
@@ -246,7 +246,7 @@
                                 }
                             ]
                         },
-                        "PolicyName": "aws-quick-start-s3-policy"
+                        "PolicyName": "fortigate-autoscale-s3-access-policy"
                     }
                 ]
             }
@@ -256,7 +256,7 @@
             "Properties": {
                 "Roles": [
                     {
-                        "Ref": "IamRoleFazInstance"
+                        "Ref": "IAMRoleFazInstance"
                     }
                 ]
             }
@@ -280,21 +280,21 @@
                     {
                         "DeviceIndex": 0,
                         "AssociatePublicIpAddress": {
-                            "Fn::If": ["IfUseEip", false, true]
+                            "Fn::If": ["IfUseEIP", false, true]
                         },
                         "PrivateIpAddress": {
                             "Fn::If": [
-                                "IfNoCustomPrivateIpAddress",
+                                "IfNoCustomPrivateIPAddress",
                                 {
                                     "Ref": "AWS::NoValue"
                                 },
                                 {
-                                    "Ref": "CustomPrivateIpAddress"
+                                    "Ref": "CustomPrivateIPAddress"
                                 }
                             ]
                         },
                         "SubnetId": {
-                            "Ref": "SubnetId"
+                            "Ref": "SubnetID"
                         },
                         "GroupSet": [
                             {
@@ -364,7 +364,7 @@
             }
         },
         "FazEIP": {
-            "Condition": "IfUseEip",
+            "Condition": "IfUseEIP",
             "Type": "AWS::EC2::EIP",
             "Properties": {
                 "Domain": "vpc",
@@ -389,7 +389,7 @@
                     "Ref": "CustomIdentifier"
                 },
                 "UniqueId": {
-                    "Ref": "UniqueId"
+                    "Ref": "UniqueID"
                 }
             },
             "Type": "AWS::CloudFormation::CustomResource"
@@ -438,17 +438,17 @@
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
-                    "S3BucketName": {
-                        "Ref": "S3BucketName"
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
                     },
-                    "S3KeyPrefix": {
-                        "Ref": "S3KeyPrefix"
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
                     },
                     "ObjectPaths": "functions/packages/faz-handler.zip"
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/copy-objects.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/copy-objects.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
@@ -469,7 +469,7 @@
                                 "Ref": "CustomIdentifier"
                             },
                             {
-                                "Ref": "UniqueId"
+                                "Ref": "UniqueID"
                             },
                             "fortianalyzer-handler"
                         ]
@@ -481,16 +481,16 @@
                     },
                     "S3Key": {
                         "Fn::Sub": [
-                            "${KeyPrefix}functions/packages/faz-handler.zip",
+                            "${QSS3KeyPrefix}functions/packages/faz-handler.zip",
                             {
-                                "KeyPrefix": {
-                                    "Fn::GetAtt": ["StackCopyLambda", "Outputs.KeyPrefix"]
+                                "QSS3KeyPrefix": {
+                                    "Fn::GetAtt": ["StackCopyLambda", "Outputs.QSS3KeyPrefix"]
                                 }
                             }
                         ]
                     }
                 },
-                "Description": "Register a FortiAnalyzer to DB for the FortiGate AutoScale",
+                "Description": "Register a FortiAnalyzer in the DB for FortiGate Autoscale.",
                 "Handler": "index.handler",
                 "Role": {
                     "Fn::GetAtt": ["IamRoleFazHandler", "Arn"]
@@ -647,7 +647,7 @@
                             },
                             "fortianalyzer-handler",
                             {
-                                "Ref": "UniqueId"
+                                "Ref": "UniqueID"
                             }
                         ]
                     ]
@@ -724,26 +724,26 @@
         }
     },
     "Outputs": {
-        "InstanceId": {
+        "InstanceID": {
             "Description": "The instance ID of the created FortiAnalyzer.",
             "Value": {
                 "Fn::GetAtt": ["FazHandlerService", "InstanceId"]
             }
         },
-        "PublicIp": {
-            "Description": "The public ip of the created FortiAnalyzer.",
+        "PublicIP": {
+            "Description": "The public IP address of the created FortiAnalyzer.",
             "Value": {
                 "Fn::GetAtt": ["ec2InstanceFortiAnalyzer", "PublicIp"]
             }
         },
-        "PrivateIp": {
-            "Description": "The private ip of the created FortiAnalyzer.",
+        "PrivateIP": {
+            "Description": "The private IP address of the created FortiAnalyzer.",
             "Value": {
                 "Fn::GetAtt": ["ec2InstanceFortiAnalyzer", "PrivateIp"]
             }
         },
         "VIP": {
-            "Description": "The vip of the created FortiAnalyzer.",
+            "Description": "The VIP of the created FortiAnalyzer.",
             "Value": {
                 "Fn::GetAtt": ["FazHandlerService", "VIP"]
             }
@@ -754,20 +754,20 @@
                 "Fn::GetAtt": ["LambdaFunctionFazHandler", "Arn"]
             }
         },
-        "RestApiId": {
-            "Description": "The API Id of the API Gateway for FAZ service.",
+        "RestAPIID": {
+            "Description": "The API ID of the API Gateway for FAZ service.",
             "Value": {
                 "Ref": "ApiGatewayFazService"
             }
         },
         "FazHandlerFunctionName": {
-            "Description": "FortiGate Autoscale - FortiAnalyzer handler function name",
+            "Description": "FortiGate Autoscale - FortiAnalyzer handler function name.",
             "Value": {
                 "Ref": "LambdaFunctionFazHandler"
             }
         },
         "FazHandlerFunctionArn": {
-            "Description": "FortiGate Autoscale - FortiAnalyzer handler function ARN",
+            "Description": "FortiGate Autoscale - FortiAnalyzer handler function ARN.",
             "Value": {
                 "Fn::GetAtt": ["LambdaFunctionFazHandler", "Arn"]
             }
