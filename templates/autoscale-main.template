@@ -633,8 +633,8 @@
                     "CustomIdentifier": {
                         "Ref": "CustomIdentifier"
                     },
-                    "UniqueId": {
-                        "Ref": "UniqueId"
+                    "UniqueID": {
+                        "Ref": "UniqueID"
                     },
                     "VpcEndPoint": {
                         "Ref": "FgtAsgVpcEndpoint"
@@ -854,8 +854,8 @@
                     "CustomIdentifier": {
                         "Ref": "CustomIdentifier"
                     },
-                    "UniqueId": {
-                        "Ref": "UniqueId"
+                    "UniqueID": {
+                        "Ref": "UniqueID"
                     },
                     "DbTableArn": {
                         "Fn::GetAtt": ["StackCreateDynamoDBTable", "Outputs.NicAttachmentTableArn"]
@@ -898,8 +898,8 @@
                     "CustomIdentifier": {
                         "Ref": "CustomIdentifier"
                     },
-                    "UniqueId": {
-                        "Ref": "UniqueId"
+                    "UniqueID": {
+                        "Ref": "UniqueID"
                     },
                     "TrafficProtocol": {
                         "Ref": "LoadBalancingTrafficProtocol"
@@ -981,7 +981,7 @@
                     "ResourceTagPrefix": {
                         "Ref": "ResourceTagPrefix"
                     },
-                    "UniqueId": {
+                    "UniqueID": {
                         "Ref": "UniqueID"
                     },
                     "AsgSubnet1ID": {
@@ -1492,7 +1492,7 @@
                 "CustomIdentifier": {
                     "Ref": "CustomIdentifier"
                 },
-                "UniqueId": {
+                "UniqueID": {
                     "Fn::Select": [
                         0,
                         {
