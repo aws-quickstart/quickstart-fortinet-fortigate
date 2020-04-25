@@ -78,7 +78,7 @@
             "ConstraintDescription": "This path must begin with a '/' character, and can be at most 1024 characters in length.",
             "Description": "Optional. The destination path for health checks. This path must begin with a '/' character, and can be at most 1024 characters in length."
         },
-        "InternalLoadBalancingSubnetIds": {
+        "InternalLoadBalancingSubnetIDs": {
             "Type": "String",
             "Description": "Optional. A comma-delimited list of subnet IDs that the internal load balancing instances locate in."
         }
@@ -272,7 +272,7 @@
                     "Fn::Split": [
                         ",",
                         {
-                            "Ref": "InternalLoadBalancingSubnetIds"
+                            "Ref": "InternalLoadBalancingSubnetIDs"
                         }
                     ]
                 },

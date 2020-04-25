@@ -37,7 +37,7 @@
             "Description": "The DynamoDB table ARN list that this stack needs to access to. This parameter should be passed down from the caller stack for consistency."
         },
         "VPCID": {
-            "Type": "AWS::EC2::VPC::ID",
+            "Type": "AWS::EC2::VPC::Id",
             "Description": "The ID of the existing VPC where FortiGate Autoscale will be deployed. The VPC must have the option 'DNS hostnames' enabled and each of the two Availability Zones in the VPC must have at least 1 public subnet and at least 1 private subnet."
         },
         "VPCCIDR": {
@@ -50,7 +50,7 @@
             "Type": "String",
             "Description": "The VPCEndpoint for calling the service through the API Gateway."
         },
-        "SubnetId": {
+        "SubnetID": {
             "Type": "AWS::EC2::Subnet::Id",
             "Description": "The ID of the subnet where FortiAnalyzer will be deployed."
         },
@@ -202,7 +202,7 @@
                 }
             }
         },
-        "IamRoleFazInstance": {
+        "IAMRoleFazInstance": {
             "Type": "AWS::IAM::Role",
             "Properties": {
                 "ManagedPolicyArns": [
@@ -484,7 +484,7 @@
                             "${QSS3KeyPrefix}functions/packages/faz-handler.zip",
                             {
                                 "QSS3KeyPrefix": {
-                                    "Fn::GetAtt": ["StackCopyLambda", "Outputs.QSS3KeyPrefix"]
+                                    "Fn::GetAtt": ["StackCopyLambda", "Outputs.KeyPrefix"]
                                 }
                             }
                         ]
@@ -518,7 +518,7 @@
                         },
                         "FORTIANALYZER_IP": {
                             "Fn::If": [
-                                "IfUseEip",
+                                "IfUseEIP",
                                 {
                                     "Ref": "FazEIP"
                                 },

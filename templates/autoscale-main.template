@@ -541,16 +541,16 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/create-db-table.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-db-table.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
                             },
-                            "S3BucketName": {
-                                "Ref": "S3BucketName"
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
                             },
-                            "S3KeyPrefix": {
-                                "Ref": "S3KeyPrefix"
+                            "QSS3KeyPrefix": {
+                                "Ref": "QSS3KeyPrefix"
                             }
                         }
                     ]
@@ -587,13 +587,13 @@
                                     "Action": ["s3:GetObject"],
                                     "Resource": {
                                         "Fn::Sub": [
-                                            "arn:aws:s3:::${S3BucketName}/${S3KeyPrefix}*",
+                                            "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
                                             {
-                                                "S3BucketName": {
-                                                    "Ref": "S3BucketName"
+                                                "QSS3BucketName": {
+                                                    "Ref": "QSS3BucketName"
                                                 },
-                                                "S3KeyPrefix": {
-                                                    "Ref": "S3KeyPrefix"
+                                                "QSS3KeyPrefix": {
+                                                    "Ref": "QSS3KeyPrefix"
                                                 }
                                             }
                                         ]
@@ -621,11 +621,11 @@
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
-                    "S3BucketName": {
-                        "Ref": "S3BucketName"
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
                     },
-                    "S3KeyPrefix": {
-                        "Ref": "S3KeyPrefix"
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
                     },
                     "ResourceTagPrefix": {
                         "Ref": "ResourceTagPrefix"
@@ -637,7 +637,7 @@
                         "Ref": "UniqueID"
                     },
                     "VpcEndPoint": {
-                        "Ref": "FgtAsgVpcEndpoint"
+                        "Ref": "FgtAsgVPCEndpoint"
                     },
                     "HandlerScriptTimeout": 300,
                     "ServiceScriptTimeout": 900,
@@ -645,16 +645,16 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/create-autoscale-handler.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-autoscale-handler.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
                             },
-                            "S3BucketName": {
-                                "Ref": "S3BucketName"
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
                             },
-                            "S3KeyPrefix": {
-                                "Ref": "S3KeyPrefix"
+                            "QSS3KeyPrefix": {
+                                "Ref": "QSS3KeyPrefix"
                             }
                         }
                     ]
@@ -805,7 +805,7 @@
                 "CidrIp": "0.0.0.0/0"
             }
         },
-        "FgtAsgVpcEndpoint": {
+        "FgtAsgVPCEndpoint": {
             "Type": "AWS::EC2::VPCEndpoint",
             "Properties": {
                 "VpcEndpointType": "Interface",
@@ -842,11 +842,11 @@
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
-                    "S3BucketName": {
-                        "Ref": "S3BucketName"
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
                     },
-                    "S3KeyPrefix": {
-                        "Ref": "S3KeyPrefix"
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
                     },
                     "ResourceTagPrefix": {
                         "Ref": "ResourceTagPrefix"
@@ -863,16 +863,16 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/add-nic-attachment-service.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/add-nic-attachment-service.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
                             },
-                            "S3BucketName": {
-                                "Ref": "S3BucketName"
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
                             },
-                            "S3KeyPrefix": {
-                                "Ref": "S3KeyPrefix"
+                            "QSS3KeyPrefix": {
+                                "Ref": "QSS3KeyPrefix"
                             }
                         }
                     ]
@@ -951,16 +951,16 @@
                 },
                 "TemplateURL": {
                     "Fn::Sub": [
-                        "https://${S3BucketName}.${S3Region}.amazonaws.com/${S3KeyPrefix}templates/create-load-balancer.template",
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-load-balancer.template",
                         {
                             "S3Region": {
                                 "Fn::If": ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
                             },
-                            "S3BucketName": {
-                                "Ref": "S3BucketName"
+                            "QSS3BucketName": {
+                                "Ref": "QSS3BucketName"
                             },
-                            "S3KeyPrefix": {
-                                "Ref": "S3KeyPrefix"
+                            "QSS3KeyPrefix": {
+                                "Ref": "QSS3KeyPrefix"
                             }
                         }
                     ]
@@ -972,11 +972,11 @@
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "Parameters": {
-                    "S3BucketName": {
-                        "Ref": "S3BucketName"
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
                     },
-                    "S3KeyPrefix": {
-                        "Ref": "S3KeyPrefix"
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
                     },
                     "ResourceTagPrefix": {
                         "Ref": "ResourceTagPrefix"
