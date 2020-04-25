@@ -482,7 +482,11 @@
             "Properties": {
                 "Parameters": {
                     "QSS3BucketName": {
+                    "QSS3BucketName": {
                         "Ref": "QSS3BucketName"
+                    },
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
                     },
                     "QSS3KeyPrefix": {
                         "Ref": "QSS3KeyPrefix"
