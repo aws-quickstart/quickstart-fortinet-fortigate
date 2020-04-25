@@ -258,7 +258,7 @@
                 "do not need one"
             ],
             "ConstraintDescription": "must choose from the provided options.",
-            "Description": "(Optional) The pre-defined load balancer to route traffic to web service in the private subnets."
+            "Description": "(Optional) The pre-defined load balancer to route traffic to targets in the private subnets."
         },
         "InternalTargetGroupHealthCheckPath": {
             "Type": "String",
