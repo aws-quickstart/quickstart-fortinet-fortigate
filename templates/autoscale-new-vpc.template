@@ -230,7 +230,7 @@
             "MinValue": 1,
             "MaxValue": 65535,
             "ConstraintDescription": "must be a valid number between 1 and 65535.",
-            "Description": "Number of consecutively lost heartbeats. When the Heartbeat Loss Count has been reached, the VM is deemed unhealthy and fail-over activities will commence."
+            "Description": "The number of consecutively lost heartbeats. When the Heartbeat Loss Count has been reached, the FortiGate is deemed unhealthy and fail-over activities will commence."
         },
         "HeartBeatDelayAllowance": {
             "Type": "Number",
