@@ -227,7 +227,7 @@
             "Type": "Number",
             "Default": 2,
             "MinValue": 0,
-            "Description": "The maximum amount of time (in seconds) allowed for network latency of the FortiGate heartbeat arriving at the Autoscale handler. Minimum is 0."
+            "Description": "The maximum amount of time (in seconds) allowed for network latency of the FortiGate heartbeat arriving at the FortiGate Autoscale handler. Minimum is 0."
         },
         "LoadBalancingTrafficProtocol": {
             "Type": "String",
