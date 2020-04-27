@@ -7,7 +7,7 @@
             "AllowedPattern": "[0-9a-zA-Z@.#-]+",
             "MaxLength": 50,
             "ConstraintDescription": "Resource tag prefix can include numbers, lowercase letters, uppercase letters, ampersat(@) , hyphens (-), period (.), and hash (#). Max length is 50.",
-            "Description": "The ResourceGroup Tag Key used on all resources and as the name prefix of all applicable resources. Can only contain numbers, lowercase letters, uppercase letters, ampersat(@), hyphens (-), period (.), and hash (#). Max length is 50."
+            "Description": "The ResourceGroup Tag Key used on all resources and as the name prefix of all applicable resources. It can only contain numbers, lowercase letters, uppercase letters, ampersat(@), hyphens (-), period (.), and hash (#). Max length is 50."
         },
         "CustomIdentifier": {
             "Type": "String",
