@@ -15,7 +15,7 @@
             "MaxLength": "10",
             "AllowedPattern": "[A-Za-z0-9]+",
             "ConstraintDescription": "must only contain uppercase and lowercase letters and numbers",
-            "Description": "An alternative name prefix to be used on a resource that the 'Resource tag prefix' cannot apply to. Can only contain numbers, lowercase letters, and uppercase letters. Max length is 10."
+            "Description": "An alternative name prefix to be used on a resource that the 'Resource tag prefix' cannot apply to. It can only contain numbers, lowercase letters, and uppercase letters. Max length is 10."
         },
         "QSS3BucketName": {
             "Type": "String",
