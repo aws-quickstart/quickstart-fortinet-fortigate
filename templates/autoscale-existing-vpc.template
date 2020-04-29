@@ -850,7 +850,7 @@
                     "default": "Maximum group size (BYOL)"
                 },
                 "FgtAsgDesiredCapacityPayg": {
-                    "default": "Desired capacity (On-Demand)"
+                    "default": "Desired capacity (On-demand)"
                 },
                 "FgtAsgMinSizePayg": {
                     "default": "Minimum group size (On-Demand)"
