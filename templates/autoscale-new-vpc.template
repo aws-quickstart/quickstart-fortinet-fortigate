@@ -151,7 +151,7 @@
             "Default": 0,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "Minimum number of FortiGate instances in the On-Demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing."
+            "Description": "The minimum number of FortiGate instances in the On-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-demand-only, and >= 0 for hybrid licensing."
         },
         "FgtAsgMaxSizePayg": {
             "Type": "Number",
