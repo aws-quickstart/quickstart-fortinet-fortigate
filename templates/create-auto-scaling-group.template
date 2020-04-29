@@ -124,7 +124,7 @@
             "Default": 0,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 1.",
-            "Description": "Minimum number of FortiGate instances in the Auto-Scaling Group. Minimum is 2."
+            "Description": "The minimum number of FortiGate instances in the Auto Scaling group. Minimum is 2."
         },
         "AsgMaxSize": {
             "Type": "Number",
