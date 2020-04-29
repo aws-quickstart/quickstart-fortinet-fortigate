@@ -853,7 +853,7 @@
                     "default": "Desired capacity (On-demand)"
                 },
                 "FgtAsgMinSizePayg": {
-                    "default": "Minimum group size (On-Demand)"
+                    "default": "Minimum group size (On-demand)"
                 },
                 "FgtAsgMaxSizePayg": {
                     "default": "Maximum group size (On-Demand)"
