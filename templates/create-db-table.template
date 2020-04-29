@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Create all necessary DynamoDB tables for FortiGate Autoscale Solution.",
+    "Description": "Create all necessary DynamoDB tables for FortiGate Auto Scaling Solution.",
     "Parameters": {
         "ResourceTagPrefix": {
             "Type": "String",

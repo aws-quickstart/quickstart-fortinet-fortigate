@@ -213,7 +213,7 @@
             "MinValue": 30,
             "MaxValue": 90,
             "ConstraintDescription": "must be a valid number between 30 and 90.",
-            "Description": "The length of time (in seconds) that a FortiGate instance waits between sending heartbeat requests to the FortiGate Autoscale handler. Minimum is 30. Maximum is 90."
+            "Description": "The length of time (in seconds) that a FortiGate instance waits between sending heartbeat requests to the FortiGate Auto Scaling handler. Minimum is 30. Maximum is 90."
         },
         "HeartBeatLossCount": {
             "Type": "Number",
@@ -227,7 +227,7 @@
             "Type": "Number",
             "Default": 2,
             "MinValue": 0,
-            "Description": "The maximum amount of time (in seconds) allowed for network latency of the FortiGate heartbeat arriving at the FortiGate Autoscale handler. Minimum is 0."
+            "Description": "The maximum amount of time (in seconds) allowed for network latency of the FortiGate heartbeat arriving at the FortiGate Auto Scaling handler. Minimum is 0."
         },
         "LoadBalancingTrafficProtocol": {
             "Type": "String",

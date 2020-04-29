@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "This template creates a FortiGate Autoscale Handler Lambda function and an API Gateway.",
+    "Description": "This template creates a FortiGate Auto Scaling Handler Lambda function and an API Gateway.",
     "Parameters": {
         "QSS3BucketName": {
             "Type": "String",
@@ -558,7 +558,7 @@
         "FgtAsgLambdaFunctionAsgHandler": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
-                "Description": "FortiGate Autoscale handler function.",
+                "Description": "FortiGate Auto Scaling handler function.",
                 "FunctionName": {
                     "Fn::Join": [
                         "-",
@@ -619,7 +619,7 @@
         "FgtAsgLambdaFunctionCfnService": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
-                "Description": "FortiGate Autoscale service provider function for Cloud Formation stack.",
+                "Description": "FortiGate Auto Scaling service provider function for Cloud Formation stack.",
                 "FunctionName": {
                     "Fn::Join": [
                         "-",
@@ -707,7 +707,7 @@
             "Type": "AWS::Lambda::Function",
             "Condition": "CreateByolLicenseHandler",
             "Properties": {
-                "Description": "FortiGate Autoscale BYOL license handler function.",
+                "Description": "FortiGate Auto Scaling BYOL license handler function.",
                 "FunctionName": {
                     "Fn::Join": [
                         "-",
@@ -800,7 +800,7 @@
             }
         },
         "FgtAsgHandlerApiGatewayUrl": {
-            "Description": "API Gateway URL of the FortiGate Autoscale Handler",
+            "Description": "API Gateway URL of the FortiGate Auto Scaling Handler",
             "Value": {
                 "Fn::Sub": [
                     "https://${gatewayId}.execute-api.${region}.amazonaws.com/prod/fgt-asg-handler",
@@ -816,57 +816,57 @@
             }
         },
         "FgtAsgHandlerFunctionName": {
-            "Description": "FortiGate Autoscale handler function Name",
+            "Description": "FortiGate Auto Scaling handler function Name",
             "Value": {
                 "Ref": "FgtAsgLambdaFunctionAsgHandler"
             }
         },
         "FgtAsgHandlerFunctionArn": {
-            "Description": "FortiGate Autoscale handler function ARN",
+            "Description": "FortiGate Auto Scaling handler function ARN",
             "Value": {
                 "Fn::GetAtt": ["FgtAsgLambdaFunctionAsgHandler", "Arn"]
             }
         },
         "FgtAsgHandlerServicName": {
-            "Description": "FortiGate Autoscale handler service function Name",
+            "Description": "FortiGate Auto Scaling handler service function Name",
             "Value": {
                 "Ref": "FgtAsgLambdaFunctionCfnService"
             }
         },
         "FgtAsgHandlerServiceArn": {
-            "Description": "FortiGate Autoscale handler service function ARN",
+            "Description": "FortiGate Auto Scaling handler service function ARN",
             "Value": {
                 "Fn::GetAtt": ["FgtAsgLambdaFunctionCfnService", "Arn"]
             }
         },
         "ByolLicenseHandlerFunctionName": {
             "Condition": "CreateByolLicenseHandler",
-            "Description": "FortiGate Autoscale BYOL license handler function Name",
+            "Description": "FortiGate Auto Scaling BYOL license handler function Name",
             "Value": {
                 "Ref": "FgtAsgLambdaFunctionByolLicenseHandler"
             }
         },
         "ByolLicenseHandlerFunctionArn": {
             "Condition": "CreateByolLicenseHandler",
-            "Description": "FortiGate Autoscale BYOL license handler function ARN",
+            "Description": "FortiGate Auto Scaling BYOL license handler function ARN",
             "Value": {
                 "Fn::GetAtt": ["FgtAsgLambdaFunctionByolLicenseHandler", "Arn"]
             }
         },
         "FgtAsgHandlerIamRoleName": {
-            "Description": "FortiGate Autoscale handler IAM Role name.",
+            "Description": "FortiGate Auto Scaling handler IAM Role name.",
             "Value": {
                 "Ref": "FgtAsgHandlerIamRole"
             }
         },
         "FgtAsgHandlerIamRoleArn": {
-            "Description": "FortiGate Autoscale handler IAM Role name.",
+            "Description": "FortiGate Auto Scaling handler IAM Role name.",
             "Value": {
                 "Fn::GetAtt": ["FgtAsgHandlerIamRole", "Arn"]
             }
         },
         "RequiredConfigsetList": {
-            "Description": "A comma-delimited list of required configset for the FortiGate Autoscale handling.",
+            "Description": "A comma-delimited list of required configset for the FortiGate Auto Scaling handling.",
             "Value": ""
         }
     }

@@ -38,7 +38,7 @@
         },
         "VPCID": {
             "Type": "AWS::EC2::VPC::Id",
-            "Description": "The ID of the existing VPC where FortiGate Autoscale will be deployed. The VPC must have the option 'DNS hostnames' enabled and each of the two Availability Zones in the VPC must have at least 1 public subnet and at least 1 private subnet."
+            "Description": "The ID of the existing VPC where FortiGate Auto Scaling will be deployed. The VPC must have the option 'DNS hostnames' enabled and each of the two Availability Zones in the VPC must have at least 1 public subnet and at least 1 private subnet."
         },
         "VPCCIDR": {
             "Type": "String",
@@ -78,7 +78,7 @@
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which FortiGate Autoscale uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-)."
+            "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which FortiGate Auto Scaling uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-)."
         },
         "AutoscaleAdminPassword": {
             "Type": "String",
@@ -490,7 +490,7 @@
                         ]
                     }
                 },
-                "Description": "Register a FortiAnalyzer in the DB for FortiGate Autoscale.",
+                "Description": "Register a FortiAnalyzer in the DB for FortiGate Auto Scaling.",
                 "Handler": "index.handler",
                 "Role": {
                     "Fn::GetAtt": ["IamRoleFazHandler", "Arn"]
@@ -761,13 +761,13 @@
             }
         },
         "FazHandlerFunctionName": {
-            "Description": "FortiGate Autoscale - FortiAnalyzer handler function name.",
+            "Description": "FortiGate Auto Scaling - FortiAnalyzer handler function name.",
             "Value": {
                 "Ref": "LambdaFunctionFazHandler"
             }
         },
         "FazHandlerFunctionArn": {
-            "Description": "FortiGate Autoscale - FortiAnalyzer handler function ARN.",
+            "Description": "FortiGate Auto Scaling - FortiAnalyzer handler function ARN.",
             "Value": {
                 "Fn::GetAtt": ["LambdaFunctionFazHandler", "Arn"]
             }

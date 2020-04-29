@@ -1,9 +1,9 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "This template creates a new VPC to deploy the FortiGate Autoscale Solution.",
+    "Description": "This template creates a new VPC to deploy the FortiGate Auto Scaling Solution.",
     "Parameters": {
         "AvailabilityZones": {
-            "Description": "The list of Availability Zones to use for the subnets in the VPC. The FortiGate Autoscale solution uses two Availability Zones from your list and preserves the logical order you specify.",
+            "Description": "The list of Availability Zones to use for the subnets in the VPC. The FortiGate Auto Scaling solution uses two Availability Zones from your list and preserves the logical order you specify.",
             "Type": "List<AWS::EC2::AvailabilityZone::Name>"
         },
         "VPCCIDR": {

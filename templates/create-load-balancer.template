@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Deploy Network traffic Load Balancers and components for FortiGate Autoscale.",
+    "Description": "Deploy Network traffic Load Balancers and components for FortiGate Auto Scaling.",
     "Parameters": {
         "ResourceTagPrefix": {
             "Type": "String",
@@ -61,7 +61,7 @@
         },
         "FgtSubnetIds": {
             "Type": "String",
-            "Description": "A comma-delimited list of subnet IDs that FortiGate Autoscale instances locate in."
+            "Description": "A comma-delimited list of subnet IDs that FortiGate Auto Scaling instances locate in."
         },
         "NewInternalLoadBalancer": {
             "Type": "String",
@@ -485,13 +485,13 @@
     },
     "Outputs": {
         "FgtLoadBalancerDNSName": {
-            "Description": "FortiGate Autoscale load balancer DNS name",
+            "Description": "FortiGate Auto Scaling load balancer DNS name",
             "Value": {
                 "Fn::GetAtt": ["FgtLoadBalancer", "DNSName"]
             }
         },
         "FgtTargetGroupArn": {
-            "Description": "FortiGate Autoscale target group ARN",
+            "Description": "FortiGate Auto Scaling target group ARN",
             "Value": {
                 "Ref": "FgtTargetGroup"
             }

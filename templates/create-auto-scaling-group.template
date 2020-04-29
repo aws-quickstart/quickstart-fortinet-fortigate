@@ -126,7 +126,7 @@
             "MinValue": 60,
             "MaxValue": 3600,
             "ConstraintDescription": "must be a valid number between 60 and 3600.",
-            "Description": "The amount of time (in seconds) that can elapse before the FortiGate Autoscale lifecycle hook times out. Minimum is 60. Maximum is 3600."
+            "Description": "The amount of time (in seconds) that can elapse before the FortiGate Auto Scaling lifecycle hook times out. Minimum is 60. Maximum is 3600."
         },
         "DependOnCondition": {
             "Type": "String",
@@ -637,7 +637,7 @@
     },
     "Outputs": {
         "AutoScalingGroupName": {
-            "Description": "FortiGate Autoscale Auto Scaling Group Name",
+            "Description": "FortiGate Auto Scaling Auto Scaling Group Name",
             "Value": {
                 "Ref": "FgtAutoScalingGroup"
             }
