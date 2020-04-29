@@ -130,7 +130,7 @@
             "Default": 2,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "Minimum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing."
+            "Description": "The minimum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-demand-only, and >= 2 for BYOL-only or hybrid licensing."
         },
         "FgtAsgMaxSizeByol": {
             "Type": "Number",
