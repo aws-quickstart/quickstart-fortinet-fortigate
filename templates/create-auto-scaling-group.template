@@ -156,7 +156,7 @@
         "ProductAMI": {
             "Type": "String",
             "Default": "",
-            "Description": "The AMI for launch template for the auto scaling group."
+            "Description": "The AMI for the launch template for the Auto Scaling group."
         },
         "ProductCode": {
             "Type": "String",
