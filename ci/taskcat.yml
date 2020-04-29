@@ -85,7 +85,7 @@ tests:
     - eu-central-1
     - eu-west-1
     - eu-west-2
-    s3_bucket: 'dchao-autoscale-bucket'
+    s3_bucket: 'aws-quickstart-taskcat-ci'
     template: templates/autoscale-new-vpc.template
   quickstart-fortigate-test-ap-east-1:
     parameters:
@@ -136,7 +136,7 @@ tests:
       VPCCIDR: 192.168.0.0/16
     regions:
     - ap-east-1
-    s3_bucket: 'dchao-autoscale-bucket'
+    s3_bucket: 'aws-quickstart-taskcat-ci'
     template: templates/autoscale-new-vpc.template
   quickstart-fortigate-test-eu-north-1:
     parameters:
@@ -187,7 +187,7 @@ tests:
       VPCCIDR: 192.168.0.0/16
     regions:
     - eu-north-1
-    s3_bucket: 'dchao-autoscale-bucket'
+    s3_bucket: 'aws-quickstart-taskcat-ci'
     template: templates/autoscale-new-vpc.template
   quickstart-fortigate-test-eu-west-3:
     parameters:
@@ -238,7 +238,7 @@ tests:
       VPCCIDR: 192.168.0.0/16
     regions:
     - eu-west-3
-    s3_bucket: 'dchao-autoscale-bucket'
+    s3_bucket: 'aws-quickstart-taskcat-ci'
     template: templates/autoscale-new-vpc.template
   quickstart-fortigate-test-me-south-1:
     parameters:
@@ -289,7 +289,7 @@ tests:
       VPCCIDR: 192.168.0.0/16
     regions:
     - me-south-1
-    s3_bucket: 'dchao-autoscale-bucket'
+    s3_bucket: 'aws-quickstart-taskcat-ci'
     template: templates/autoscale-new-vpc.template
   quickstart-fortigate-test-sa-east-1:
     parameters:
@@ -340,5 +340,5 @@ tests:
       VPCCIDR: 192.168.0.0/16
     regions:
     - sa-east-1
-    s3_bucket: 'dchao-autoscale-bucket'
+    s3_bucket: 'aws-quickstart-taskcat-ci'
     template: templates/autoscale-new-vpc.template
