@@ -12,7 +12,7 @@
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Deployment package S3 key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Description": "S3 key prefix for the deployment package. Key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/)."
+            "Description": "The S3 key name prefix used to simulate a folder for your copy of Quick Start assets. You need to use this if you want to customize the Quick Start for your own use. It can only contain numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). If provided, it must end with a forward slash (/)."
         },
         "ResourceTagPrefix": {
             "Type": "String",
