@@ -6,7 +6,7 @@
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Deployment resource S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "The name of the S3 bucket you created for your copy of Quick Start assets if you decide to customize the Quick Start for your own use. It can only contain numbers, lowercase letters, uppercase letters, and hyphens (-), but should not start or end with a hyphen (-).
+            "Description": "The name of the S3 bucket you created for your copy of Quick Start assets if you decide to customize the Quick Start for your own use. It can only contain numbers, lowercase letters, uppercase letters, and hyphens (-), but should not start or end with a hyphen (-)."
         },
         "QSS3KeyPrefix": {
             "Type": "String",
@@ -42,27 +42,6 @@
         },
         "InstanceType": {
             "Type": "String",
-            "Default": "c5.large",
-            "AllowedValues": [
-                "t2.small",
-                "t3.small",
-                "t3.xlarge",
-                "c4.large",
-                "c4.xlarge",
-                "c4.2xlarge",
-                "c4.4xlarge",
-                "c4.8xlarge",
-                "c5.large",
-                "c5.xlarge",
-                "c5.2xlarge",
-                "c5.4xlarge",
-                "c5.9xlarge",
-                "c5.18xlarge",
-                "c5n.large",
-                "c5n.xlarge",
-                "c5n.2xlarge"
-            ],
-            "ConstraintDescription": "must be a valid EC2 instance type.",
             "Description": "The instance type for the FortiGates in the Auto Scaling group. There are t2.small and compute-optimized instances such as c4 and c5 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/."
         },
         "InstanceProfileArn": {
