@@ -970,7 +970,7 @@
                     "default": "Minimum group size (On-Demand)"
                 },
                 "FgtAsgMaxSizePayg": {
-                    "default": "Maximum group size (On-Demand)"
+                    "default": "Maximum group size (On-demand)"
                 },
                 "FgtAsgHealthCheckGracePeriod": {
                     "default": "Health check grace period"
