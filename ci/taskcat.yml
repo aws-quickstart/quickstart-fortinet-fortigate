@@ -21,7 +21,7 @@ project:
   - eu-north-1
   - me-south-1
   - sa-east-1
-  s3_bucket: 'dchao-autoscale-bucket'
+  s3_bucket: 'aws-quickstart-taskcat-ci'
   s3_object_acl: public-read
 tests:
   quickstart-fortigate-test:
