@@ -339,7 +339,7 @@
                 "m5.24xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 instance type.",
-            "Description": "The instance type to launch as FortiAnalyzer On-Demand instances. There are t2.small and compute-optimized instances such as m4 and c4 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/"
+            "Description": "The instance type to launch as FortiAnalyzer On-demand instances. There are compute-optimized instances such as m4 and c4 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/."
         },
         "FortiAnalyzerVersion": {
             "Type": "String",
@@ -967,7 +967,7 @@
                     "default": "Desired capacity (On-demand)"
                 },
                 "FgtAsgMinSizePayg": {
-                    "default": "Minimum group size (On-Demand)"
+                    "default": "Minimum group size (On-demand)"
                 },
                 "FgtAsgMaxSizePayg": {
                     "default": "Maximum group size (On-demand)"
