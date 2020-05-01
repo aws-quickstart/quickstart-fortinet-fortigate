@@ -135,7 +135,7 @@
             "Default": 0,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "The number of FortiGate instances the On-demand Auto Scaling group should have at any time. For High Availability in a On-demand-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-demand-only, and >= 0 for hybrid licensing."
+            "Description": "The number of FortiGate instances the On-demand Auto Scaling group should have at any time. For High Availability in an On-demand-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-demand-only, and >= 0 for hybrid licensing."
         },
         "FgtAsgMinSizePayg": {
             "Type": "Number",
@@ -344,21 +344,21 @@
             "Default": "",
             "AllowedPattern": "^$|^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which Fortinet FortiGate Auto Scaling uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-)."
+            "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which Fortinet FortiGate Auto Scaling uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-).  If 'FortiAnalyzer integration' is set to 'no', any input will be ignored."
         },
         "FortiAnalyzerAutoscaleAdminPassword": {
             "Type": "String",
             "NoEcho": true,
             "Default": "",
             "MaxLength": 128,
-            "Description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
+            "Description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation. If 'FortiAnalyzer integration' is set to 'no', any input will be ignored."
         },
         "FortiAnalyzerCustomPrivateIPAddress": {
             "Type": "String",
             "Default": "",
             "AllowedPattern": "^$|^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}$",
             "ConstraintDescription": "must be a valid IPv4 format.",
-            "Description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored."
+            "Description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored."
         },
         "IntegratedNATGatewayOptions": {
             "Type": "String",
