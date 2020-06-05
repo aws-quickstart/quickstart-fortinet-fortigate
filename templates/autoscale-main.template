@@ -408,84 +408,84 @@
                 "623": "FGTVM64PAYG623"
             },
             "FortiAnalyzerPayg": {
-                "623": "FAZVM64PAYG623"
+                "625": "FAZVM64PAYG625"
             }
         },
         "AWSAMIRegionMap": {
             "AMI": {
                 "FGTVM64BYOL623": "aws-marketplace/FortiGate-VM64-AWS build8404 (6.2.3) GA-e5936f4a-0d69-479f-919c-d5e158bd4d12-ami-01c5698f7658a8322.4",
                 "FGTVM64PAYG623": "aws-marketplace/FortiGate-VM64-AWSONDEMAND build8404 (6.2.3) GA-3124a694-441c-4ff1-8bf7-4d153be424a6-ami-0462507a813be3282.4",
-                "FAZVM64PAYG623": "aws-marketplace/FortiAnalyzer VM64-AWSOnDemand build1235 (6.2.3) GA-137ae5b3-1f45-4ebd-81bf-93687e21d93e-ami-0750d39819d7caa42.4"
+                "FAZVM64PAYG625": "aws-marketplace/FortiAnalyzer VM64-AWSOnDemand build1307 (6.2.5) GA-5bc06b01-2e8b-4205-b84c-8ac24e5925cb-ami-0ad43fcfba0fdf465.4"
             },
             "ap-northeast-1": {
                 "FGTVM64BYOL623": "ami-0bc8cacacf3dfcfc8",
                 "FGTVM64PAYG623": "ami-0444162d604179bf6",
-                "FAZVM64PAYG623": "ami-0b0dd518b763ae923"
+                "FAZVM64PAYG625": "ami-058bb5281554ea853"
             },
             "ap-northeast-2": {
                 "FGTVM64BYOL623": "ami-0a2a06f3cbde68482",
                 "FGTVM64PAYG623": "ami-065b67d14c722617a",
-                "FAZVM64PAYG623": "ami-03365fee895cc8522"
+                "FAZVM64PAYG625": "ami-091491ec939b91b4a"
             },
             "ap-south-1": {
                 "FGTVM64BYOL623": "ami-053b6c12f13183b41",
                 "FGTVM64PAYG623": "ami-0f6693857523585b8",
-                "FAZVM64PAYG623": "ami-0b18b7bfbda2f5793"
+                "FAZVM64PAYG625": "ami-0f9202563d8cf347d"
             },
             "ap-southeast-1": {
                 "FGTVM64BYOL623": "ami-039c20a560db91564",
                 "FGTVM64PAYG623": "ami-0155fb808596ae522",
-                "FAZVM64PAYG623": "ami-063a043576683a8cd"
+                "FAZVM64PAYG625": "ami-048f31c63e075d14e"
             },
             "ap-southeast-2": {
                 "FGTVM64BYOL623": "ami-0fce8cb38dad71632",
                 "FGTVM64PAYG623": "ami-0b67711c6be07aa0b",
-                "FAZVM64PAYG623": "ami-0d1060f02fae9ea3b"
+                "FAZVM64PAYG625": "ami-079ef4c6aca62da73"
             },
             "ca-central-1": {
                 "FGTVM64BYOL623": "ami-047aac44951feb9fb",
                 "FGTVM64PAYG623": "ami-099941e57393c2225",
-                "FAZVM64PAYG623": "ami-002bde3b72a43df1f"
+                "FAZVM64PAYG625": "ami-00f47a3e5f20cafa1"
             },
             "eu-central-1": {
                 "FGTVM64BYOL623": "ami-050d93bdbc31fcc64",
                 "FGTVM64PAYG623": "ami-0c380ca68f2b1f6e8",
-                "FAZVM64PAYG623": "ami-0223b59251aa9f807"
+                "FAZVM64PAYG625": "ami-0c15ecda03070ed9d"
             },
             "eu-north-1": {
                 "FGTVM64BYOL623": "ami-071a868b96c93d6da",
                 "FGTVM64PAYG623": "ami-0d49417aa3a3912e1",
-                "FAZVM64PAYG623": "ami-0dbf09daca24aa6bf"
+                "FAZVM64PAYG625": "ami-0663c71f97fc203b6"
             },
             "eu-west-1": {
                 "FGTVM64BYOL623": "ami-013de57d4a8680ade",
                 "FGTVM64PAYG623": "ami-0874d1d29263b27ff",
-                "FAZVM64PAYG623": "ami-05f96f24754bb4e00"
+                "FAZVM64PAYG625": "ami-0b8ea17ab0826a944"
             },
             "eu-west-2": {
                 "FGTVM64BYOL623": "ami-0aad5e076fa22e8c4",
                 "FGTVM64PAYG623": "ami-04eba63bb19dbeebe",
-                "FAZVM64PAYG623": "ami-0125f10e7400d460d"
+                "FAZVM64PAYG625": "ami-0b4528aca3c1b55bd"
             },
             "eu-west-3": {
                 "FGTVM64BYOL623": "ami-092a7d4eb40332b32",
                 "FGTVM64PAYG623": "ami-0c104a0848b644152",
-                "FAZVM64PAYG623": "ami-00e2f34ab8b6b16f9"
+                "FAZVM64PAYG625": "ami-0f6435b452cf7c82f"
             },
             "sa-east-1": {
                 "FGTVM64BYOL623": "ami-0feee4be0b03e070d",
                 "FGTVM64PAYG623": "ami-04de901f24e8532db",
-                "FAZVM64PAYG623": "ami-0d9fdeb8c498541b6"
+                "FAZVM64PAYG625": "ami-05bbb60d2960f36a4"
             },
             "us-east-1": {
                 "FGTVM64BYOL623": "ami-056b8cbed90f235f7",
                 "FGTVM64PAYG623": "ami-027f258cda3df62de",
-                "FAZVM64PAYG623": "ami-097ebd38f91b7a4de"
+                "FAZVM64PAYG625": "ami-0aec62149ff70fcbf"
             },
             "us-east-2": {
                 "FGTVM64BYOL623": "ami-02dfca9796bfaff10",
                 "FGTVM64PAYG623": "ami-05a4ac8312f7911b9",
-                "FAZVM64PAYG623": "ami-046abcd4e8711920b"
+                "FAZVM64PAYG625": "ami-0185408b148b00d58"
             },
             "us-gov-west-1": {
                 "FGTVM64BYOL623": "ami-23b28442",
@@ -494,22 +494,22 @@
             "us-west-1": {
                 "FGTVM64BYOL623": "ami-012fa84a251f3e63f",
                 "FGTVM64PAYG623": "ami-0f54d37e47fa994a0",
-                "FAZVM64PAYG623": "ami-0086e6c996c6b1d3a"
+                "FAZVM64PAYG625": "ami-0362a553a3d81e6ab"
             },
             "us-west-2": {
                 "FGTVM64BYOL623": "ami-00efdd54f8b4755da",
                 "FGTVM64PAYG623": "ami-02b9cc036cab1071d",
-                "FAZVM64PAYG623": "ami-0b7bfc2604bf63d33"
+                "FAZVM64PAYG625": "ami-03babf421c5f09e17"
             },
             "ap-east-1": {
                 "FGTVM64BYOL623": "ami-0bfc475f9b1de6da9",
                 "FGTVM64PAYG623": "ami-0437be57fc361c67b",
-                "FAZVM64PAYG623": "ami-62420713"
+                "FAZVM64PAYG625": "ami-02cd3bc5abdee1e2b"
             },
             "me-south-1": {
                 "FGTVM64BYOL623": "ami-0063dcdb7c00646a5",
                 "FGTVM64PAYG623": "ami-0fcd028d7d86a0695",
-                "FAZVM64PAYG623": "ami-0af628a19f5cb6382"
+                "FAZVM64PAYG625": "ami-048340a2b75936111"
             }
         },
         "ProtocolPortMap": {

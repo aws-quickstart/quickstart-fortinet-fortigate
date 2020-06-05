@@ -63,7 +63,7 @@
         },
         "FortiGateInstanceType": {
             "Type": "String",
-            "Default": "c5.large",
+            "Default": "c5.xlarge",
             "AllowedValues": [
                 "t2.small",
                 "t3.small",
@@ -91,7 +91,7 @@
             "Default": "6.2.3",
             "AllowedValues": ["6.2.3"],
             "ConstraintDescription": "must be a valid FortiOS version from the selection.",
-            "Description": "The FortiOS version supported by Fortinet FortiGate Auto Scaling."
+            "Description": "The FortiOS version supported by Fortinet FortiGate Auto Scaling. **IMPORTANT!** Requires a subscription to the Fortinet FortiGate On-demand and/or BYOL AMI(s)."
         },
         "LifecycleHookTimeout": {
             "Type": "Number",
@@ -121,28 +121,28 @@
             "Default": 2,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "The minimum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-demand-only, and >= 2 for BYOL-only or hybrid licensing."
+            "Description": "Minimum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing."
         },
         "FgtAsgMaxSizeByol": {
             "Type": "Number",
             "Default": 2,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "The maximum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-demand-only, and >= 2 for BYOL-only or hybrid licensing. This number must be greater than or equal to the Minimum group size (BYOL)."
+            "Description": "Maximum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing. This number must be greater than or equal to the Minimum group size (BYOL)."
         },
         "FgtAsgDesiredCapacityPayg": {
             "Type": "Number",
             "Default": 0,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "The number of FortiGate instances the On-demand Auto Scaling group should have at any time. For High Availability in an On-demand-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-demand-only, and >= 0 for hybrid licensing."
+            "Description": "The number of FortiGate instances the On-Demand Auto Scaling group should have at any time. For High Availability in a On-Demand-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing."
         },
         "FgtAsgMinSizePayg": {
             "Type": "Number",
             "Default": 0,
             "MinValue": 0,
             "ConstraintDescription": "must be a valid number not less than 0.",
-            "Description": "The minimum number of FortiGate instances in the On-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-demand-only, and >= 0 for hybrid licensing."
+            "Description": "Minimum number of FortiGate instances in the On-Demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing."
         },
         "FgtAsgMaxSizePayg": {
             "Type": "Number",
@@ -291,74 +291,50 @@
         },
         "FortiAnalyzerInstanceType": {
             "Type": "String",
-            "Default": "m4.large",
+            "Default": "m5.large",
             "AllowedValues": [
-                "c4.large",
-                "c4.xlarge",
-                "c4.2xlarge",
-                "c4.4xlarge",
-                "c4.8xlarge",
-                "c5.large",
-                "c5.xlarge",
-                "c5.2xlarge",
-                "c5.4xlarge",
-                "c5.9xlarge",
-                "c5.12xlarge",
-                "c5.18xlarge",
-                "c5.24xlarge",
-                "d2.xlarge",
-                "d2.2xlarge",
-                "d2.4xlarge",
-                "d2.8xlarge",
                 "h1.2xlarge",
                 "h1.4xlarge",
                 "h1.8xlarge",
-                "h1.16xlarge",
-                "m4.large",
-                "m4.xlarge",
-                "m4.2xlarge",
-                "m4.4xlarge",
-                "m4.10xlarge",
-                "m4.16xlarge",
                 "m5.large",
                 "m5.xlarge",
                 "m5.2xlarge",
                 "m5.4xlarge",
-                "m5.8xlarge",
                 "m5.12xlarge",
-                "m5.16xlarge",
-                "m5.24xlarge"
+                "t2.medium",
+                "t2.large",
+                "t2.xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 instance type.",
             "Description": "The instance type to launch as FortiAnalyzer On-demand instances. There are compute-optimized instances such as m4 and c4 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/."
         },
         "FortiAnalyzerVersion": {
             "Type": "String",
-            "Default": "6.2.3",
-            "AllowedValues": ["6.2.3"],
+            "Default": "6.2.5",
+            "AllowedValues": ["6.2.5"],
             "ConstraintDescription": "must choose from the provided options.",
-            "Description": "The FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling."
+            "Description": "The FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling. **IMPORTANT!** Requires a subscription to the Fortinet FortiAnalyzer Centralized Logging/Reporting (10 managed devices) AMI."
         },
         "FortiAnalyzerAutoscaleAdminUsername": {
             "Type": "String",
             "Default": "",
             "AllowedPattern": "^$|^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which Fortinet FortiGate Auto Scaling uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-).  If 'FortiAnalyzer integration' is set to 'no', any input will be ignored."
+            "Description": "The name of the secondary administrator level account in the FortiAnalyzer, which Fortinet FortiGate Auto Scaling uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-)."
         },
         "FortiAnalyzerAutoscaleAdminPassword": {
             "Type": "String",
             "NoEcho": true,
             "Default": "",
             "MaxLength": 128,
-            "Description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation. If 'FortiAnalyzer integration' is set to 'no', any input will be ignored."
+            "Description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
         },
         "FortiAnalyzerCustomPrivateIPAddress": {
             "Type": "String",
             "Default": "",
             "AllowedPattern": "^$|^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}$",
             "ConstraintDescription": "must be a valid IPv4 format.",
-            "Description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored."
+            "Description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored."
         },
         "IntegratedNATGatewayOptions": {
             "Type": "String",
@@ -856,7 +832,7 @@
                     "default": "Minimum group size (On-demand)"
                 },
                 "FgtAsgMaxSizePayg": {
-                    "default": "Maximum group size (On-demand)"
+                    "default": "Maximum group size (On-Demand)"
                 },
                 "FgtAsgHealthCheckGracePeriod": {
                     "default": "Health check grace period"
