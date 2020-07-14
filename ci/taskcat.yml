@@ -62,7 +62,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
@@ -125,7 +125,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
@@ -176,7 +176,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
@@ -227,7 +227,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
@@ -278,7 +278,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
@@ -329,7 +329,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
