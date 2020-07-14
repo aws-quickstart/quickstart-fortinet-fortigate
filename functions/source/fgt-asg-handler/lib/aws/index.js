@@ -2708,7 +2708,7 @@ class AwsAutoscaleHandler extends AutoScaleCore.AutoscaleHandler {
             );
             return config;
         } else {
-            this._step = 'handler:getConfig:getSlaveConfig';
+            this._step = 'handler:getConfig:getSecondaryConfig';
             let getPendingMasterIp = !(
                 this._settings['master-election-no-wait'] === 'true' &&
                 this._masterRecord &&
@@ -2718,7 +2718,7 @@ class AwsAutoscaleHandler extends AutoScaleCore.AutoscaleHandler {
             params.masterIp =
                 (getPendingMasterIp && masterInfo && masterInfo.primaryPrivateIpAddress) || null;
             params.allowHeadless = this._settings['master-election-no-wait'] === 'true';
-            config = await this.getSlaveConfig(params);
+            config = await this.getSecondaryConfig(params);
             logger.info(
                 'called handleGetConfig: returning slave config' +
                     `(master-ip: ${params.masterIp || 'undetermined'}):\n ${config}`

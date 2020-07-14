@@ -599,7 +599,7 @@ module.exports = class AutoscaleHandler {
                     } else if (this._masterRecord && this._masterRecord.voteState === 'pending') {
                         // i am not the new master
                         // if no wait for master election, I could become a headless instance
-                        // may allow any instance of slave role to come up without master.
+                        // may allow any instance of secondary role to come up without master.
                         // They will receive the new master ip on one of their following
                         // heartbeat sync callback
                         if (this._settings['master-election-no-wait'] === 'true') {
@@ -656,7 +656,7 @@ module.exports = class AutoscaleHandler {
                 // 1. a new instance comes up and becomes the new master, master healthcheck won't
                 // exist yet because this instance isn't added to monitor.
                 //   1.1. in this case, the instance will be added to monitor.
-                // 2. an existing slave instance becomes the new master, master healthcheck exists
+                // 2. an existing secondary instance becomes the new master, master healthcheck exists
                 // because the instance in under monitoring.
                 //   2.1. in this case, the instance will take actions based on its healthcheck
                 //        result.
@@ -753,7 +753,7 @@ module.exports = class AutoscaleHandler {
 
         // if master has changed and this is the new master,
         if (masterChanged && isMaster) {
-            // update master/slave tags
+            // update master/secondary tags
             await this.platform.updateHAAPRoleTag(this._selfInstance.instanceId);
             // if enable nat gw, update route
             if (this._settings['enable-integrated-egress-nat-gateway'] === 'true') {
@@ -786,7 +786,7 @@ module.exports = class AutoscaleHandler {
             }
 
             masterIp = this._masterInfo ? this._masterInfo.primaryPrivateIpAddress : null;
-            // if slave finds master is pending, don't update master ip to the health check record
+            // if secondary finds master is pending, don't update master ip to the health check record
             if (
                 !isMaster &&
                 this._masterRecord &&
@@ -943,7 +943,7 @@ module.exports = class AutoscaleHandler {
         return config;
     }
 
-    async getSlaveConfig(parameters) {
+    async getSecondaryConfig(parameters) {
         this._baseConfig = await this.getBaseConfig();
         const autoScaleSectionMatch = AUTOSCALE_SECTION_EXPR.exec(this._baseConfig),
             autoScaleSection = autoScaleSectionMatch && autoScaleSectionMatch[1],
@@ -959,7 +959,7 @@ module.exports = class AutoscaleHandler {
             errorMessage = 'Api endpoint is missing';
         }
         if (!(parameters.masterIp || parameters.allowHeadless)) {
-            errorMessage = 'Master ip is missing';
+            errorMessage = 'Primary ip is missing';
         }
         if (!pskSecret) {
             errorMessage = 'psksecret is missing';

@@ -943,7 +943,7 @@ module.exports = class AutoscaleHandler {
         return config;
     }
 
-    async getSlaveConfig(parameters) {
+    async getSecondaryConfig(parameters) {
         this._baseConfig = await this.getBaseConfig();
         const autoScaleSectionMatch = AUTOSCALE_SECTION_EXPR.exec(this._baseConfig),
             autoScaleSection = autoScaleSectionMatch && autoScaleSectionMatch[1],

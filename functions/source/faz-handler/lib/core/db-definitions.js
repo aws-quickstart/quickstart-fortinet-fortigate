@@ -79,7 +79,7 @@ const DB = {
             }
         ]
     },
-    FORTIGATEMASTERELECTION: {
+    FORTIGATEPRIMARYELECTION: {
         AttributeDefinitions: [
             {
                 AttributeName: 'scalingGroupName',

@@ -32,7 +32,7 @@ const autoScaling = new AWS.AutoScaling(),
     DB = AutoScaleCore.dbDefinitions.getTables(RESOURCE_TAG_PREFIX),
     MINIMUM_REQUIRED_DB_TABLE_KEYS = [
         'FORTIGATEAUTOSCALE',
-        'FORTIGATEMASTERELECTION',
+        'FORTIGATEPRIMARYELECTION',
         'LIFECYCLEITEM',
         'SETTINGS'
     ],
@@ -270,7 +270,7 @@ class AwsPlatform extends AutoScaleCore.CloudPlatform {
             let now = Date.now();
             let electionTimeout = parseInt(this._settings['master-election-timeout']);
             let params = {
-                TableName: DB.FORTIGATEMASTERELECTION.TableName,
+                TableName: DB.FORTIGATEPRIMARYELECTION.TableName,
                 Item: {
                     scalingGroupName: this.masterScalingGroupName,
                     ip: candidateInstance.primaryPrivateIpAddress,
@@ -304,7 +304,7 @@ class AwsPlatform extends AutoScaleCore.CloudPlatform {
     /** @override */
     async getMasterRecord() {
         const params = {
-                TableName: DB.FORTIGATEMASTERELECTION.TableName,
+                TableName: DB.FORTIGATEPRIMARYELECTION.TableName,
                 FilterExpression: '#PrimaryKeyName = :primaryKeyValue',
                 ExpressionAttributeNames: {
                     '#PrimaryKeyName': 'scalingGroupName'
@@ -328,7 +328,7 @@ class AwsPlatform extends AutoScaleCore.CloudPlatform {
         // only purge the master with a done votestate to avoid a
         // race condition
         const params = {
-            TableName: DB.FORTIGATEMASTERELECTION.TableName,
+            TableName: DB.FORTIGATEPRIMARYELECTION.TableName,
             Key: {
                 scalingGroupName: this.masterScalingGroupName
             },
@@ -349,7 +349,7 @@ class AwsPlatform extends AutoScaleCore.CloudPlatform {
             let electedMaster = this._masterRecord || (await this.getMasterRecord());
             electedMaster.voteState = 'done';
             const params = {
-                TableName: DB.FORTIGATEMASTERELECTION.TableName,
+                TableName: DB.FORTIGATEPRIMARYELECTION.TableName,
                 Item: electedMaster
             };
             let result = await docClient.put(params).promise();
@@ -2607,7 +2607,7 @@ class AwsAutoscaleHandler extends AutoScaleCore.AutoscaleHandler {
                 // scaling group. and if master-election-no-wait is enabled, allow this fgt
                 // to wake up without a master ip.
                 // this also implies this instance cannot be elected as the next maste which
-                // means it should be a slave.
+                // means it should be a secondary.
 
                 // master info exists
                 if (result) {
@@ -2708,7 +2708,7 @@ class AwsAutoscaleHandler extends AutoScaleCore.AutoscaleHandler {
             );
             return config;
         } else {
-            this._step = 'handler:getConfig:getSlaveConfig';
+            this._step = 'handler:getConfig:getSecondaryConfig';
             let getPendingMasterIp = !(
                 this._settings['master-election-no-wait'] === 'true' &&
                 this._masterRecord &&
@@ -2718,9 +2718,9 @@ class AwsAutoscaleHandler extends AutoScaleCore.AutoscaleHandler {
             params.masterIp =
                 (getPendingMasterIp && masterInfo && masterInfo.primaryPrivateIpAddress) || null;
             params.allowHeadless = this._settings['master-election-no-wait'] === 'true';
-            config = await this.getSlaveConfig(params);
+            config = await this.getSecondaryConfig(params);
             logger.info(
-                'called handleGetConfig: returning slave config' +
+                'called handleGetConfig: returning secondary config' +
                     `(master-ip: ${params.masterIp || 'undetermined'}):\n ${config}`
             );
             return config;
