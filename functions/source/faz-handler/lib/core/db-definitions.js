@@ -70,7 +70,7 @@ const DB = {
                 AttributeType: 'N'
             },
             {
-                AttributeName: 'masterIp',
+                AttributeName: 'primaryIp',
                 AttributeType: 'S'
             },
             {
@@ -93,7 +93,7 @@ const DB = {
             }
         ],
         ProvisionedThroughput: { ReadCapacityUnits: 1, WriteCapacityUnits: 1 },
-        TableName: 'FortiGateMasterElection',
+        TableName: 'FortiGatePrimaryElection',
         AdditionalAttributeDefinitions: [
             {
                 AttributeName: 'instanceId',
@@ -150,7 +150,7 @@ const DB = {
                 AttributeType: 'S'
             },
             {
-                AttributeName: 'master',
+                AttributeName: 'primary',
                 AttributeType: 'BOOL'
             }
         ]
