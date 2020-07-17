@@ -50,7 +50,7 @@ module.exports = class CloudPlatform {
     }
 
     /**
-     * Submit an primary record for election with a vote state.
+     * Submit a primary record for election with a vote state.
      * Abstract class method.
      * @param {String} candidateInstance the primary candidate instance
      * @param {String} voteState vote state of 'pending' or 'done'

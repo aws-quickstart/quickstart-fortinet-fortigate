@@ -2607,7 +2607,7 @@ class AwsAutoscaleHandler extends AutoScaleCore.AutoscaleHandler {
                 // if neither a pending primary nor a primary instance is found on the primary
                 // scaling group. and if primary-election-no-wait is enabled, allow this fgt
                 // to wake up without a primary ip.
-                // this also implies this instance cannot be elected as the next maste which
+                // this also implies this instance cannot be elected as the next primary which
                 // means it should be a secondary.
 
                 // primary info exists
