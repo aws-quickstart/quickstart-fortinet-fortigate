@@ -1,8 +1,8 @@
 # quickstart-fortinet-fortigate
 
-## Fortinet FortiGate Auto Scaling Baseline on the AWS Cloud
+## Fortinet FortiGate Auto Scaling on the AWS Cloud
 
-This Quick Start deploys FortiGate Auto Scaling, a next-generation firewall (NGFW) from Fortinet, on the Amazon Web Services (AWS) Cloud in about 15 minutes.
+This Quick Start deploys FortiGate Auto Scaling, a next-generation firewall (NGFW) from Fortinet, on the Amazon Web Services (AWS) Cloud in about 10 minutes.
 
 FortiGate mid-range next-generation firewalls (NGFWs) provide high performance, multi-layered advanced security, and better visibility to help protect against cyber attacks while reducing complexity. FortiGate firewalls are purpose-built with security processors to enable a high level of threat protection and performance for Secure Sockets Layer (SSL)-encrypted traffic.
 
