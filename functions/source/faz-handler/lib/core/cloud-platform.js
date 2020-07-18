@@ -64,7 +64,7 @@ module.exports = class CloudPlatform {
     /**
      * Get the primary record from db.
      * Abstract class method.
-     * @returns {String} Ip of the FortiGate which should be the auto-sync primary
+     * @returns {String} Ip of the FortiGate which should be the auto-sync primary instance
      */
     async getPrimaryRecord() {
         await this.throwNotImplementedException();
