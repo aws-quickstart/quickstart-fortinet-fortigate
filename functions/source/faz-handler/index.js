@@ -48,13 +48,13 @@ exports.handler = async (event, context) => {
         const lambda = new AWS.Lambda();
         const kms = new AWS.KMS();
 
-        async function registerFaz(instanceId, ip, master = '', vip = '') {
+        async function registerFaz(instanceId, ip, primary = '', vip = '') {
             logger.info('calling registerFaz');
             let params = {
                 Item: {
                     instanceId: instanceId,
                     ip: ip,
-                    master: !!master,
+                    primary: !!primary,
                     vip: vip ? vip : ip
                 },
                 TableName: DB.FORTIANALYZER.TableName
@@ -87,7 +87,7 @@ exports.handler = async (event, context) => {
                 }
             };
             let response = await docClient.query(params).promise();
-            // check if it is also registered as the faz HA master, then remove it
+            // check if it is also registered as the faz HA primary instance, then remove it
             if (response.Items && Array.isArray(response.Items) && response.Items.length === 1) {
                 let settingItem = FortiAnalyzerSettingItem.fromDb(response.Items[0]);
                 if (settingItem.instanceId === instanceId) {

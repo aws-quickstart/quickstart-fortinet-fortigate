@@ -42,8 +42,8 @@ tests:
       FortiAnalyzerAutoscaleAdminUsername: taskcat
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
-      FortiAnalyzerInstanceType: c4.large
-      FortiAnalyzerVersion: 6.2.3
+      FortiAnalyzerInstanceType: m5.large
+      FortiAnalyzerVersion: 6.2.5
       FortiGateAdminCIDR: 0.0.0.0/0
       FortiGateAdminPort: 8443
       FortiGateInstanceType: c5.large
@@ -62,7 +62,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
@@ -105,8 +105,8 @@ tests:
       FortiAnalyzerAutoscaleAdminUsername: taskcat
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
-      FortiAnalyzerInstanceType: d2.4xlarge
-      FortiAnalyzerVersion: 6.2.3
+      FortiAnalyzerInstanceType: m5.large
+      FortiAnalyzerVersion: 6.2.5
       FortiGateAdminCIDR: 0.0.0.0/0
       FortiGateAdminPort: 8443
       FortiGateInstanceType: c5.large
@@ -125,7 +125,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
@@ -156,8 +156,8 @@ tests:
       FortiAnalyzerAutoscaleAdminUsername: taskcat
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
-      FortiAnalyzerInstanceType: d2.4xlarge
-      FortiAnalyzerVersion: 6.2.3
+      FortiAnalyzerInstanceType: m5.large
+      FortiAnalyzerVersion: 6.2.5
       FortiGateAdminCIDR: 0.0.0.0/0
       FortiGateAdminPort: 8443
       FortiGateInstanceType: c5.large
@@ -176,7 +176,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
@@ -207,8 +207,8 @@ tests:
       FortiAnalyzerAutoscaleAdminUsername: taskcat
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
-      FortiAnalyzerInstanceType: d2.4xlarge
-      FortiAnalyzerVersion: 6.2.3
+      FortiAnalyzerInstanceType: m5.large
+      FortiAnalyzerVersion: 6.2.5
       FortiGateAdminCIDR: 0.0.0.0/0
       FortiGateAdminPort: 8443
       FortiGateInstanceType: c5.large
@@ -227,7 +227,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
@@ -258,8 +258,8 @@ tests:
       FortiAnalyzerAutoscaleAdminUsername: taskcat
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
-      FortiAnalyzerInstanceType: d2.4xlarge
-      FortiAnalyzerVersion: 6.2.3
+      FortiAnalyzerInstanceType: m5.large
+      FortiAnalyzerVersion: 6.2.5
       FortiGateAdminCIDR: 0.0.0.0/0
       FortiGateAdminPort: 8443
       FortiGateInstanceType: c5.large
@@ -278,7 +278,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
@@ -309,8 +309,8 @@ tests:
       FortiAnalyzerAutoscaleAdminUsername: taskcat
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
-      FortiAnalyzerInstanceType: c4.large
-      FortiAnalyzerVersion: 6.2.3
+      FortiAnalyzerInstanceType: m5.large
+      FortiAnalyzerVersion: 6.2.5
       FortiGateAdminCIDR: 0.0.0.0/0
       FortiGateAdminPort: 8443
       FortiGateInstanceType: c5.large
@@ -329,7 +329,7 @@ tests:
       LoadBalancingHealthCheckThreshold: 3
       LoadBalancingTrafficPort: 443
       LoadBalancingTrafficProtocol: HTTPS
-      MasterElectionTimeout: 300
+      PrimaryElectionTimeout: 300
       PrivateSubnet1CIDR: 192.168.3.0/24
       PrivateSubnet2CIDR: 192.168.4.0/24
       PublicSubnet1CIDR: 192.168.1.0/24
