@@ -4,6 +4,9 @@ Description: >-
   group, and instance profile. **WARNING!** This template is designed for being called
   within FortiGate AutoScale Solution only but not compatible with any other Cloud
   Formation template. Do not directly use it anywhere else.
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Launch into an existing VPC"
 Parameters:
   CustomTagValue:
     AllowedPattern: ^([a-zA-Z0-9+\-.,_:/@ *\\"'\[\]\{\}]*)?$
