@@ -1,2 +1,1 @@
-- _us-east-1 (N. Virginia)_ (EXAMPLE)
-- _us-east-2 (Ohio)_ (EXAMPLE)
+This deployment includes *AWS Auto Scaling,* which isn’t currently supported in all AWS Regions. For a current list of supported Regions, see https://docs.aws.amazon.com/general/latest/gr/aws-service-information.html[Service Endpoints and Quotas] in the AWS documentation.

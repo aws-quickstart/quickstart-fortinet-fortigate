@@ -1,14 +1,14 @@
-:quickstart-project-name: quickstart-documentation-base
-:partner-product-name: Example Product Name
-:partner-company-name: Example Company Name, Ltd.
+:quickstart-project-name: quickstart-fortinet-fortigate
+:partner-product-name: FortiGate Auto Scaling
+:partner-company-name: Fortinet, Inc.
 :doc-month: May
 :doc-year: 2020
-:partner-contributors: John Doe and Jane Doe - {partner-company-name}
-:quickstart-contributors: Jim Smith - AWS Global Partner SA, AWS + Joe Jones - Technical Product Manager, AWS
-:deployment_time: 30 minutes / 1 hour
-:default_deployment_region: us-east-1
+:partner-contributors: Kimberly Lee, Jayden Liang, Daniel Chao, and Jamie Pate - {partner-company-name}
+:quickstart-contributors: Shivansh Singh - Tony Bulding, AWS
+:deployment_time: 10 minutes
+:default_deployment_region: us-east-2
 // Uncomment these two attributes if you are leveraging
 // - an AWS Marketplace listing.
 // Additional content will be auto-generated based on these attributes.
-// :marketplace_subscription:
-// :marketplace_listing_url: https://example.com/
+:marketplace_subscription: Fortinet
+:marketplace_listing_url: https://aws.amazon.com/marketplace/seller-profile?id=243a3a4c-e35a-49b0-9061-3f354bb2254e&ref=dtl_B00PCZSWDA

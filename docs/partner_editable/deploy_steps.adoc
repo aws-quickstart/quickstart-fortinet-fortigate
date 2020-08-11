@@ -6,16 +6,33 @@
 
 // Optional based on Marketplace listing. Not to be edited
 ifdef::marketplace_subscription[]
-=== Subscribe to the {partner-product-name} AMI
+=== Subscribe to the {partner-product-name} AMI(s)
 
-This Quick Start requires a subscription to the AMI for {partner-product-name} in AWS Marketplace.
+This Quick Start requires a subscription to one or more of the following AMIs available in AWS Marketplace
+
+*	If your deployment will contain On-demand instances, subscribe to the https://aws.amazon.com/marketplace/pp/B00PCZSWDA[Fortinet FortiGate Next-Generation Firewall] AMI.
+*	If your deployment will contain BYOL instances, subscribe to the https://aws.amazon.com/marketplace/pp/B00ISG1GUG[Fortinet FortiGate (BYOL) Next-Generation Firewall] AMI.
+*	If your deployment will integrate with FortiAnalyzer, subscribe to the https://aws.amazon.com/marketplace/pp/B07Q1F19SC[FortiAnalyzer Centralized Logging/Reporting (10 managed devices)] AMI.
+
+//-
 
 . Sign in to your AWS account.
-. {marketplace_listing_url}[Open the page for the {partner-product-name} AMI in AWS Marketplace], and then choose *Continue to Subscribe*.
+. For each AMI you will subscribe to, open the page for the AMI in AWS Marketplace and choose *Continue to Subscribe*.
 . Review the terms and conditions for software usage, and then choose *Accept Terms*. +
   A confirmation page loads, and an email confirmation is sent to the account owner. For detailed subscription instructions, see the https://aws.amazon.com/marketplace/help/200799470[AWS Marketplace documentation^].
 
 . When the subscription process is complete, exit out of AWS Marketplace without further action. *Do not* provision the software from AWS Marketplace—the Quick Start deploys the AMI for you.
+
+If your deployment will contain BYOL instances:
+
+.	Navigate to the GitHub repository for the Quick Start and download the repository.
+.	Unzip the file on your local machine.
+.	Create an S3 bucket for your deployment. The name of the S3 bucket will be used for the parameter Quick Start S3 bucket name. 
+.	Inside this folder, create another folder to store the deployment resources. The name of this folder will be used for the parameter Quick Start S3 key prefix.
+.	Navigate to this second folder and upload the files and folders you extracted in step 2 to this location.
+.	Navigate to the assets folder, create a folder named fgt-asg-license, and upload your FortiGate license file(s) to this folder.
+
+
 endif::marketplace_subscription[]
 // \Not to be edited
 
@@ -25,10 +42,12 @@ NOTE: You are responsible for the cost of the AWS services used while running th
 
 . Sign in to your AWS account, and choose one of the following options to launch the AWS CloudFormation template. For help with choosing an option, see link:#_deployment_options[deployment options] earlier in this guide.
 
-[cols=",]
+[cols="60,40a"]
 |===
-|http://qs_launch_link[Deploy {partner-product-name} into a new VPC on AWS^] 
-|http://qs_launch_link[Deploy {partner-product-name} into an existing VPC on AWS^]
+^|http://qs_launch_link[Deploy {partner-product-name} into a new VPC on AWS^] 
+^|link:=../../templates/oracle-database-master.template.yaml[View template^]
+^|http://qs_launch_link[Deploy {partner-product-name} into an existing VPC on AWS^] 
+^|link:=../../templates/oracle-database.template.yaml[View template^]
 |===
 
 WARNING: If you’re deploying {partner-product-name} into an existing VPC, make sure that your VPC has two private subnets in different Availability Zones for the workload instances, and that the subnets aren’t shared. This Quick Start doesn’t support https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html[shared subnets^]. These subnets require https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html[NAT gateways^] in their route tables, to allow the instances to download packages and software without exposing them to the internet.
