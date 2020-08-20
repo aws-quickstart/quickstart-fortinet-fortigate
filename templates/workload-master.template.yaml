@@ -6,6 +6,10 @@ Description: >-
   be billed for the FortiGate On-Demand instances and related AWS resources if you
   create a stack from this template. (qs-1p3pr46rl)
 Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Launch into a new VPC"
+    OptionalParameters:
+      - InternalLoadBalancerDnsName
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
