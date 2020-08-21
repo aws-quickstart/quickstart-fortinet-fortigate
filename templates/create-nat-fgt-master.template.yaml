@@ -1,8 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Deploys and configures FortiGates to the selected subnets in a VPC
-Metadata:
-  QuickStartDocumentation:
-    EntrypointName: "Launch into a new VPC"
 Parameters:
   QSS3BucketName:
     Type: String
