@@ -142,7 +142,7 @@ Parameters:
     ConstraintDescription: must be a valid FortiOS version from the selection.
     Description: >-
       The FortiOS version supported by Fortinet FortiGate Auto Scaling.
-      **IMPORTANT!** Requires a subscription to the Fortinet FortiGate On-demand
+      **IMPORTANT!** Requires a subscription to the Fortinet FortiGate On-Demand
       and/or BYOL AMI(s).
   LifecycleHookTimeout:
     Type: Number
@@ -172,7 +172,7 @@ Parameters:
       The number of FortiGate instances the BYOL Auto Scaling group should have
       at any time. For High Availability in BYOL-only and Hybrid use cases,
       ensure at least 2 FortiGates are in the group. For specific use cases, set
-      to 0 for On-demand-only, and >= 2 for BYOL-only or hybrid licensing.
+      to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing.
   FgtAsgMinSizeByol:
     Type: Number
     Default: 2
@@ -180,7 +180,7 @@ Parameters:
     ConstraintDescription: must be a valid number not less than 0.
     Description: >-
       The minimum number of FortiGate instances in the BYOL Auto Scaling group.
-      For specific use cases, set to 0 for On-demand-only, and >= 2 for
+      For specific use cases, set to 0 for On-Demand-only, and >= 2 for
       BYOL-only or hybrid licensing.
   FgtAsgMaxSizeByol:
     Type: Number
@@ -189,7 +189,7 @@ Parameters:
     ConstraintDescription: must be a valid number not less than 0.
     Description: >-
       The maximum number of FortiGate instances in the BYOL Auto Scaling group.
-      For specific use cases, set to 0 for On-demand-only, and >= 2 for
+      For specific use cases, set to 0 for On-Demand-only, and >= 2 for
       BYOL-only or hybrid licensing. This number must be greater than or equal
       to the Minimum group size (BYOL).
   FgtAsgDesiredCapacityPayg:
@@ -198,10 +198,10 @@ Parameters:
     MinValue: 0
     ConstraintDescription: must be a valid number not less than 0.
     Description: >-
-      The number of FortiGate instances the On-demand Auto Scaling group should
-      have at any time. For High Availability in an On-demand-only use case,
+      The number of FortiGate instances the On-Demand Auto Scaling group should
+      have at any time. For High Availability in an On-Demand-only use case,
       ensure at least 2 FortiGates are in the group. For specific use cases, set
-      to 0 for BYOL-only, >= 2 for On-demand-only, and >= 0 for hybrid
+      to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid
       licensing.
   FgtAsgMinSizePayg:
     Type: Number
@@ -209,19 +209,19 @@ Parameters:
     MinValue: 0
     ConstraintDescription: must be a valid number not less than 0.
     Description: >-
-      The minimum number of FortiGate instances in the On-demand Auto Scaling
+      The minimum number of FortiGate instances in the On-Demand Auto Scaling
       group. For specific use cases, set to 0 for BYOL-only, >= 2 for
-      On-demand-only, and >= 0 for hybrid licensing.
+      On-Demand-only, and >= 0 for hybrid licensing.
   FgtAsgMaxSizePayg:
     Type: Number
     Default: 6
     MinValue: 0
     ConstraintDescription: must be a valid number not less than 0.
     Description: >-
-      The maximum number of FortiGate instances in the On-demand Auto Scaling
+      The maximum number of FortiGate instances in the On-Demand Auto Scaling
       group. For specific use cases, set to 0 for BYOL-only, >= 2 for
-      On-demand-only, and >= 0 for hybrid licensing. This number must be greater
-      than or equal to the Minimum group size (On-demand).
+      On-Demand-only, and >= 0 for hybrid licensing. This number must be greater
+      than or equal to the Minimum group size (On-Demand).
   FgtAsgHealthCheckGracePeriod:
     Type: Number
     Default: 300
@@ -761,11 +761,11 @@ Metadata:
       FgtAsgMaxSizeByol:
         default: Maximum group size (BYOL)
       FgtAsgDesiredCapacityPayg:
-        default: Desired capacity (On-demand)
+        default: Desired capacity (On-Demand)
       FgtAsgMinSizePayg:
         default: Minimum group size (On-Demand)
       FgtAsgMaxSizePayg:
-        default: Maximum group size (On-demand)
+        default: Maximum group size (On-Demand)
       FgtAsgHealthCheckGracePeriod:
         default: Health check grace period
       FgtAsgScaleInThreshold:
@@ -868,7 +868,7 @@ Outputs:
   FgtLicensingModel:
     Description: >-
       The FortiGate licensing model in the Auto Scaling group(s) for the initial
-      deployment of this stack. (Options: On-demand-only, BYOL-only, Hybrid)
+      deployment of this stack. (Options: On-Demand-only, BYOL-only, Hybrid)
     Value: !GetAtt
       - StackMainWorkload
       - Outputs.FgtLicensingModel

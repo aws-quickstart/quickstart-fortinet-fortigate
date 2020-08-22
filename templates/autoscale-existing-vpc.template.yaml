@@ -134,7 +134,7 @@ Parameters:
     ConstraintDescription: must be a valid FortiOS version from the selection.
     Description: >-
       The FortiOS version supported by Fortinet FortiGate Auto Scaling.
-      **IMPORTANT!** Requires a subscription to the Fortinet FortiGate On-demand
+      **IMPORTANT!** Requires a subscription to the Fortinet FortiGate On-Demand
       and/or BYOL AMI(s).
   LifecycleHookTimeout:
     Type: Number
@@ -164,7 +164,7 @@ Parameters:
       The number of FortiGate instances the BYOL Auto Scaling group should have
       at any time. For High Availability in BYOL-only and Hybrid use cases,
       ensure at least 2 FortiGates are in the group. For specific use cases, set
-      to 0 for On-demand-only, and >= 2 for BYOL-only or hybrid licensing.
+      to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing.
   FgtAsgMinSizeByol:
     Type: Number
     Default: 2
@@ -210,10 +210,10 @@ Parameters:
     MinValue: 0
     ConstraintDescription: must be a valid number not less than 0.
     Description: >-
-      The maximum number of FortiGate instances in the On-demand Auto Scaling
+      The maximum number of FortiGate instances in the On-Demand Auto Scaling
       group. For specific use cases, set to 0 for BYOL-only, >= 2 for
-      On-demand-only, and >= 0 for hybrid licensing. This number must be greater
-      than or equal to the Minimum group size (On-demand).
+      On-Demand-only, and >= 0 for hybrid licensing. This number must be greater
+      than or equal to the Minimum group size (On-Demand).
   FgtAsgHealthCheckGracePeriod:
     Type: Number
     Default: 300
@@ -400,7 +400,7 @@ Parameters:
       - t2.xlarge
     ConstraintDescription: must be a valid EC2 instance type.
     Description: >-
-      The instance type to launch as FortiAnalyzer On-demand instances. There
+      The instance type to launch as FortiAnalyzer On-Demand instances. There
       are compute-optimized instances such as m4 and c4 available with different
       vCPU sizes and bandwidths. For more information about instance types, see
       https://aws.amazon.com/ec2/instance-types/.
@@ -696,9 +696,9 @@ Metadata:
       FgtAsgMaxSizeByol:
         default: Maximum group size (BYOL)
       FgtAsgDesiredCapacityPayg:
-        default: Desired capacity (On-demand)
+        default: Desired capacity (On-Demand)
       FgtAsgMinSizePayg:
-        default: Minimum group size (On-demand)
+        default: Minimum group size (On-Demand)
       FgtAsgMaxSizePayg:
         default: Maximum group size (On-Demand)
       FgtAsgHealthCheckGracePeriod:
@@ -803,7 +803,7 @@ Outputs:
   FgtLicensingModel:
     Description: >-
       The FortiGate licensing model in the Auto Scaling group(s) for the initial
-      deployment of this stack. (Options: On-demand-only, BYOL-only, Hybrid)
+      deployment of this stack. (Options: On-Demand-only, BYOL-only, Hybrid)
     Value: !GetAtt
       - StackMainWorkload
       - Outputs.FgtLicensingModel
