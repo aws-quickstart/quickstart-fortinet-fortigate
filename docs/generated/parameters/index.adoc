@@ -1,1 +1,6 @@
-// placeholder
+
+=== Launch into a new VPC
+include::workload-master.template.adoc[]
+
+=== Launch into an existing VPC
+include::workload.template.adoc[]
