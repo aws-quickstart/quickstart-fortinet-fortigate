@@ -10,8 +10,8 @@ This Quick Start deploys an automatically scaled group of FortiGate instances, w
 
 The Quick Start offers two deployment options:
 
- - [Deploying FortiGate into a new virtual private cloud (VPC) on AWS](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=FortigateASG&templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-quickstart%2Fquickstart-fortinet-fortigate%2Ftemplates%2Fautoscale-new.template)
- - [Deploying FortiGate into an existing VPC on AWS](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=FortigateASG&templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-quickstart%2Fquickstart-fortinet-fortigate%2Ftemplates%2Fautoscale-existing.template)
+ - [Deploying FortiGate into a new virtual private cloud (VPC) on AWS](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=FortigateASG&templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-quickstart%2Fquickstart-fortinet-fortigate%2Ftemplates%2Fautoscale-new.template.yaml)
+ - [Deploying FortiGate into an existing VPC on AWS](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=FortigateASG&templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-quickstart%2Fquickstart-fortinet-fortigate%2Ftemplates%2Fautoscale-existing.template.yaml)
 
 You can also use the AWS CloudFormation templates as a starting point for your own implementation.
 
