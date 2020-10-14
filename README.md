@@ -1,8 +1,8 @@
 # quickstart-fortinet-fortigate
 
-## Fortinet FortiGate Auto Scaling Baseline on the AWS Cloud
+## Fortinet FortiGate Auto Scaling on the AWS Cloud
 
-This Quick Start deploys FortiGate Auto Scaling, a next-generation firewall (NGFW) from Fortinet, on the Amazon Web Services (AWS) Cloud in about 15 minutes.
+This Quick Start deploys FortiGate Auto Scaling, a next-generation firewall (NGFW) from Fortinet, on the Amazon Web Services (AWS) Cloud in about 10 minutes.
 
 FortiGate mid-range next-generation firewalls (NGFWs) provide high performance, multi-layered advanced security, and better visibility to help protect against cyber attacks while reducing complexity. FortiGate firewalls are purpose-built with security processors to enable a high level of threat protection and performance for Secure Sockets Layer (SSL)-encrypted traffic.
 
@@ -10,13 +10,13 @@ This Quick Start deploys an automatically scaled group of FortiGate instances, w
 
 The Quick Start offers two deployment options:
 
- - [Deploying FortiGate into a new virtual private cloud (VPC) on AWS](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=FortigateASG&templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-quickstart%2Fquickstart-fortinet-fortigate%2Ftemplates%2Fworkload-master.template)
- - [Deploying FortiGate into an existing VPC on AWS](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=FortigateASG&templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-quickstart%2Fquickstart-fortinet-fortigate%2Ftemplates%2Fworkload.template)
+ - [Deploying FortiGate into a new virtual private cloud (VPC) on AWS](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=FortigateASG&templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-quickstart%2Fquickstart-fortinet-fortigate%2Ftemplates%2Fautoscale-new.template.yaml)
+ - [Deploying FortiGate into an existing VPC on AWS](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=FortigateASG&templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-quickstart%2Fquickstart-fortinet-fortigate%2Ftemplates%2Fautoscale-existing.template.yaml)
 
 You can also use the AWS CloudFormation templates as a starting point for your own implementation.
 
 ![Architecture diagram](https://d0.awsstatic.com/partner-network/QuickStart/datasheets/fortinet-fortigate-on-aws-architecture.png)
 
-For architectural details, step-by-step instructions, and customization options, see the [deployment guide](https://fwd.aws/xjzgv). 
+For architectural details, step-by-step instructions, and customization options, see the [deployment guide](https://fwd.aws/xjzgv).
 
 To post feedback, submit feature ideas, or report bugs, use the **Issues** section of this GitHub repo. If you'd like to submit code for this Quick Start, please review the [AWS Quick Start Contributor's Kit](https://aws-quickstart.github.io/).

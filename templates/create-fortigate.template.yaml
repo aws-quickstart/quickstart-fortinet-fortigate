@@ -1,13 +1,14 @@
-AWSTemplateFormatVersion: '2010-09-09'
+---
+AWSTemplateFormatVersion: 2010-09-09
 Description: >-
-  Deploys a FortiGate EC2 instance to a subnet using a given FortiGate AMI, security
-  group, and instance profile. **WARNING!** This template is designed for being called
-  within FortiGate AutoScale Solution only but not compatible with any other Cloud
-  Formation template. Do not directly use it anywhere else.
+  Deploys a FortiGate EC2 instance to a subnet using a given FortiGate AMI,
+  security group, and instance profile. **WARNING!** This template is designed
+  for being called within FortiGate AutoScale Solution only but not compatible
+  with any other Cloud Formation template. Do not directly use it anywhere else.
 Parameters:
   CustomTagValue:
-    AllowedPattern: ^([a-zA-Z0-9+\-.,_:/@ *\\"'\[\]\{\}]*)?$
-    ConstraintDescription: tag values can only contain [a-zA-Z0-9+\-._:/@ *\\"'\[\]\{\}]
+    AllowedPattern: '^([a-zA-Z0-9+\-.,_:/@ *\\"''\[\]\{\}]*)?$'
+    ConstraintDescription: 'tag values can only contain [a-zA-Z0-9+\-._:/@ *\\"''\[\]\{\}]'
     Default: FortiGate-NAT-Gateway
     Description: (Optional) A custom tag value added to the EC2 instance.
     Type: String
@@ -15,112 +16,93 @@ Parameters:
     Type: String
     Description: Instance Type.
   KeyPairName:
-    Type: AWS::EC2::KeyPair::KeyName
+    Type: 'AWS::EC2::KeyPair::KeyName'
     Description: Amazon EC2 Key Pair for admin access.
   FortiGateAdminPort:
     Type: Number
     MinValue: 1
     MaxValue: 65535
     ConstraintDescription: must be a valid port number between 1 and 65535.
-    Description: 'A port number for FortiGate administration. Default to 8443. Do
-      not use: 443, 541, 514, 703.'
+    Description: >-
+      A port number for FortiGate administration. Default to 8443. Do not use:
+      443, 541, 514, 703.
   FortiGateSecurityGroupId:
     Type: String
     Description: The security group ID which is attached to this FortiGate instance.
   SubnetId1:
-    Type: AWS::EC2::Subnet::Id
+    Type: 'AWS::EC2::Subnet::Id'
     Description: 'The subnet ID for the network interface #1'
   SubnetId2:
-    Type: AWS::EC2::Subnet::Id
+    Type: 'AWS::EC2::Subnet::Id'
     Description: 'The subnet ID for the network interface #2'
   FortiGateImageId:
     Type: String
     Description: FortiGate Official AMI ID.
   InstanceProfile:
     Type: String
-    Description: The instance profile that passes a proper IAM role to the FortiGate
-      EC2 instance.
+    Description: >-
+      The instance profile that passes a proper IAM role to the FortiGate EC2
+      instance.
+  FortiAnalyzerIp:
+    Type: String
+    Description: The IP of FortiAnalyzer to send logs to.
 Conditions:
   IfAddCustomTag: !Not
     - !Equals
-      - !Ref 'CustomTagValue'
+      - !Ref CustomTagValue
+      - ''
+  IfIntegrateFortiAnalyzer: !Not
+    - !Equals
+      - !Ref FortiAnalyzerIp
       - ''
 Resources:
-  nic0:
-    Type: AWS::EC2::NetworkInterface
-    Properties:
-      Description: 'FortiGate NIC: port1'
-      GroupSet:
-        - !Ref 'FortiGateSecurityGroupId'
-      SourceDestCheck: false
-      SubnetId: !Ref 'SubnetId1'
-      Tags:
-        - Key: Name
-          Value: !Join
-            - '-'
-            - - !If
-                - IfAddCustomTag
-                - !Ref 'CustomTagValue'
-                - FortiGate-NAT-Gateway
-              - fgt
-              - eni0
-              - !Ref 'AWS::StackName'
   nic1:
-    Type: AWS::EC2::NetworkInterface
+    Type: 'AWS::EC2::NetworkInterface'
     Properties:
       Description: 'FortiGate NIC: port2'
       GroupSet:
-        - !Ref 'FortiGateSecurityGroupId'
-      SourceDestCheck: false
-      SubnetId: !Ref 'SubnetId2'
+        - !Ref FortiGateSecurityGroupId
+      SourceDestCheck: 'false'
+      SubnetId: !Ref SubnetId2
       Tags:
         - Key: Name
           Value: !Join
             - '-'
             - - !If
                 - IfAddCustomTag
-                - !Ref 'CustomTagValue'
+                - !Ref CustomTagValue
                 - FortiGate-NAT-Gateway
               - fgt
               - eni1
               - !Ref 'AWS::StackName'
-  eip:
-    Type: AWS::EC2::EIP
-    Properties:
-      Domain: vpc
-    DependsOn: nic0
-  eipAssociation:
-    Type: AWS::EC2::EIPAssociation
-    Properties:
-      AllocationId: !GetAtt 'eip.AllocationId'
-      NetworkInterfaceId: !Ref 'nic0'
-    DependsOn: eip
   ec2InstanceFortiGate:
-    Type: AWS::EC2::Instance
+    Type: 'AWS::EC2::Instance'
     Properties:
-      KeyName: !Ref 'KeyPairName'
-      IamInstanceProfile: !Ref 'InstanceProfile'
+      KeyName: !Ref KeyPairName
+      IamInstanceProfile: !Ref InstanceProfile
       NetworkInterfaces:
-        - NetworkInterfaceId: !Ref 'nic0'
-          DeviceIndex: '0'
-        - NetworkInterfaceId: !Ref 'nic1'
-          DeviceIndex: '1'
-      ImageId: !Ref 'FortiGateImageId'
-      InstanceType: !Ref 'FortiGateInstanceType'
-      Monitoring: true
+        - DeviceIndex: 0
+          AssociatePublicIpAddress: true
+          SubnetId: !Ref SubnetId1
+          GroupSet:
+            - !Ref FortiGateSecurityGroupId
+      ImageId: !Ref FortiGateImageId
+      InstanceType: !Ref FortiGateInstanceType
+      Monitoring: 'true'
       Tags:
         - Key: Name
           Value: !If
             - IfAddCustomTag
-            - !Ref 'CustomTagValue'
+            - !Ref CustomTagValue
             - FortiGate-NAT-Gateway
       UserData: !Base64
-        Fn::Join:
-          - "\n"
+        'Fn::Join':
+          - |+
+
           - - config system global
             - !Sub
               - '  set admin-sport ${FortiGateAdminPort}'
-              - FortiGateAdminPort: !Ref 'FortiGateAdminPort'
+              - FortiGateAdminPort: !Ref FortiGateAdminPort
             - end
             - config system interface
             - '  edit port1'
@@ -147,15 +129,49 @@ Resources:
             - '    set nat enable'
             - '  next'
             - end
+            - !If
+              - IfIntegrateFortiAnalyzer
+              - !Join
+                - |+
+
+                - - config log fortianalyzer setting
+                  - '    set status enable'
+                  - !Sub
+                    - '    set server "${FazIp}"'
+                    - FazIp: !Ref FortiAnalyzerIp
+                  - '    set reliable enable'
+                  - end
+                  - config report setting
+                  - '    set pdf-report disable'
+                  - end
+              - ''
     DependsOn:
       - eipAssociation
+  Nic1Attachment:
+    Type: 'AWS::EC2::NetworkInterfaceAttachment'
+    Properties:
+      DeviceIndex: 1
+      InstanceId: !Ref ec2InstanceFortiGate
+      NetworkInterfaceId: !Ref nic1
 Outputs:
-  InstanceId:
+  InstanceID:
     Description: The instance ID of the created FortiGate.
-    Value: !Ref 'ec2InstanceFortiGate'
-  NetworkInterface0Id:
-    Description: The nic0 ID of the created FortiGate.
-    Value: !Ref 'nic0'
+    Value: !Ref ec2InstanceFortiGate
+  PublicIP:
+    Description: The public IP of the created FortiGate.
+    Value: !GetAtt
+      - ec2InstanceFortiGate
+      - PublicIp
   NetworkInterface1Id:
     Description: The nic1 ID of the created FortiGate.
-    Value: !Ref 'nic1'
+    Value: !Ref nic1
+  Nic0PrivateIp:
+    Description: The nic0 private IP of the created FortiGate.
+    Value: !GetAtt
+      - ec2InstanceFortiGate
+      - PrivateIp
+  Nic1PrivateIp:
+    Description: The nic1 private IP of the created FortiGate.
+    Value: !GetAtt
+      - nic1
+      - PrimaryPrivateIpAddress
