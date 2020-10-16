@@ -3,24 +3,24 @@ project:
   owner: quickstart-eng@amazon.com
   package_lambda: false
   regions:
-  - us-east-1
-  - us-east-2
-  - us-west-1
-  - us-west-2
-  - ap-east-1
-  - ap-south-1
-  - ap-northeast-2
-  - ap-southeast-1
-  - ap-southeast-2
-  - ap-northeast-1
-  - ca-central-1
-  - eu-central-1
-  - eu-west-1
-  - eu-west-2
-  - eu-west-3
-  - eu-north-1
-  - me-south-1
-  - sa-east-1
+    - us-east-1
+    - us-east-2
+    - us-west-1
+    - us-west-2
+    - ap-east-1
+    - ap-south-1
+    - ap-northeast-2
+    - ap-southeast-1
+    - ap-southeast-2
+    - ap-northeast-1
+    - ca-central-1
+    - eu-central-1
+    - eu-west-1
+    - eu-west-2
+    - eu-west-3
+    - eu-north-1
+    - me-south-1
+    - sa-east-1
   s3_bucket: 'aws-quickstart-taskcat-ci'
   s3_object_acl: public-read
 tests:
@@ -72,21 +72,21 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - us-east-1
-    - us-east-2
-    - us-west-1
-    - us-west-2
-    - ap-south-1
-    - ap-northeast-2
-    - ap-southeast-1
-    - ap-southeast-2
-    - ap-northeast-1
-    - ca-central-1
-    - eu-central-1
-    - eu-west-1
-    - eu-west-2
+      - us-east-1
+      - us-east-2
+      - us-west-1
+      - us-west-2
+      - ap-south-1
+      - ap-northeast-2
+      - ap-southeast-1
+      - ap-southeast-2
+      - ap-northeast-1
+      - ca-central-1
+      - eu-central-1
+      - eu-west-1
+      - eu-west-2
     s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
+    template: templates/autoscale-new-vpc.template.yaml
   quickstart-fortigate-test-ap-east-1:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
@@ -135,9 +135,9 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - ap-east-1
+      - ap-east-1
     s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
+    template: templates/autoscale-new-vpc.template.yaml
   quickstart-fortigate-test-eu-north-1:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
@@ -186,9 +186,9 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - eu-north-1
+      - eu-north-1
     s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
+    template: templates/autoscale-new-vpc.template.yaml
   quickstart-fortigate-test-eu-west-3:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
@@ -237,9 +237,9 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - eu-west-3
+      - eu-west-3
     s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
+    template: templates/autoscale-new-vpc.template.yaml
   quickstart-fortigate-test-me-south-1:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
@@ -288,9 +288,9 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - me-south-1
+      - me-south-1
     s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
+    template: templates/autoscale-new-vpc.template.yaml
   quickstart-fortigate-test-sa-east-1:
     parameters:
       AvailabilityZones: sa-east-1a,sa-east-1c
@@ -339,6 +339,6 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - sa-east-1
+      - sa-east-1
     s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
+    template: templates/autoscale-new-vpc.template.yaml
