@@ -125,7 +125,7 @@ Parameters:
       length 128. If you need to enable KMS encryption, refer to the
       documentation.
   ProductAMI:
-    Type: String
+    Type: AWS::EC2::Image::Id
     Description: The AMI for the product created with the EC2 instance in this stack.
   CustomPrivateIPAddress:
     Type: String

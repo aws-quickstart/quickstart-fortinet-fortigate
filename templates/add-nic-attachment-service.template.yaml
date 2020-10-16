@@ -124,8 +124,6 @@ Resources:
       Tags:
         - Key: ResourceGroup
           Value: !Ref ResourceTagPrefix
-    DependsOn:
-      - StackCopyLambdaSource
   NicAttachmentServiceScript:
     Type: 'AWS::Lambda::Function'
     Properties:
@@ -157,8 +155,6 @@ Resources:
       Tags:
         - Key: ResourceGroup
           Value: !Ref ResourceTagPrefix
-    DependsOn:
-      - StackCopyLambdaSource
   IamRoleNicAttachment:
     Properties:
       AssumeRolePolicyDocument:

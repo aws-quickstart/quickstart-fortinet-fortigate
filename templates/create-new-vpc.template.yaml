@@ -159,8 +159,6 @@ Resources:
       RuleAction: allow
       RuleNumber: 100
       NetworkAclId: !Ref FgtPublicSubnetAcl
-    DependsOn:
-      - FgtPublicSubnetAcl
   FgtPublicSubnet2AclEntry:
     Type: 'AWS::EC2::NetworkAclEntry'
     Properties:
@@ -169,24 +167,16 @@ Resources:
       RuleAction: allow
       RuleNumber: 100
       NetworkAclId: !Ref FgtPublicSubnetAcl
-    DependsOn:
-      - FgtPublicSubnetAcl
   FgtPublicSubnet1AclAssoc:
     Type: 'AWS::EC2::SubnetNetworkAclAssociation'
     Properties:
       NetworkAclId: !Ref FgtPublicSubnetAcl
       SubnetId: !Ref PublicSubnet1
-    DependsOn:
-      - FgtPublicSubnetAcl
-      - PublicSubnet1
   FgtPublicSubnet2AclAssoc:
     Type: 'AWS::EC2::SubnetNetworkAclAssociation'
     Properties:
       NetworkAclId: !Ref FgtPublicSubnetAcl
       SubnetId: !Ref PublicSubnet2
-    DependsOn:
-      - FgtPublicSubnetAcl
-      - PublicSubnet2
   FgtPublicSubnetRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:

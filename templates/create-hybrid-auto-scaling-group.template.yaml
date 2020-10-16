@@ -662,7 +662,6 @@ Metadata:
           default: Basic configuration
         Parameters:
           - ResourceTagPrefix
-          - CustomIdentifier
           - AsgSubnet1ID
           - AsgSubnet2ID
           - APIGatewayID
@@ -685,7 +684,6 @@ Metadata:
           - AsgCooldown
           - AsgScaleOutThreshold
           - AsgScaleInThreshold
-          - FortiGateElbTgHealthyThreshold
       - Label:
           default: Deployment package configuration
         Parameters:

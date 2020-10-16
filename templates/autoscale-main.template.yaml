@@ -855,7 +855,6 @@ Resources:
       ServiceType: stopAutoscale
     DependsOn:
       - StackCreateFortiGateAutoScalingGroup
-      - StackCreateFortiGateAutoScaleHandler
       - SaveSettings
   SaveSettings:
     Type: 'AWS::CloudFormation::CustomResource'
@@ -956,9 +955,6 @@ Resources:
         - 'true'
         - 'false'
       EgressTrafficRouteTable: !Ref PrivateSubnetRouteTable
-    DependsOn:
-      - StackCreateFortiGateAutoScalingGroup
-      - StackCreateFortiGateAutoScaleHandler
   StackCreateFortiAnalyzer:
     Type: 'AWS::CloudFormation::Stack'
     Condition: IfIntegrateFortiAnalyzer

@@ -407,8 +407,6 @@ Resources:
       Tags:
         - Key: ResourceGroup
           Value: !Ref ResourceTagPrefix
-    DependsOn:
-      - StackCopyLambdaSource
   FgtAsgLambdaFunctionCfnService:
     Type: 'AWS::Lambda::Function'
     Properties:
@@ -443,8 +441,6 @@ Resources:
       Tags:
         - Key: ResourceGroup
           Value: !Ref ResourceTagPrefix
-    DependsOn:
-      - StackCopyLambdaSource
   LambdaPermissionFgtAsgHandler:
     Type: 'AWS::Lambda::Permission'
     Properties:
@@ -491,10 +487,9 @@ Resources:
       Tags:
         - Key: ResourceGroup
           Value: !Ref ResourceTagPrefix
-    DependsOn:
-      - StackCopyLambdaSource
   LambdaPermissionByolLicenseHandler:
     Type: 'AWS::Lambda::Permission'
+    Condition: CreateByolLicenseHandler
     Properties:
       FunctionName: !GetAtt
         - FgtAsgLambdaFunctionByolLicenseHandler
