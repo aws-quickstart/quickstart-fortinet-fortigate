@@ -113,7 +113,7 @@ Resources:
             - s3
           QSS3BucketName: !Ref QSS3BucketName
           QSS3KeyPrefix: !Ref QSS3KeyPrefix
-      TimeoutInMinutes: '5'
+      TimeoutInMinutes: 5
   FgtAsgApiGateway:
     Type: 'AWS::ApiGateway::RestApi'
     Properties:
