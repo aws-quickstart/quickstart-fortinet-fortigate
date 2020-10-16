@@ -5,7 +5,7 @@ Description: >-
   FortiGate Auto Scaling into an existing VPC. For more details, please see the
   Fortinet FortiGate Auto Scaling documentation. **WARNING** You will be billed
   for the FortiGate instances and related AWS resources if you create a stack
-  from this template.
+  from this template. (qs-1p3pr46rg)
 Parameters:
   ResourceTagPrefix:
     Type: String
