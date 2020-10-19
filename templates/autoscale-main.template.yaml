@@ -559,7 +559,7 @@ Resources:
             - s3
           QSS3BucketName: !Ref QSS3BucketName
           QSS3KeyPrefix: !Ref QSS3KeyPrefix
-      TimeoutInMinutes: '10'
+      TimeoutInMinutes: 10
   FgtInstanceIamRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -613,7 +613,7 @@ Resources:
             - s3
           QSS3BucketName: !Ref QSS3BucketName
           QSS3KeyPrefix: !Ref QSS3KeyPrefix
-      TimeoutInMinutes: '10'
+      TimeoutInMinutes: 10
   FgtAsgSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -638,32 +638,32 @@ Resources:
     Properties:
       GroupId: !Ref FgtAsgSecurityGroup
       IpProtocol: tcp
-      FromPort: '22'
-      ToPort: '22'
+      FromPort: 22
+      ToPort: 22
       CidrIp: !Ref FortiGateAdminCIDR
   FgtAsgSecurityGroupIngressSecFabMgmt1:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
       GroupId: !Ref FgtAsgSecurityGroup
       IpProtocol: tcp
-      FromPort: '541'
-      ToPort: '541'
+      FromPort: 541
+      ToPort: 541
       CidrIp: !Ref VPCCIDR
   FgtAsgSecurityGroupIngressSecFabMgmt2:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
       GroupId: !Ref FgtAsgSecurityGroup
       IpProtocol: tcp
-      FromPort: '514'
-      ToPort: '514'
+      FromPort: 514
+      ToPort: 514
       CidrIp: !Ref VPCCIDR
   FgtAsgSecurityGroupIngressSecFabMgmt3:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
       GroupId: !Ref FgtAsgSecurityGroup
       IpProtocol: udp
-      FromPort: '514'
-      ToPort: '514'
+      FromPort: 514
+      ToPort: 514
       CidrIp: !Ref VPCCIDR
   FgtAsgSecurityGroupIngressAdminAccess:
     Type: 'AWS::EC2::SecurityGroupIngress'
@@ -722,7 +722,7 @@ Resources:
             - s3
           QSS3BucketName: !Ref QSS3BucketName
           QSS3KeyPrefix: !Ref QSS3KeyPrefix
-      TimeoutInMinutes: '10'
+      TimeoutInMinutes: 10
   StartNicAttachmentService:
     Type: 'AWS::CloudFormation::CustomResource'
     Properties:
@@ -763,7 +763,7 @@ Resources:
             - s3
           QSS3BucketName: !Ref QSS3BucketName
           QSS3KeyPrefix: !Ref QSS3KeyPrefix
-      TimeoutInMinutes: '10'
+      TimeoutInMinutes: 10
   StackCreateFortiGateAutoScalingGroup:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -833,7 +833,7 @@ Resources:
             - s3
           QSS3BucketName: !Ref QSS3BucketName
           QSS3KeyPrefix: !Ref QSS3KeyPrefix
-      TimeoutInMinutes: '10'
+      TimeoutInMinutes: 10
     DependsOn:
       - StartNicAttachmentService
   StartFortiGateAutoScalingGroupService:
@@ -855,7 +855,6 @@ Resources:
       ServiceType: stopAutoscale
     DependsOn:
       - StackCreateFortiGateAutoScalingGroup
-      - StackCreateFortiGateAutoScaleHandler
       - SaveSettings
   SaveSettings:
     Type: 'AWS::CloudFormation::CustomResource'
@@ -956,9 +955,6 @@ Resources:
         - 'true'
         - 'false'
       EgressTrafficRouteTable: !Ref PrivateSubnetRouteTable
-    DependsOn:
-      - StackCreateFortiGateAutoScalingGroup
-      - StackCreateFortiGateAutoScaleHandler
   StackCreateFortiAnalyzer:
     Type: 'AWS::CloudFormation::Stack'
     Condition: IfIntegrateFortiAnalyzer
@@ -1016,7 +1012,7 @@ Resources:
             - s3
           QSS3BucketName: !Ref QSS3BucketName
           QSS3KeyPrefix: !Ref QSS3KeyPrefix
-      TimeoutInMinutes: '10'
+      TimeoutInMinutes: 10
   FazHandlerSetting:
     Condition: IfIntegrateFortiAnalyzer
     Properties:

@@ -2,29 +2,11 @@ project:
   name: quickstart-fortinet-fortigate
   owner: quickstart-eng@amazon.com
   package_lambda: false
-  regions:
-  - us-east-1
-  - us-east-2
-  - us-west-1
-  - us-west-2
-  - ap-east-1
-  - ap-south-1
-  - ap-northeast-2
-  - ap-southeast-1
-  - ap-southeast-2
-  - ap-northeast-1
-  - ca-central-1
-  - eu-central-1
-  - eu-west-1
-  - eu-west-2
-  - eu-west-3
-  - eu-north-1
-  - me-south-1
-  - sa-east-1
-  s3_bucket: 'aws-quickstart-taskcat-ci'
   s3_object_acl: public-read
+  tags: # [OPTIONAL] Tags to apply to CloudFormation template
+    taskcatReport: quickstart-fortinet-fortigate
 tests:
-  quickstart-fortigate-test:
+  ap-east-1:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
       CustomIdentifier: customId00
@@ -39,7 +21,7 @@ tests:
       FgtAsgScaleInThreshold: 25
       FgtAsgScaleOutThreshold: 80
       FortiAnalyzerAutoscaleAdminPassword: $[taskcat_genpass_8]
-      FortiAnalyzerAutoscaleAdminUsername: taskcat
+      FortiAnalyzerAutoscaleAdminUsername: autoscale-admin
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
       FortiAnalyzerInstanceType: m5.large
@@ -72,22 +54,9 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - us-east-1
-    - us-east-2
-    - us-west-1
-    - us-west-2
-    - ap-south-1
-    - ap-northeast-2
-    - ap-southeast-1
-    - ap-southeast-2
-    - ap-northeast-1
-    - ca-central-1
-    - eu-central-1
-    - eu-west-1
-    - eu-west-2
-    s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
-  quickstart-fortigate-test-ap-east-1:
+      - ap-east-1
+    template: templates/autoscale-new-vpc.template.yaml
+  eu-north-1:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
       CustomIdentifier: customId00
@@ -102,7 +71,7 @@ tests:
       FgtAsgScaleInThreshold: 25
       FgtAsgScaleOutThreshold: 80
       FortiAnalyzerAutoscaleAdminPassword: $[taskcat_genpass_8]
-      FortiAnalyzerAutoscaleAdminUsername: taskcat
+      FortiAnalyzerAutoscaleAdminUsername: autoscale-admin
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
       FortiAnalyzerInstanceType: m5.large
@@ -135,10 +104,9 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - ap-east-1
-    s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
-  quickstart-fortigate-test-eu-north-1:
+      - eu-north-1
+    template: templates/autoscale-new-vpc.template.yaml
+  eu-west-3:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
       CustomIdentifier: customId00
@@ -153,7 +121,7 @@ tests:
       FgtAsgScaleInThreshold: 25
       FgtAsgScaleOutThreshold: 80
       FortiAnalyzerAutoscaleAdminPassword: $[taskcat_genpass_8]
-      FortiAnalyzerAutoscaleAdminUsername: taskcat
+      FortiAnalyzerAutoscaleAdminUsername: autoscale-admin
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
       FortiAnalyzerInstanceType: m5.large
@@ -186,10 +154,9 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - eu-north-1
-    s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
-  quickstart-fortigate-test-eu-west-3:
+      - eu-west-3
+    template: templates/autoscale-new-vpc.template.yaml
+  me-south-1:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
       CustomIdentifier: customId00
@@ -204,7 +171,7 @@ tests:
       FgtAsgScaleInThreshold: 25
       FgtAsgScaleOutThreshold: 80
       FortiAnalyzerAutoscaleAdminPassword: $[taskcat_genpass_8]
-      FortiAnalyzerAutoscaleAdminUsername: taskcat
+      FortiAnalyzerAutoscaleAdminUsername: autoscale-admin
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
       FortiAnalyzerInstanceType: m5.large
@@ -237,12 +204,11 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - eu-west-3
-    s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
-  quickstart-fortigate-test-me-south-1:
+      - me-south-1
+    template: templates/autoscale-new-vpc.template.yaml
+  sa-east-1:
     parameters:
-      AvailabilityZones: $[taskcat_genaz_2]
+      AvailabilityZones: sa-east-1a,sa-east-1b
       CustomIdentifier: customId00
       FgtAsgCooldown: 300
       FgtAsgDesiredCapacityByol: 1
@@ -255,7 +221,7 @@ tests:
       FgtAsgScaleInThreshold: 25
       FgtAsgScaleOutThreshold: 80
       FortiAnalyzerAutoscaleAdminPassword: $[taskcat_genpass_8]
-      FortiAnalyzerAutoscaleAdminUsername: taskcat
+      FortiAnalyzerAutoscaleAdminUsername: autoscale-admin
       FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
       FortiAnalyzerIntegrationOptions: 'yes'
       FortiAnalyzerInstanceType: m5.large
@@ -288,57 +254,5 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     regions:
-    - me-south-1
-    s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
-  quickstart-fortigate-test-sa-east-1:
-    parameters:
-      AvailabilityZones: sa-east-1a,sa-east-1c
-      CustomIdentifier: customId00
-      FgtAsgCooldown: 300
-      FgtAsgDesiredCapacityByol: 1
-      FgtAsgDesiredCapacityPayg: 1
-      FgtAsgHealthCheckGracePeriod: 300
-      FgtAsgMaxSizeByol: 1
-      FgtAsgMaxSizePayg: 6
-      FgtAsgMinSizeByol: 1
-      FgtAsgMinSizePayg: 1
-      FgtAsgScaleInThreshold: 25
-      FgtAsgScaleOutThreshold: 80
-      FortiAnalyzerAutoscaleAdminPassword: $[taskcat_genpass_8]
-      FortiAnalyzerAutoscaleAdminUsername: taskcat
-      FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
-      FortiAnalyzerIntegrationOptions: 'yes'
-      FortiAnalyzerInstanceType: m5.large
-      FortiAnalyzerVersion: 6.2.5
-      FortiGateAdminCIDR: 0.0.0.0/0
-      FortiGateAdminPort: 8443
-      FortiGateInstanceType: c5.large
-      FortiGatePskSecret: $[taskcat_genpass_8]
-      FortiOSVersion: 6.2.3
-      GetLicenseGracePeriod: 600
-      HeartBeatDelayAllowance: 2
-      HeartBeatInterval: 30
-      HeartBeatLossCount: 3
-      IntegratedNATGatewayOptions: 'yes'
-      InternalLoadBalancerDNSName: ''
-      InternalLoadBalancingOptions: add a new internal load balancer
-      InternalTargetGroupHealthCheckPath: /
-      KeyPairName: taskcat
-      LifecycleHookTimeout: 480
-      LoadBalancingHealthCheckThreshold: 3
-      LoadBalancingTrafficPort: 443
-      LoadBalancingTrafficProtocol: HTTPS
-      PrimaryElectionTimeout: 300
-      PrivateSubnet1CIDR: 192.168.3.0/24
-      PrivateSubnet2CIDR: 192.168.4.0/24
-      PublicSubnet1CIDR: 192.168.1.0/24
-      PublicSubnet2CIDR: 192.168.2.0/24
-      QSS3BucketName: $[taskcat_autobucket]
-      QSS3KeyPrefix: quickstart-fortinet-fortigate/
-      ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
-      VPCCIDR: 192.168.0.0/16
-    regions:
-    - sa-east-1
-    s3_bucket: 'aws-quickstart-taskcat-ci'
-    template: templates/autoscale-new-vpc.template
+      - sa-east-1
+    template: templates/autoscale-new-vpc.template.yaml

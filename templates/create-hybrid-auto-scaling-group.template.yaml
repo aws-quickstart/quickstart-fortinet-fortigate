@@ -181,7 +181,7 @@ Parameters:
       The amount of time (in seconds) that can elapse before the FortiGate Auto
       Scaling lifecycle hook times out. Minimum is 60. Maximum is 3600.
   ProductAMIByol:
-    Type: String
+    Type: AWS::EC2::Image::Id
     Default: ''
     Description: The AMI for launch template for the BYOL auto scaling group.
   ProductCodeByol:
@@ -189,7 +189,7 @@ Parameters:
     Default: ''
     Description: An optional product code provided for the AMI(BYOL) if using a custom AMI.
   ProductAMIPayg:
-    Type: String
+    Type: AWS::EC2::Image::Id
     Default: ''
     Description: The AMI for launch template for the PAYG auto scaling group.
   ProductCodePayg:
@@ -344,47 +344,47 @@ Resources:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref FgtAutoScalingGroupByol
-      ScalingAdjustment: '-1'
+      ScalingAdjustment: -1
   ByolAsgGrowOnHighCPUUtilization:
     Condition: IfBYOLOnly
     Type: 'AWS::AutoScaling::ScalingPolicy'
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref FgtAutoScalingGroupByol
-      ScalingAdjustment: '1'
+      ScalingAdjustment: 1
   PaygAsgShrinkOnLowCPUUtilization:
     Condition: IfNotBYOLOnly
     Type: 'AWS::AutoScaling::ScalingPolicy'
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref FgtAutoScalingGroupPayg
-      ScalingAdjustment: '-1'
+      ScalingAdjustment: -1
   PaygAsgGrowOnHighCPUUtilization:
     Condition: IfNotBYOLOnly
     Type: 'AWS::AutoScaling::ScalingPolicy'
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref FgtAutoScalingGroupPayg
-      ScalingAdjustment: '1'
+      ScalingAdjustment: 1
   PaygAsgShrinkOnByolAsgCondition:
     Condition: IfHybrid
     Type: 'AWS::AutoScaling::ScalingPolicy'
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref FgtAutoScalingGroupPayg
-      ScalingAdjustment: '-1'
+      ScalingAdjustment: -1
   PaygAsgGrowOnByolAsgCondition:
     Condition: IfHybrid
     Type: 'AWS::AutoScaling::ScalingPolicy'
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref FgtAutoScalingGroupPayg
-      ScalingAdjustment: '1'
+      ScalingAdjustment: 1
   AlarmByolGroupLowCPUUtilization:
     Condition: IfNotPAYGOnly
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
-      EvaluationPeriods: '1'
+      EvaluationPeriods: 1
       Statistic: Average
       Threshold: !Ref AsgScaleInThreshold
       AlarmDescription: >-
@@ -406,7 +406,7 @@ Resources:
     Condition: IfNotPAYGOnly
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
-      EvaluationPeriods: '1'
+      EvaluationPeriods: 1
       Statistic: Average
       Threshold: !Ref AsgScaleOutThreshold
       AlarmDescription: >-
@@ -428,7 +428,7 @@ Resources:
     Condition: IfNotBYOLOnly
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
-      EvaluationPeriods: '1'
+      EvaluationPeriods: 1
       Statistic: Average
       Threshold: !Ref AsgScaleInThreshold
       AlarmDescription: >-
@@ -447,7 +447,7 @@ Resources:
     Condition: IfNotBYOLOnly
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
-      EvaluationPeriods: '1'
+      EvaluationPeriods: 1
       Statistic: Average
       Threshold: !Ref AsgScaleOutThreshold
       AlarmDescription: >-
@@ -662,7 +662,6 @@ Metadata:
           default: Basic configuration
         Parameters:
           - ResourceTagPrefix
-          - CustomIdentifier
           - AsgSubnet1ID
           - AsgSubnet2ID
           - APIGatewayID
@@ -685,7 +684,6 @@ Metadata:
           - AsgCooldown
           - AsgScaleOutThreshold
           - AsgScaleInThreshold
-          - FortiGateElbTgHealthyThreshold
       - Label:
           default: Deployment package configuration
         Parameters:
