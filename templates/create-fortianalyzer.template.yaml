@@ -125,7 +125,7 @@ Parameters:
       length 128. If you need to enable KMS encryption, refer to the
       documentation.
   ProductAMI:
-    Type: String
+    Type: AWS::EC2::Image::Id
     Description: The AMI for the product created with the EC2 instance in this stack.
   CustomPrivateIPAddress:
     Type: String
@@ -229,7 +229,7 @@ Resources:
       ImageId: !Ref ProductAMI
       InstanceType: !Ref InstanceType
       NetworkInterfaces:
-        - DeviceIndex: 0
+        - DeviceIndex: '0'
           AssociatePublicIpAddress: !If
             - IfUseEIP
             - false
@@ -241,7 +241,7 @@ Resources:
           SubnetId: !Ref SubnetID
           GroupSet:
             - !Ref sgFortiAnalyzerInstance
-      Monitoring: 'true'
+      Monitoring: true
       Tags:
         - Key: Name
           Value: !If
@@ -327,7 +327,7 @@ Resources:
             - GovCloudCondition
             - s3-us-gov-west-1
             - s3
-      TimeoutInMinutes: '10'
+      TimeoutInMinutes: 10
   LambdaFunctionFazHandler:
     Properties:
       FunctionName: !Join

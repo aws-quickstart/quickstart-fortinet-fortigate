@@ -93,8 +93,8 @@ Resources:
         - AttributeName: instanceId
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
@@ -112,8 +112,8 @@ Resources:
         - AttributeName: scalingGroupName
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
@@ -135,8 +135,8 @@ Resources:
         - AttributeName: actionName
           KeyType: RANGE
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
@@ -154,8 +154,8 @@ Resources:
         - AttributeName: settingKey
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
@@ -178,8 +178,8 @@ Resources:
         - AttributeName: timestamp
           KeyType: RANGE
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
@@ -198,8 +198,8 @@ Resources:
         - AttributeName: id
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
@@ -218,8 +218,8 @@ Resources:
         - AttributeName: instanceId
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
@@ -238,8 +238,8 @@ Resources:
         - AttributeName: checksum
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
@@ -258,8 +258,8 @@ Resources:
         - AttributeName: id
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
@@ -282,8 +282,8 @@ Resources:
         - AttributeName: publicIp
           KeyType: RANGE
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
@@ -302,8 +302,8 @@ Resources:
         - AttributeName: instanceId
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '1'
-        WriteCapacityUnits: '1'
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !Join
         - '-'
         - - !Ref ResourceTagPrefix
