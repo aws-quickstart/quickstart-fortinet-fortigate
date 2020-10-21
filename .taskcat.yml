@@ -73,3 +73,6 @@ tests:
       ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
       VPCCIDR: 192.168.0.0/16
     template: templates/autoscale-new-vpc.template.yaml
+    regions:
+      - us-east-2
+      - us-west-1
