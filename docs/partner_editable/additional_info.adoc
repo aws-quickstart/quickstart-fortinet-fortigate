@@ -31,10 +31,10 @@ Look up the DynamoDB table <ResourceTagPrefix>-FortiGateMasterElection. Select t
 [link=images/test_deployment_3.png]
 image::../images/test_deployment_3.png[test_deployment_3,width=648,height=439]
 
-TIP:     Make note of the instanceID as you will need it to connect to the master FortiGate
+TIP: Make note of the instanceID as you will need it to connect to the master FortiGate instance.
 
 
-== Post deployment steps
+== Post-deployment steps
 // If Post-deployment steps are required, add them here. If not, remove the heading
 
 === Connect to the master FortiGate instance
@@ -43,11 +43,11 @@ To connect to the master FortiGate instance you will need a login URL, a usernam
 
 .	Construct the login URL in this way: https://<IPAddress>:<Port>/.
 Port refers to the Admin port specified during FortiGate configuration.
-IPAddress refers to the IPv4 Public IP of the FortiGate and is listed on the Description tab for the instance. In th EC2 Management console, locate the instance using the instanceID of the master instance.
+IPAddress refers to the IPv4 public IP of the FortiGate and is listed on the Description tab for the instance. In th EC2 Management console, locate the instance using the instanceID of the master instance.
 +
 :xrefstyle: short
 [#post_deployment_1]
-.Post deployment steps
+.Post-deployment steps
 [link=images/post_deployment_1.png]
 image::../images/post_deployment_1.png[post_deployment_1,width=648,height=439]
 + 
@@ -67,7 +67,7 @@ NOTE: You should only change the password on the master FortiGate instance. The 
 +
 :xrefstyle: short
 [#post_deployment_2]
-.Post deployment steps
+.Post-deployment steps
 [link=images/post_deployment_2.png]
 image::../images/post_deployment_2.png[post_deployment_2,width=648,height=439]
 
@@ -82,16 +82,16 @@ image::../images/post_deployment_2.png[post_deployment_2,width=648,height=439]
 
 NOTE: For BYOL-only and hybrid licensing deployments, the Minimum group size (FgtAsgMinSizeByol) must be at least 2. These FortiGates are the main instances and are fixed and running 7x24. If it is set to 1 and the instance fails to work, the current FortiGate configuration will be lost.
 
-*	*The On-demand Auto Scaling group* contains 0 to many FortiGates of the On-demand licensing model and will dynamically scale-out or scale-in based on the scaling metrics specified by the parameters Scale-out threshold and Scale-in threshold.
+*	*The on-demand Auto Scaling group* contains 0 to many FortiGates of the on-demand licensing model and will dynamically scale-out or scale-in based on the scaling metrics specified by the parameters scale-out threshold and scale-in threshold.
 
-NOTE: For On-demand-only deployments, the Minimum group size (FgtAsgMinSizePayg) must be at least 2. These FortiGates are the main instances and are fixed and running 7x24. If it is set to 1 and the instance fails to work, the current FortiGate configuration will be lost.
+NOTE: For on-demand-only deployments, the minimum group size (FgtAsgMinSizePayg) must be at least 2. These FortiGates are the main instances and are fixed and running 7x24. If it is set to 1 and the instance fails to work, the current FortiGate configuration will be lost.
 
 *	*The assets/configset folder in the S3 bucket* contains files that are loaded as the initial configuration for a new FortiGate instance.
 **	baseconfig is the base configuration. This file can be modified as needed to meet your network requirements. Placeholders such as {SYNC_INTERFACE} are explained in the Configset placeholders table below.
 **	httproutingpolicy and httpsroutingpolicy are provided as part of the base configset - for a common use case - and specify the FortiGate firewall policy for VIPs for http routing and https routing respectively. This common use case includes a VIP on port 80 and a VIP on port 443 with a policy that points to an internal load balancer. The port numbers are configurable and can be changed during CFT deployment. Additional VIPs can be added here as needed.
 
 NOTE: In FortiOS 6.2.3, any VIPs created on the master will not sync to the slave units. Any VIP you wish to add must be added as part of the base configuration.
-If you set the Internal ELB options parameter to “do not need one”, then you must append your VIP configuration to baseconfig.
+If you set the internal ELB options parameter to “do not need one,” then you must append your VIP configuration to baseconfig.
 ** *(Optional) The assets/fgt-asg-license folder in the S3 bucket* contains BYOL license files.
 
 *	The tables in DynamoDB are required to store information such as health check monitoring, master election, state transitions, etc. These records should not be modified unless required for troubleshooting purposes.
@@ -140,7 +140,7 @@ Specified during CloudFormation deployment.
 |The value of the CFT parameter *Resource tag prefix* which is described in the table *Resource tagging configuration.*
 |===
 
-=== Additional Resources
+=== Additional resources
 
 *AWS resources*
 

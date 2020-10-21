@@ -2,15 +2,16 @@
 
 This Quick Start provides two deployment options:
 
-* *Deploy {partner-product-name} into a new VPC (end-to-end deployment)*. This option builds a new AWS environment consisting of the VPC, subnets, NAT gateways, security groups, bastion hosts, and other infrastructure components. It then deploys {partner-product-name} into this new VPC.
+* *Deploy {partner-product-name} into a new VPC*. This option builds a new AWS environment consisting of the VPC, subnets, NAT gateways, security groups, bastion hosts, and other infrastructure components. It then deploys {partner-product-name} into this new VPC.
+//TODO Shivansh, We didn't mention NAT gateways or bastion hosts in describing the diagram. Do we need to tweak this?
 * *Deploy {partner-product-name} into an existing VPC*. This option provisions {partner-product-name} in your existing AWS infrastructure.
 
-=== Incoming and Outgoing Requests
+The Quick Start provides separate templates for these options. It also lets you configure Classless Inter-Domain Routing (CIDR) blocks, instance types, and {partner-product-name} settings, as discussed later in this guide.
 
-Incoming requests to the protected instances in the private subnets present in your existing VPC will go through a connection that flows through the Internet gateway, Network Load Balancer, and the FortiGate Auto Scaling group before reaching the protected instances. The protected instances return a response using the same connection.
+=== Incoming and outgoing requests
 
-Outgoing requests from the protected instances go through one FortiGate in the Auto Scaling group(s) and the Internet gateway to the public network. The public network returns the response using the same path.
+Incoming requests to the protected instances in the private subnets present in your existing VPC will go through a connection that flows through the internet gateway, Network Load Balancer, and the FortiGate Auto Scaling group before reaching the protected instances. The protected instances return a response using the same connection.
+
+Outgoing requests from the protected instances go through one FortiGate in the Auto Scaling group(s) and the internet gateway to the public network. The public network returns the response using the same path.
 
 NOTE: Ensure that you remove any existing NAT device routes from existing route tables associated with the private subnets. The Quick Start automatically attaches a proper route (as described above) to the route table.
-
-The Quick Start provides separate templates for these options. It also lets you configure Classless Inter-Domain Routing (CIDR) blocks, instance types, and {partner-product-name} settings, as discussed later in this guide.

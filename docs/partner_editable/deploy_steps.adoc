@@ -10,7 +10,7 @@ ifdef::marketplace_subscription[]
 
 This Quick Start requires a subscription to one or more of the following AMIs available in AWS Marketplace
 
-*	If your deployment will contain On-demand instances, subscribe to the https://aws.amazon.com/marketplace/pp/B00PCZSWDA[Fortinet FortiGate Next-Generation Firewall] AMI.
+*	If your deployment will contain on-demand instances, subscribe to the https://aws.amazon.com/marketplace/pp/B00PCZSWDA[Fortinet FortiGate Next-Generation Firewall] AMI.
 *	If your deployment will contain BYOL instances, subscribe to the https://aws.amazon.com/marketplace/pp/B00ISG1GUG[Fortinet FortiGate (BYOL) Next-Generation Firewall] AMI.
 *	If your deployment will integrate with FortiAnalyzer, subscribe to the https://aws.amazon.com/marketplace/pp/B07Q1F19SC[FortiAnalyzer Centralized Logging/Reporting (10 managed devices)] AMI.
 
@@ -19,7 +19,7 @@ This Quick Start requires a subscription to one or more of the following AMIs av
 . Sign in to your AWS account.
 . For each AMI you will subscribe to, open the page for the AMI in AWS Marketplace and choose *Continue to Subscribe*.
 . Review the terms and conditions for software usage, and then choose *Accept Terms*. +
-  A confirmation page loads, and an email confirmation is sent to the account owner. For detailed subscription instructions, see the https://aws.amazon.com/marketplace/help/200799470[AWS Marketplace documentation^].
+  A confirmation page loads, and an email confirmation is sent to the account owner. For detailed subscription instructions, see the https://aws.amazon.com/marketplace/help/200799470[Getting started^] page in the AWS Marketplace Buyer Guide.
 
 . When the subscription process is complete, exit out of AWS Marketplace without further action. *Do not* provision the software from AWS Marketplace—the Quick Start deploys the AMI for you.
 
@@ -30,7 +30,7 @@ If your deployment will contain BYOL instances:
 .	Create an S3 bucket for your deployment. The name of the S3 bucket will be used for the parameter Quick Start S3 bucket name. 
 .	Inside this folder, create another folder to store the deployment resources. The name of this folder will be used for the parameter Quick Start S3 key prefix.
 .	Navigate to this second folder and upload the files and folders you extracted in step 2 to this location.
-.	Navigate to the assets folder, create a folder named fgt-asg-license, and upload your FortiGate license file(s) to this folder.
+.	Navigate to the assets folder, create a folder named `fgt-asg-license`, and upload your FortiGate license file(s) to this folder.
 
 
 endif::marketplace_subscription[]
@@ -40,7 +40,7 @@ endif::marketplace_subscription[]
 
 NOTE: You are responsible for the cost of the AWS services used while running this Quick Start reference deployment. There is no additional cost for using this Quick Start. For full details, see the pricing pages for each AWS service used by this Quick Start. Prices are subject to change.
 
-. Sign in to your AWS account, and choose one of the following options to launch the AWS CloudFormation template. For help with choosing an option, see link:#_deployment_options[deployment options] earlier in this guide.
+. Sign in to your AWS account, and choose one of the following options to launch the AWS CloudFormation template. For help with choosing an option, see link:#_deployment_options[Deployment options] earlier in this guide.
 
 [cols="60,40a"]
 |===
@@ -49,6 +49,8 @@ NOTE: You are responsible for the cost of the AWS services used while running th
 ^|http://qs_launch_link[Deploy {partner-product-name} into an existing VPC on AWS^] 
 ^|link:=../../templates/oracle-database.template.yaml[View template^]
 |===
+//TODO Shivansh, are these the right links ("oracle-database.template" etc.)?
+//TODO Shivansh, Do we want "View template" links here? This is where we put the "Deploy" links.
 
 WARNING: If you’re deploying {partner-product-name} into an existing VPC, make sure that your VPC has two private subnets in different Availability Zones for the workload instances, and that the subnets aren’t shared. This Quick Start doesn’t support https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html[shared subnets^]. These subnets require https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html[NAT gateways^] in their route tables, to allow the instances to download packages and software without exposing them to the internet.
 
@@ -63,9 +65,4 @@ Each deployment takes about {deployment_time} to complete.
 
 [start=3]
 . On the *Create stack* page, keep the default setting for the template URL, and then choose *Next*.
-. On the *Specify stack details* page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary.
-
-// In the following tables, parameters are listed by category and described separately for the two deployment options:
-
-// * Parameters for deploying {partner-product-name} into a new VPC
-// * Parameters for deploying {partner-product-name} into an existing VPC
+. On the *Specify stack details* page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary. For details on each parameter, see the link:#_parameter_reference[Parameter reference] section of this guide.

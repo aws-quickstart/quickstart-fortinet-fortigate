@@ -7,11 +7,11 @@
 *A1.* If AWS CloudFormation fails to create the stack, we recommend that you relaunch the template with *Rollback on failure* set to *No*. (This setting is under *Advanced* in the AWS CloudFormation console, *Options* page.) With this setting, the stack’s state is retained and the instance is left running, so you can troubleshoot the issue. (For Windows, look at the log files in %ProgramFiles%\Amazon\EC2ConfigService and C:\cfn\log.)
 // If you’re deploying on Linux instances, provide the location for log files on Linux, or omit this sentence.
 
-WARNING: When you set *Rollback on failure* to *Disabled*, you continue to incur AWS charges for this stack. Please make sure to delete the stack when you finish troubleshooting.
+WARNING: When you set *Rollback on failure* to *Disabled*, you continue to incur AWS charges for this stack. Delete the stack when you finish troubleshooting.
 
 For additional information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html[Troubleshooting AWS CloudFormation^] on the AWS website.
 
-*A2.* The deployment will fail if you select an instance type that is not supported in the region that was selected. Your desired instance type is available in your region if it is listed on the Instance types page for your region.
+*A2.* The deployment will fail if you select an instance type that is not supported in the Region that was selected. Your desired instance type is available in your Region if it is listed on the instance types page for your Region.
 
 *Q.* I encountered a size limitation error when I deployed the AWS CloudFormation templates.
 
@@ -19,8 +19,8 @@ For additional information, see https://docs.aws.amazon.com/AWSCloudFormation/la
 
 *Q.* The FortiGate master election was not successful.
 
-*A.* If the FortiGate master election is not successful, reset the master election. If the reset does not solve the problem, please contact support.
+*A.* If the FortiGate master election is not successful, reset the master election. If the reset does not solve the problem, contact support.
 
 *Q.* I want to reset the master election.
 
-*A.* To reset the master election, navigate to the DynamoDB table *<ResourceTagPrefix>-FortiGateMasterElection.* Click the Items tab and delete the master record (the only item listed). A new master FortiGate will be elected and a new record will be created as a result.
+*A.* To reset the master election, navigate to the DynamoDB table *<ResourceTagPrefix>-FortiGateMasterElection.* Choose the *Items* tab, and delete the master record (the only item listed). A new master FortiGate is elected, and a new record is created.

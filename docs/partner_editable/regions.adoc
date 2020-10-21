@@ -1,1 +1,7 @@
-This deployment includes *AWS Auto Scaling,* which isn’t currently supported in all AWS Regions. For a current list of supported Regions, see https://docs.aws.amazon.com/general/latest/gr/aws-service-information.html[Service Endpoints and Quotas] in the AWS documentation.
+This Quick Start supports the following Regions:
+
+* ___
+* ___
+
+//TODO Shivansh, Please list these in this format: us-east-1, US East (N. Virginia)
+
