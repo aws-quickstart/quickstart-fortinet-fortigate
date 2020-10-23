@@ -23,3 +23,6 @@ autoscale_params.txt
 
 # macOS
 .DS_Store
+
+# taskcat reports
+taskcat_outputs/*
