@@ -5,8 +5,7 @@
 :doc-year: 2020
 :partner-contributors: Kimberly Lee, Jayden Liang, Daniel Chao, and Jamie Pate, {partner-company-name}
 :quickstart-contributors: Shivansh Singh and Tony Bulding, AWS Quick Start team
-:deployment_time: 10 minutes
-//TODO Shivansh, The landing page says 15 minutes. Which number should we use?
+:deployment_time: 15 minutes
 :default_deployment_region: us-east-2
 :parameters_as_appendix:
 // Uncomment these two attributes if you are leveraging

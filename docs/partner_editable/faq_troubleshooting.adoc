@@ -17,10 +17,6 @@ For additional information, see https://docs.aws.amazon.com/AWSCloudFormation/la
 
 *A.* We recommend that you launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template size limitations. For more information about AWS CloudFormation quotas, see the http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html[AWS documentation^].
 
-*Q.* The FortiGate master election was not successful.
+*Q.* The FortiGate main-instance election was not successful.
 
-*A.* If the FortiGate master election is not successful, reset the master election. If the reset does not solve the problem, contact support.
-
-*Q.* I want to reset the master election.
-
-*A.* To reset the master election, navigate to the DynamoDB table *<ResourceTagPrefix>-FortiGateMasterElection.* Choose the *Items* tab, and delete the master record (the only item listed). A new master FortiGate is elected, and a new record is created.
+*A.* Reset the main-instance election. To reset the main-instance election, navigate to the DynamoDB table *<ResourceTagPrefix>-FortiGateMasterElection.* Choose the *Items* tab, and delete the main record (the only item listed). A new main FortiGate instance is elected, and a new record is created. If the reset does not solve the problem, contact support.

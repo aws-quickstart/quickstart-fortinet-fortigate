@@ -16,16 +16,15 @@ best practices, to provide you with your own virtual network on AWS.*
 
 * In the public subnets:
 
-** A FortiGate host in an Auto Scaling group to complement AWS security groups (not shown) to provide intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. It also allows VPN access by authorized users.
-//TODO Shivansh, If the AWS security groups are important to mention, might we add them to the diagram? Or say "(not shown)"? Call them IAM security groups (no; change the resource item to AWS security groups)? 
-//TODO Marcia's note to self: Spell out IAM on first occurrence.
-
-** A FortiGate master instance in an Auto Scaling group to act as a NAT gateway, allowing outbound internet access for resources in the private subnets.*
-
-** A Network Load Balancer that distributes inbound traffic across FortiGate instances.
+** A Network Load Balancer, which distributes inbound traffic across FortiGate instances.
 
 ** A FortiAnalyzer instance, which consolidates logging and reporting for your FortiGate cluster.
-//TODO Move this up in the list.
+
+** FortiGate instances, which act as network address translation (NAT) gateways, allowing outbound internet access for resources in the private subnets. These instances include the following:
+
+*** A FortiGate main instance in an Auto Scaling group.
+
+*** A FortiGate host in an Auto Scaling group. This host complements AWS security groups (not shown), providing intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. It also allows VPN access by authorized users.
 
 * In the private subnets:
 
