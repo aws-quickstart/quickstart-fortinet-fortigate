@@ -2,22 +2,26 @@
 // Briefly describe the software. Use consistent and clear branding. 
 // Include the benefits of using the software on AWS, and provide details on usage scenarios.
 
-FortiGate mid-range next-generation firewalls (NGFWs) provide high-performance, multi-layered advanced security, and better visibility to protect against cyber-attacks while reducing complexity. FortiGate firewalls are purpose-built with security processers to enable the industry’s best threat protection and performance for Secure Sockets Layer (SSL)-encrypted traffic.
+FortiGate midrange next-generation firewalls (NGFWs) provide high-performance, multilayered advanced security and better visibility to protect against cyberattacks while reducing complexity. FortiGate firewalls are built with security processors to enable threat protection and performance for Secure Sockets Layer (SSL)-encrypted traffic.
 
-By providing granular visibility of applications, users, and Internet of Things (IoT) devices, these firewalls are designed to identify issues quickly and intuitively. Our security services from FortiGuard Labs provide continuous threat intelligence updates to keep organizations protected from:
+//TODO Shivansh, Is NGFW an acronym people might search on? If so, add it to our landing page? If not, deleted it in this guide?
+
+By providing granular visibility of applications, users, and Internet of Things (IoT) devices, these firewalls are designed to identify issues quickly and intuitively. Our security services from FortiGuard Labs provide continuous threat intelligence updates to keep organizations protected from the following:
 
 *	Exploits and encrypted malware
 *	Malicious websites and botnets
 *	Ransomware and unknown attacks
 
-FortiGate mid-range next-generation firewalls include:
+//TODO Shivansh, How can we rephrase "granular visibility" and "quickly and intuitively" to describe this more scientifically?
+
+FortiGate midrange next-generation firewalls include:
 
 *	Top-rated security validated by NSS Labs, Virus Bulletin, and AV Comparatives
 *	Industry’s highest threat protection and SSL inspection performance
-*	Multi-layered security capabilities to reduce complexity
+*	Multilayered security capabilities to reduce complexity
 *	Deep visibility and granular control of applications, users, and IoT devices
 *	Single-pane-of-glass view with centralized management and reporting
-*	An Auto Scaling group to provide highly efficient clustering at times of high workloads.
+*	An Auto Scaling group to provide efficient clustering at times of high workloads
 
-Multiple FortiGate instances can be scaled out automatically according to predefined workload levels. When a spike in traffic occurs, the Lambda script is invoked to scale out the group by automatically adding FortiGate instances. Auto Scaling is achieved by using FortiGate-native high availability features such as Config-Sync, which synchronizes operating system configurations across multiple FortiGate instances at the time of scale out events.
+Multiple FortiGate instances can be scaled out automatically according to predefined workload levels. When a spike in traffic occurs, the Lambda script is invoked to scale out the group by automatically adding FortiGate instances. Auto Scaling is achieved by using FortiGate-native high-availability features. For example, Config-Sync synchronizes operating system configurations across multiple FortiGate instances at the time of scale-out events.
 

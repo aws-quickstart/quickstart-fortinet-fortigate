@@ -3,14 +3,14 @@
 
 == Test the deployment
 
-Fortinet FortiGate Auto Scaling creates two Auto Scaling groups with an elected master instance.
+Fortinet FortiGate Auto Scaling creates two Auto Scaling groups with an elected main instance.
 
 .	Confirm that the Auto Scaling groups were created after completion of the CloudFormation stack.
-The name of each group will start with the prefix you specified in Resource tag prefix. Confirm that the number in the Instances column is equal to or greater than the Desired capacity you specified.
+The name of each group starts with the prefix you specified in *Resource tag prefix*. Confirm that the number in the *Instances* column is equal to or greater than the capacity you specified in the *Desired* column.
 +
 :xrefstyle: short
 [#test_deployment_1]
-.Test the deployment
+.Confirming the number of Auto Scaling groups
 [link=images/test_deployment_1.png]
 image::../images/test_deployment_1.png[test_deployment_1,width=648,height=439]
 + 
@@ -18,56 +18,56 @@ image::../images/test_deployment_1.png[test_deployment_1,width=648,height=439]
 +
 :xrefstyle: short
 [#test_deployment_2]
-.Test the deployment
+.Confirming that all FortiGate instances are running
 [link=images/test_deployment_2.png]
 image::../images/test_deployment_2.png[test_deployment_2,width=648,height=439]
 +
-.	Confirm that a master instance was elected.
-Look up the DynamoDB table <ResourceTagPrefix>-FortiGateMasterElection. Select the Items tab and open the master record (the only item listed). A master has been elected when the voteState is done.
- +
+.	Confirm that a main instance was elected.
+Look up the DynamoDB table *<ResourceTagPrefix>-FortiGateMasterElection*. Choose the *Items* tab, and open the main record (the only item listed). A main instance has been elected when `voteState` is done.
++
 :xrefstyle: short
 [#test_deployment_3]
-.Test the deployment
+.Confirming that a main instance was elected
 [link=images/test_deployment_3.png]
 image::../images/test_deployment_3.png[test_deployment_3,width=648,height=439]
 
-TIP:     Make note of the instanceID as you will need it to connect to the master FortiGate
+. Make note of the instance ID (`instanceID`). You will need it to connect to the main FortiGate instance.
 
 
-== Post deployment steps
+== Post-deployment steps
 // If Post-deployment steps are required, add them here. If not, remove the heading
 
-=== Connect to the master FortiGate instance
+=== Connect to the main FortiGate instance
 
-To connect to the master FortiGate instance you will need a login URL, a username, and a password.
+To connect to the main FortiGate instance, you need a login URL, a user name, and a password.
 
 .	Construct the login URL in this way: https://<IPAddress>:<Port>/.
-Port refers to the Admin port specified during FortiGate configuration.
-IPAddress refers to the IPv4 Public IP of the FortiGate and is listed on the Description tab for the instance. In th EC2 Management console, locate the instance using the instanceID of the master instance.
+<Port> refers to the parameter *Admin port* specified during FortiGate configuration.
+<IPAddress> refers to the IPv4 public IP address of the FortiGate. This IP address is listed under the *Description* tab for the instance, as shown in <<post_deployment_1>>. In the Amazon EC2 management console, locate the instance using the instance ID of the main instance.
 +
 :xrefstyle: short
 [#post_deployment_1]
-.Post deployment steps
+.IPv4 public IP address of the FortiGate instance
 [link=images/post_deployment_1.png]
 image::../images/post_deployment_1.png[post_deployment_1,width=648,height=439]
 + 
 .	Open an HTTPS session and go to the login URL.
 +
-NOTE: Your browser will display a certificate error message. This is normal because the default FortiGate certificate is self-signed and not recognized by browsers. Proceed past this error. At a later time, you can upload a publicly signed certificate to avoid this error.
+Your browser displays a certificate error message. This is normal because the default FortiGate certificate is self-signed and not recognized by browsers. Proceed past this error. Later, you can upload a publicly signed certificate to avoid this error.
 +
-.	Log in to the FortiGate with the username admin and the default password of the instanceID of the master instance.
+.	Log in to the FortiGate with the user name *admin* and the default password *<instanceID>*.
 +
-NOTE: As the master FortiGate propagates the password to all secondary FortiGate instances, this is the initial password for all FortiGate instances. You will need this initial password if failover occurs prior to the password being changed, as the newly elected master FortiGate will still have the initial password of the previous master.
+This is the initial password for all FortiGate instances because the main FortiGate propagates the password to all secondary FortiGate instances. If failover occurs before the password is changed, you will need this initial password since the newly elected main FortiGate will still have the initial password of the previous main instance.
 +
-.	You will be prompted to change the password at the first-time login.
+. When you are prompted at the first-time login, change the password. 
 +
-NOTE: You should only change the password on the master FortiGate instance. The master FortiGate instance will propagate the password to all slave FortiGates. Any password changed on a slave FortiGate will be overwritten.
+NOTE: Change the password only on the main FortiGate instance. This instance propagates the password to all FortiGates in the Auto Scaling group. Any password changed on a secondary FortiGate is overwritten with the main FortiGate's password.
 +
-.	You will now see the FortiGate dashboard. The information displayed in the license widget of the dashboard depends on your license type.
+The FortiGate dashboard opens. The information displayed in the license widget of the dashboard depends on your license type.
 +
 :xrefstyle: short
 [#post_deployment_2]
-.Post deployment steps
+.The FortiGate dashboard
 [link=images/post_deployment_2.png]
 image::../images/post_deployment_2.png[post_deployment_2,width=648,height=439]
 
@@ -78,56 +78,43 @@ image::../images/post_deployment_2.png[post_deployment_2,width=648,height=439]
 
 ==== Major components
 
-*	*The BYOL Auto Scaling group* contains 0 to many FortiGates of the BYOL licensing model and will dynamically scale-out or scale-in based on the scaling metrics specified by the parameters Scale-out threshold and Scale-in threshold. For each instance you must provide a valid license purchased from FortiCare.
+*	*The BYOL Auto Scaling group:* This group contains FortiGates of the BYOL licensing model. These instances dynamically scale out or scale in based on the scaling metrics specified by the parameters *Scale-out threshold* and *Scale-in threshold*. For each instance you must provide a valid license purchased from FortiCare. For BYOL-only and hybrid licensing deployments, the minimum group size (`FgtAsgMinSizeByol`) must be at least 2. These FortiGates are the main instances and are fixed and running 7x24. If it is set to 1 and the instance fails to work, the current FortiGate configuration is lost.
 
-NOTE: For BYOL-only and hybrid licensing deployments, the Minimum group size (FgtAsgMinSizeByol) must be at least 2. These FortiGates are the main instances and are fixed and running 7x24. If it is set to 1 and the instance fails to work, the current FortiGate configuration will be lost.
+*	*The on-demand Auto Scaling group:* This group contains FortiGates of the on-demand licensing model. These instances dynamically scale out or scale in based on the scaling metrics specified by the parameters *Scale-out threshold* and *Scale-in threshold*. For on-demand-only deployments, the minimum group size (`FgtAsgMinSizePayg`) must be at least 2. These FortiGates are the main instances and are fixed and running 7x24. If it is set to 1 and the instance fails to work, the current FortiGate configuration is lost.
 
-*	*The On-demand Auto Scaling group* contains 0 to many FortiGates of the On-demand licensing model and will dynamically scale-out or scale-in based on the scaling metrics specified by the parameters Scale-out threshold and Scale-in threshold.
+*	*The `assets/configset` directory in the S3 bucket:* This directory contains the following files that are loaded as the initial configuration for a new FortiGate instance.
+**	`baseconfig` is the base configuration. This file can be modified as needed to meet your network requirements. Placeholders such as {SYNC_INTERFACE} are explained in the "Configset placeholders" table that follows.
+**	`httproutingpolicy` and `httpsroutingpolicy` are provided as part of the base `configset` - for a common use case - and specify the FortiGate firewall policy for virtual IP addresses (VIPs) for http routing and https routing respectively. This common use case includes a VIP on port 80 and a VIP on port 443 with a policy that points to an internal load balancer. The port numbers are configurable and can be changed during CFT deployment. Additional VIPs can be added here as needed. Note that in FortiOS 6.2.3, any VIPs created on the main instance do not sync to the secondary units. Any VIP you wish to add must be added as part of the base configuration. If you set the internal Elastic Load Balancing (ELB) options parameter to “do not need one,” append your VIP configuration to `baseconfig`.
+** (Optional) The `assets/fgt-asg-license` directory in the S3 bucket contains BYOL license files.
 
-NOTE: For On-demand-only deployments, the Minimum group size (FgtAsgMinSizePayg) must be at least 2. These FortiGates are the main instances and are fixed and running 7x24. If it is set to 1 and the instance fails to work, the current FortiGate configuration will be lost.
-
-*	*The assets/configset folder in the S3 bucket* contains files that are loaded as the initial configuration for a new FortiGate instance.
-**	baseconfig is the base configuration. This file can be modified as needed to meet your network requirements. Placeholders such as {SYNC_INTERFACE} are explained in the Configset placeholders table below.
-**	httproutingpolicy and httpsroutingpolicy are provided as part of the base configset - for a common use case - and specify the FortiGate firewall policy for VIPs for http routing and https routing respectively. This common use case includes a VIP on port 80 and a VIP on port 443 with a policy that points to an internal load balancer. The port numbers are configurable and can be changed during CFT deployment. Additional VIPs can be added here as needed.
-
-NOTE: In FortiOS 6.2.3, any VIPs created on the master will not sync to the slave units. Any VIP you wish to add must be added as part of the base configuration.
-If you set the Internal ELB options parameter to “do not need one”, then you must append your VIP configuration to baseconfig.
-** *(Optional) The assets/fgt-asg-license folder in the S3 bucket* contains BYOL license files.
-
-*	The tables in DynamoDB are required to store information such as health check monitoring, master election, state transitions, etc. These records should not be modified unless required for troubleshooting purposes.
-*	The networking components include the network load balancers, the target group, and the VPC and subnets. You are expected to create your own client and server instances that you want protected by the FortiGate.
+*	*The tables in DynamoDB:* These tables are required to store information such as health-check monitoring, main-instance election, and state transitions. Do not modify these records unless required for troubleshooting purposes.
+*	*The networking components:* These components include the Network Load Balancers, the target group, and the VPC and subnets. You are expected to create your own client and server instances that you want protected by the FortiGate.
 
 ==== Configset placeholders
 
-When the FortiGate requests the configuration from the FortiGate Auto Scaling Handler function, the placeholders in the table below will be replaced with actual values about the Auto Scaling group.
+When the FortiGate requests the configuration from the FortiGate Auto Scaling handler function, the placeholders in the following table are replaced with actual values for the Auto Scaling group.
 
 [cols="3",options="header",grid=rows,frame=topbot]
 |===
 |Placeholder  |Type | Description
 |*{SYNC_INTERFACE}*
 |Text
-|The interface for FortiGates to synchronize information. +
-Specify as port1, port2, port3, etc. +
-All characters must be lowercase.
+|The interface for FortiGates to synchronize information. Specify as port1, port2, port3, etc. All characters must be lowercase.
 |*{CALLBACK_URL}*	
 |URL	
-|The endpoint URL to interact with the auto scaling handler script. +
-Automatically generated during CloudFormation deployment.
+|The endpoint URL to interact with the Auto Scaling handler script. Automatically generated during AWS CloudFormation deployment.
 |*{PSK_SECRET}*	
 |Text	
-|The Pre-Shared Key used in FortiOS. +
-Specified during CloudFormation deployment.
+|The preshared key used in FortiOS. Specified during AWS CloudFormation deployment.
 |*{ADMIN_PORT}*	
 |Number	
-|A port number specified for admin login. +
-A positive integer such as 443 etc. +
-Specified during CloudFormation deployment.
+|A port number specified for administrator login. A positive integer, such as 443. Specified during AWS CloudFormation deployment.
 |*{HEART_BEAT_INTERVAL}*	
 |Number	
-|The time interval (in seconds) that the FortiGate waits between sending heartbeat requests to the Autoscale handler function.
+|The time interval (in seconds) that the FortiGate waits between sending heartbeat requests to the Auto Scaling handler function.
 |===
 
-==== Auto Scaling Handler environment variables
+==== Auto Scaling handler environment variables
 
 [cols="2",options="header",grid=rows,frame=topbot]
 |===
@@ -137,10 +124,10 @@ Specified during CloudFormation deployment.
 |*CUSTOM_ID*	
 |Reserved, empty string.
 |*RESOURCE_TAG_PREFIX*	
-|The value of the CFT parameter *Resource tag prefix* which is described in the table *Resource tagging configuration.*
+|The value of the CFT parameter *Resource tag prefix*, which is described in the table *Resource tagging configuration.*
 |===
 
-=== Additional Resources
+=== Additional resources
 
 *AWS resources*
 
@@ -151,7 +138,7 @@ Specified during CloudFormation deployment.
 *AWS services*
 
 *	https://docs.aws.amazon.com/cloudformation/[AWS CloudFormation]
-*	https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html[Amazon EBS]
+*	https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html[Amazon Elastic Block Store (Amazon EBS)]
 *	https://docs.aws.amazon.com/ec2/[Amazon EC2]
 *	https://docs.aws.amazon.com/iam/[IAM]
 *	https://docs.aws.amazon.com/vpc/[Amazon VPC]
