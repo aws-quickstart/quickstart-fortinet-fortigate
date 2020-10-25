@@ -20,11 +20,9 @@ best practices, to provide you with your own virtual network on AWS.*
 
 ** A FortiAnalyzer instance, which consolidates logging and reporting for your FortiGate cluster.
 
-** FortiGate instances, which act as network address translation (NAT) gateways, allowing outbound internet access for resources in the private subnets. These instances include the following:
+** A FortiGate main instance in an Auto Scaling group.
 
-*** A FortiGate main instance in an Auto Scaling group.
-
-*** A FortiGate host in an Auto Scaling group. This host complements AWS security groups (not shown), providing intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. It also allows VPN access by authorized users.
+** A FortiGate host in an Auto Scaling group that complements security groups (not shown). This host provides intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. It also allows VPN access by authorized users.
 
 * In the private subnets:
 
