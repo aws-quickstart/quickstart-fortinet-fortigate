@@ -215,7 +215,7 @@ Parameters:
     ConstraintDescription: Must be a valid number not less than 2.
     Description: Number of FortiGate instances the group should have at any time,
       also called desired capacity. Must keep at least 2 FortiGates in the group for
-      High Availability. Minimum is 2.
+      high availability. Minimum is 2.
   FortiGateAsgMinSize:
     Type: Number
     Default: 2
