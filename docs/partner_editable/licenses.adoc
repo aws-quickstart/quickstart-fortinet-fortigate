@@ -1,6 +1,7 @@
 // Include details about the license and how they can sign up. If no license is required, clarify that. 
 
-This Quick Start will launch FortiGate On-demand and/or BYOL instances, for which you will pay an hourly fee based on the Amazon Elastic Compute Cloud (Amazon EC2) instance type. A license is required for each FortiGate Bring Own License (BYOL) instance you might use. Licenses can be purchased from FortiCare. When you launch the Quick Start, place the license key in an S3 bucket and specify its location. For instructions, see step 3 in the deployment section.
+This Quick Start can deploy FortiGate on-demand or bring-your-own-license (BYOL) instances. You pay an hourly fee based on the Amazon Elastic Compute Cloud (Amazon EC2) instance type. A license is required for each FortiGate BYOL instance you might use. Licenses can be purchased from FortiCare. When you launch the Quick Start, place the license key in an S3 bucket and specify its location. For instructions, see step 3 in the deployment section.
+//TODO Marcia's note to self: Confirm this step number before we publish. Create a link like the one below?
 
 // Or, if the deployment uses an AMI, update this paragraph. If it doesn’t, remove the paragraph.
 
