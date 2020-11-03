@@ -3,4 +3,10 @@
 This Quick Start will launch FortiGate On-demand and/or BYOL instances, for which you will pay an hourly fee based on the Amazon Elastic Compute Cloud (Amazon EC2) instance type. A license is required for each FortiGate Bring Own License (BYOL) instance you might use. Licenses can be purchased from FortiCare. When you launch the Quick Start, place the license key in an S3 bucket and specify its location. For instructions, see step 3 in the deployment section.
 
 // Or, if the deployment uses an AMI, update this paragraph. If it doesn’t, remove the paragraph.
-_<AMI information>The Quick Start requires a subscription to one or both of the Amazon Machine Images (AMIs) for {partner-product-name}, which is available from https://aws.amazon.com/marketplace/[AWS Marketplace^]. Additional pricing, terms, and conditions may apply. For instructions, see link:#step-2.-subscribe-to-the-software-ami[step 2] in the deployment section._
+
+This Quick Start requires a subscription to one or more of the following AMIs available in AWS Marketplace:
+* If your deployment will contain On-Demand instances, subscribe to the https://aws.amazon.com/marketplace/pp/B00PCZSWDA[Fortinet FortiGate Next-Generation Firewall^] AMI.
+* If your deployment will contain BYOL instances, subscribe to the https://aws.amazon.com/marketplace/pp/B00ISG1GUG[Fortinet FortiGate (BYOL) Next-Generation Firewall^] AMI.
+* If your deployment will integrate with FortiAnalyzer, subscribe to the https://aws.amazon.com/marketplace/pp/B07Q1F19SC[FortiAnalyzer Centralized Logging/Reporting (10 managed devices)^] AMI.
+
+If your deployment will contain BYOL instances, you must place the license in an S3 bucket and provide the bucket name as parameter when launching the stack.
