@@ -654,6 +654,8 @@ Resources:
             - s3
       TimeoutInMinutes: 30
 Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Parameter to launch in a new VPC"
   'AWS::CloudFormation::Interface':
     ParameterGroups:
       - Label:
