@@ -23,8 +23,8 @@ image::../images/test_deployment_1.png[test_deployment_1,width=648,height=439]
 image::../images/test_deployment_2.png[test_deployment_2,width=648,height=439]
 +
 .	Confirm that a primary instance was elected.
-Look up the DynamoDB table <ResourceTagPrefix>-FortiGateMasterElection. Select the Items tab and open the master record (the only item listed). A master has been elected when the voteState is done.
- +
+Look up the DynamoDB table `<ResourceTagPrefix>-FortiGateMasterElection`. Select the Items tab and open the master record (the only item listed). A master has been elected when the voteState is done.
++
 :xrefstyle: short
 [#test_deployment_3]
 .Confirming that a main instance was elected
@@ -41,9 +41,9 @@ image::../images/test_deployment_3.png[test_deployment_3,width=648,height=439]
 
 To connect to the main FortiGate instance, you need a login URL, a user name, and a password.
 
-.	Construct the login URL in this way: https://<IPAddress>:<Port>/.
-<Port> refers to the parameter *Admin port* specified during FortiGate configuration.
-<IPAddress> refers to the IPv4 public IP address of the FortiGate. This IP address is listed under the *Description* tab for the instance, as shown in <<post_deployment_1>>. In the Amazon EC2 management console, locate the instance using the instance ID of the main instance.
+.	Construct the login URL in this way: `https://<IPAddress>:<Port>/`.
+*<Port>* refers to the parameter *Admin port* specified during FortiGate configuration.
+*<IPAddress>* refers to the IPv4 public IP address of the FortiGate. This IP address is listed under the *Description* tab for the instance, as shown in <<post_deployment_1>>. In the Amazon EC2 management console, locate the instance using the instance ID of the main instance.
 +
 :xrefstyle: short
 [#post_deployment_1]
