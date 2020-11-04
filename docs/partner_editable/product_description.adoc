@@ -1,0 +1,7 @@
+// Replace the content in <>
+// Briefly describe the software. Use consistent and clear branding. 
+// Include the benefits of using the software on AWS, and provide details on usage scenarios.
+
+FortiGate midrange next-generation firewalls (NGFWs) provide high-performance, multilayered advanced security and better visibility to protect against cyberattacks while reducing complexity. FortiGate firewalls are built with security processors to enable threat protection and performance for Secure Sockets Layer (SSL)-encrypted traffic.
+
+Multiple FortiGate instances form an Auto Scaling group to provide efficient clustering at times of high workloads. FortiGate instances can be scaled out automatically according to predefined workload levels. When a spike in traffic occurs, FortiGate instances are automatically added to the Auto Scaling group. Auto Scaling is achieved by using FortiGate-native high-availability (HA) features that synchronize operating-system (OS) configurations across multiple FortiGate-VM instances at the time of scale-out events.

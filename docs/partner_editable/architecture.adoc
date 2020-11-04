@@ -1,0 +1,39 @@
+Deploying this Quick Start for a new virtual private cloud (VPC) with
+default parameters builds the following {partner-product-name} environment in the
+AWS Cloud.
+
+:xrefstyle: short
+[#architecture1]
+.Quick Start architecture for _{partner-product-name}_ on AWS
+image::../images/architecture_diagram.png[Architecture,width=100%,height=100%]
+
+As shown in <<architecture1>>, the Quick Start sets up the following:
+
+* A highly available architecture that spans two Availability Zones.*
+
+* A VPC configured with public and private subnets, according to AWS
+best practices, to provide you with your own virtual network on AWS.*
+
+* In the public subnets:
+
+** A Network Load Balancer, which distributes inbound traffic across FortiGate instances.
+
+** A FortiAnalyzer instance, which consolidates logging and reporting for your FortiGate cluster.
+
+** A FortiGate main instance in an Auto Scaling group.
+
+** A FortiGate host in an Auto Scaling group that complements security groups (not shown). This host provides intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. It also allows VPN access by authorized users.
+
+* In the private subnets:
+
+** (Optional) A Network Load Balancer that distributes inbound traffic across your protected instances.
+
+* AWS Lambda, which provides the core Auto Scaling functionality between FortiGate instances.
+
+* Amazon S3 to host artifacts for Lambda functions and logs.
+
+* Amazon DynamoDB to store information about Auto Scaling condition states.
+
+*The template that deploys the Quick Start into an existing VPC skips
+the components marked by asterisks and prompts you for your existing VPC
+configuration.

@@ -1,0 +1,14 @@
+// Replace the <n> in each row to specify the number of resources used in this deployment. Remove the rows for resources that aren’t used.
+|===
+|Resource |This deployment uses
+
+// Space needed to maintain table headers
+|VPCs |1
+|Elastic IP addresses | 1
+|Security groups | 3
+|IAM roles |7
+|Auto Scaling groups | 2
+|Network Load Balancers | 2
+|c5.large instances (FortiGate) | 4
+|m4.large instances (FortiAnalyzer) | 1
+|===

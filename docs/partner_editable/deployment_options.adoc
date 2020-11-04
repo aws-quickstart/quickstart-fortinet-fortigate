@@ -1,0 +1,17 @@
+// There are generally two deployment options. If additional are required, add them here
+
+This Quick Start provides two deployment options:
+
+* *Deploy {partner-product-name} into a new VPC*. This option builds a new AWS environment consisting of the VPC, subnets, network address translation (NAT) gateways, security groups, bastion hosts, and other infrastructure components. It then deploys {partner-product-name} into this new VPC.
+
+* *Deploy {partner-product-name} into an existing VPC*. This option provisions {partner-product-name} in your existing AWS infrastructure.
+
+The Quick Start provides separate templates for these options. It also lets you configure Classless Inter-Domain Routing (CIDR) blocks, instance types, and {partner-product-name} settings, as discussed later in this guide.
+
+=== Incoming and outgoing requests
+
+Incoming requests go through a connection that flows through the internet gateway, Network Load Balancer, and FortiGate Auto Scaling group before reaching the protected instances in the private subnets in your existing VPC. The protected instances return a response using the same connection.
+
+Outgoing requests from the protected instances go through one FortiGate instance in an Auto Scaling group and the internet gateway to the public network. The public network returns the response using the same path.
+
+NOTE: Remove any existing NAT device routes from existing route tables associated with the private subnets. The Quick Start automatically attaches a proper route (as described earlier) to the route table.
