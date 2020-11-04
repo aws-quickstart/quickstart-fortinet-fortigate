@@ -19,4 +19,4 @@ For additional information, see https://docs.aws.amazon.com/AWSCloudFormation/la
 
 *Q.* The FortiGate main-instance election was not successful.
 
-*A.* Reset the main-instance election. To reset the main-instance election, navigate to the DynamoDB table *<ResourceTagPrefix>-FortiGateMasterElection.* Choose the *Items* tab, and delete the main record (the only item listed). A new main FortiGate instance is elected, and a new record is created. If the reset does not solve the problem, contact support.
+*A.* Reset the main-instance election. To reset the main-instance election, navigate to the DynamoDB table `<ResourceTagPrefix>-FortiGateMasterElection`. Choose the *Items* tab, and delete the main record (the only item listed). A new main FortiGate instance is elected, and a new record is created. If the reset does not solve the problem, contact support.

@@ -6,6 +6,7 @@ This Quick Start can deploy FortiGate on-demand or bring-your-own-license (BYOL)
 // Or, if the deployment uses an AMI, update this paragraph. If it doesn’t, remove the paragraph.
 
 This Quick Start requires a subscription to one or more of the following AMIs available in AWS Marketplace:
+
 * If your deployment will contain On-Demand instances, subscribe to the https://aws.amazon.com/marketplace/pp/B00PCZSWDA[Fortinet FortiGate Next-Generation Firewall^] AMI.
 * If your deployment will contain BYOL instances, subscribe to the https://aws.amazon.com/marketplace/pp/B00ISG1GUG[Fortinet FortiGate (BYOL) Next-Generation Firewall^] AMI.
 * If your deployment will integrate with FortiAnalyzer, subscribe to the https://aws.amazon.com/marketplace/pp/B07Q1F19SC[FortiAnalyzer Centralized Logging/Reporting (10 managed devices)^] AMI.
