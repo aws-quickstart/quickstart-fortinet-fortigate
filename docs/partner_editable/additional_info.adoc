@@ -3,14 +3,14 @@
 
 == Test the deployment
 
-Fortinet FortiGate Auto Scaling creates two Auto Scaling groups with an elected main instance.
+{partner-product-name} creates two Amazon EC2 Auto Scaling groups with an elected main instance.
 
-.	Confirm that the Auto Scaling groups were created after completion of the CloudFormation stack.
+.	Confirm that the Amazon EC2 Auto Scaling groups were created after completion of the AWS CloudFormation stack.
 The name of each group starts with the prefix you specified in *Resource tag prefix*. Confirm that the number in the *Instances* column is equal to or greater than the capacity you specified in the *Desired* column.
 +
 :xrefstyle: short
 [#test_deployment_1]
-.Confirming the number of Auto Scaling groups
+.Confirming the number of Amazon EC2 Auto Scaling groups
 [link=images/test_deployment_1.png]
 image::../images/test_deployment_1.png[test_deployment_1,width=648,height=439]
 + 
@@ -61,7 +61,7 @@ This is the initial password for all FortiGate instances because the main FortiG
 +
 . When you are prompted at the first-time login, change the password. 
 +
-NOTE: Change the password only on the main FortiGate instance. This instance propagates the password to all FortiGates in the Auto Scaling group. Any password changed on a secondary FortiGate is overwritten with the main FortiGate's password.
+NOTE: Change the password only on the main FortiGate instance. This instance propagates the password to all FortiGate instances in the Amazon EC2 Auto Scaling group. Any password changed on a secondary FortiGate is overwritten with the main FortiGate's password.
 +
 The FortiGate dashboard opens. The information displayed in the license widget of the dashboard depends on your license type.
 +
@@ -74,17 +74,17 @@ image::../images/post_deployment_2.png[post_deployment_2,width=648,height=439]
 == Other useful information
 //Provide any other information of interest to users, especially focusing on areas where AWS or cloud usage differs from on-premises usage.
 
-=== Fortinet FortiGate Auto Scaling on AWS features 
+=== {partner-product-name} on AWS features 
 
 ==== Major components
 
-*	*The BYOL Auto Scaling group:* This group contains FortiGates of the BYOL licensing model. These instances dynamically scale out or scale in based on the scaling metrics specified by the parameters *Scale-out threshold* and *Scale-in threshold*. For each instance you must provide a valid license purchased from FortiCare. For BYOL-only and hybrid licensing deployments, the minimum group size (`FgtAsgMinSizeByol`) must be at least 2. These FortiGates are the main instances and are fixed and running 7x24. If it is set to 1 and the instance fails to work, the current FortiGate configuration is lost.
+*	*The BYOL EC2 Auto Scaling group:* This group contains FortiGate instances of the BYOL licensing model. These instances dynamically scale out or scale in based on the scaling metrics specified by the parameters *Scale-out threshold* and *Scale-in threshold*. For each instance you must provide a valid license purchased from FortiCare. For BYOL-only and hybrid licensing deployments, the minimum group size (`FgtAsgMinSizeByol`) must be at least 2. These are the main instances and are fixed and running 24/7. If it is set to 1 and the instance fails to work, the current FortiGate configuration is lost.
 
-*	*The on-demand Auto Scaling group:* This group contains FortiGates of the on-demand licensing model. These instances dynamically scale out or scale in based on the scaling metrics specified by the parameters *Scale-out threshold* and *Scale-in threshold*. For on-demand-only deployments, the minimum group size (`FgtAsgMinSizePayg`) must be at least 2. These FortiGates are the main instances and are fixed and running 7x24. If it is set to 1 and the instance fails to work, the current FortiGate configuration is lost.
+*	*The on-demand EC2 Auto Scaling group:* This group contains FortiGate instances of the on-demand licensing model. These instances dynamically scale out or scale in based on the scaling metrics specified by the parameters *Scale-out threshold* and *Scale-in threshold*. For on-demand-only deployments, the minimum group size (`FgtAsgMinSizePayg`) must be at least 2. These are the main instances and are fixed and running 24/7. If it is set to 1 and the instance fails to work, the current FortiGate configuration is lost.
 
-*	*The `assets/configset` directory in the S3 bucket:* This directory contains the following files that are loaded as the initial configuration for a new FortiGate instance.
+*	*The assets/configset directory in the S3 bucket:* This directory contains the following files that are loaded as the initial configuration for a new FortiGate instance.
 **	`baseconfig` is the base configuration. This file can be modified as needed to meet your network requirements. Placeholders such as {SYNC_INTERFACE} are explained in the "Configset placeholders" table that follows.
-**	`httproutingpolicy` and `httpsroutingpolicy` specify the FortiGate firewall policy for virtual IP addresses (VIPs) for http routing and https routing, respectively. They're provided as part of the base `configset`for a common use case. This use case includes a VIP on port 80 and a VIP on port 443 with a policy that points to an internal load balancer. The port numbers are configurable and can be changed during CFT deployment. Additional VIPs can be added here as needed. Note that in FortiOS 6.2.3, any VIPs created on the main instance do not sync to the secondary units. Any VIP you wish to add must be added as part of the base configuration. If you set the `InternalLoadBalancingOptions` parameter to *Do not need one*, append your VIP configuration to `baseconfig`.
+**	`httproutingpolicy` and `httpsroutingpolicy` specify the FortiGate firewall policy for virtual IP addresses (VIPs) for http routing and https routing, respectively. They're provided as part of the base `configset` for a common use case. This use case includes a VIP on port 80 and a VIP on port 443 with a policy that points to an internal load balancer. The port numbers are configurable and can be changed during CFT deployment. Additional VIPs can be added here as needed. Note that in FortiOS 6.2.3, any VIPs created on the main instance do not sync to the secondary units. Any VIP you wish to add must be added as part of the base configuration. If you set the `InternalLoadBalancingOptions` parameter to *Do not need one*, append your VIP configuration to `baseconfig`.
 ** (Optional) The `assets/fgt-asg-license` directory in the S3 bucket contains BYOL license files.
 
 *	*The tables in DynamoDB:* These tables are required to store information such as health-check monitoring, main-instance election, and state transitions. Do not modify these records unless required for troubleshooting purposes.
@@ -92,17 +92,17 @@ image::../images/post_deployment_2.png[post_deployment_2,width=648,height=439]
 
 ==== Configset placeholders
 
-When the FortiGate requests the configuration from the FortiGate Auto Scaling handler function, the placeholders in the following table are replaced with actual values for the Auto Scaling group.
+When the FortiGate requests the configuration from the FortiGate EC2 Auto Scaling handler function, the placeholders in the following table are replaced with actual values for the Amazon EC2 Auto Scaling group.
 
 [cols="3",options="header",grid=rows,frame=topbot]
 |===
 |Placeholder  |Type | Description
 |*{SYNC_INTERFACE}*
 |Text
-|The interface for FortiGates to synchronize information. Specify as port1, port2, port3, etc. All characters must be lowercase.
+|The interface for FortiGate instances to synchronize information. Specify as port1, port2, port3, etc. All characters must be lowercase.
 |*{CALLBACK_URL}*	
 |URL	
-|The endpoint URL to interact with the Auto Scaling handler script. Automatically generated during AWS CloudFormation deployment.
+|The endpoint URL to interact with the Amazon EC2 Auto Scaling handler script. Automatically generated during AWS CloudFormation deployment.
 |*{PSK_SECRET}*	
 |Text	
 |The preshared key used in FortiOS. Specified during AWS CloudFormation deployment.
@@ -111,10 +111,10 @@ When the FortiGate requests the configuration from the FortiGate Auto Scaling ha
 |A port number specified for administrator login. A positive integer, such as 443. Specified during AWS CloudFormation deployment.
 |*{HEART_BEAT_INTERVAL}*	
 |Number	
-|The time interval (in seconds) that the FortiGate waits between sending heartbeat requests to the Auto Scaling handler function.
+|The time interval (in seconds) that the FortiGate waits between sending heartbeat requests to the Amazon EC2 Auto Scaling handler function.
 |===
 
-==== Auto Scaling handler environment variables
+==== Amazon EC2 Auto Scaling handler environment variables
 
 [cols="2",options="header",grid=rows,frame=topbot]
 |===
@@ -131,24 +131,20 @@ When the FortiGate requests the configuration from the FortiGate Auto Scaling ha
 
 *AWS resources*
 
-*	https://aws.amazon.com/getting-started/[Getting Started Resource Center]
-*	https://docs.aws.amazon.com/general/latest/gr/[AWS General Reference]
-*	https://docs.aws.amazon.com/general/latest/gr/glos-chap.html[AWS Glossary]
+*	https://aws.amazon.com/getting-started/[Getting Started with AWS^]
+*	https://docs.aws.amazon.com/general/latest/gr/[AWS General Reference^]
+*	https://docs.aws.amazon.com/general/latest/gr/glos-chap.html[AWS glossary^]
 
 *AWS services*
 
-*	https://docs.aws.amazon.com/cloudformation/[AWS CloudFormation]
-*	https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html[Amazon Elastic Block Store (Amazon EBS)]
-*	https://docs.aws.amazon.com/ec2/[Amazon EC2]
-*	https://docs.aws.amazon.com/iam/[IAM]
-*	https://docs.aws.amazon.com/vpc/[Amazon VPC]
+*	https://docs.aws.amazon.com/cloudformation/[AWS CloudFormation Documentation^]
+*	https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html[Amazon Elastic Block Store (Amazon EBS)^]
+*	https://docs.aws.amazon.com/ec2/[Amazon Elastic Compute Cloud Documentation^] (Amazon EC2)
+*	https://docs.aws.amazon.com/iam/[AWS Identity and Access Management Documentation^] (IAM)
+*	https://docs.aws.amazon.com/vpc/[Amazon Virtual Private Cloud Documentation^] (Amazon VPC)
 
-*Fortinet FortiGate Auto Scaling documentation*
+*Fortinet FortiGate documentation*
 
-*	https://docs.fortinet.com/document/fortigate/6.2.3/cookbook/[FortiGate FortiOS Cookbook]
-
-*	https://docs.fortinet.com/vm/aws/fortigate/6.2/aws-cookbook/6.2.0/[FortiGate-VM for AWS]
-
-*	https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/FortiGate_VM.pdf[FortiGate-VM datasheet]
-
-
+*	https://docs.fortinet.com/document/fortigate/6.2.3/cookbook/[Getting started with a FortiGate^]
+*	https://docs.fortinet.com/vm/aws/fortigate/6.2/aws-cookbook/6.2.0/[About FortiGate-VM for AWS^]
+*	https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/FortiGate_VM.pdf[FortiGate-VM datasheet^]

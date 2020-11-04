@@ -7,7 +7,7 @@
 |Elastic IP addresses | 1
 |Security groups | 3
 |IAM roles |7
-|Auto Scaling groups | 2
+|Amazon EC2 Auto Scaling groups | 2
 |Network Load Balancers | 2
 |c5.large instances (FortiGate) | 4
 |m4.large instances (FortiAnalyzer) | 1

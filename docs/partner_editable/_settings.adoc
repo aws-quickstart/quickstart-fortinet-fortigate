@@ -1,5 +1,5 @@
 :quickstart-project-name: quickstart-fortinet-fortigate
-:partner-product-name: FortiGate Auto Scaling With FortiAnalyzer
+:partner-product-name: FortiGate EC2 Auto Scaling
 :partner-company-name: Fortinet, Inc.
 :doc-month: November
 :doc-year: 2020

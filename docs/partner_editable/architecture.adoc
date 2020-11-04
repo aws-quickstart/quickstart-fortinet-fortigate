@@ -20,20 +20,18 @@ best practices, to provide you with your own virtual network on AWS.*
 
 ** A FortiAnalyzer instance, which consolidates logging and reporting for your FortiGate cluster.
 
-** A FortiGate main instance in an Auto Scaling group.
+** An Amazon EC2 Auto Scaling group that contains a FortiGate main instance of the BYOL licensing model.
 
-** A FortiGate host in an Auto Scaling group that complements security groups (not shown). This host provides intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. It also allows VPN access by authorized users.
+** An Amazon EC2 Auto Scaling group that contains a FortiGate host of the on-demand licensing model. This group complements security groups (not shown). This host provides intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. It also allows VPN access by authorized users.
 
 * In the private subnets:
 
 ** (Optional) A Network Load Balancer that distributes inbound traffic across your protected instances.
 
-* AWS Lambda, which provides the core Auto Scaling functionality between FortiGate instances.
+* AWS Lambda, which provides the core Amazon EC2 Auto Scaling functionality between FortiGate instances.
 
 * Amazon S3 to host artifacts for Lambda functions and logs.
 
-* Amazon DynamoDB to store information about Auto Scaling condition states.
+* Amazon DynamoDB to store information about Amazon EC2 Auto Scaling condition states.
 
-*The template that deploys the Quick Start into an existing VPC skips
-the components marked by asterisks and prompts you for your existing VPC
-configuration.
+[.small]#*The template that deploys the Quick Start into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#
