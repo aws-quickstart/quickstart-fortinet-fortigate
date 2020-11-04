@@ -2,7 +2,7 @@
 // Identify your target audience and explain how/why they would use this Quick Start.
 //Avoid borrowing text from third-party websites (copying text from AWS service documentation is fine). Also, avoid marketing-speak, focusing instead on the technical aspect.
 
-This guide provides step-by-step instructions for deploying the Fortinet {partner-product-name} Quick Start reference architecture on the AWS Cloud. By integrating FortiAnalyzer, this reference architecture consolidates logging and reporting for your FortiGate cluster.
+This guide provides step-by-step instructions for deploying the Fortinet {partner-product-name} Quick Start reference architecture on the AWS Cloud. By integrating FortiAnalyzer, this reference architecture provides consolidated logging and reporting for your FortiGate cluster.
 
 //TODO Shivansh, The landing page and the previous deployment guide include the term "baseline" in the title of the reference architecture. Do we need that word here too? (If not, remove from landing page title too?)
 
