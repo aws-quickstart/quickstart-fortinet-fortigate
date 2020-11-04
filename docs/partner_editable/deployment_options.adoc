@@ -10,8 +10,8 @@ The Quick Start provides separate templates for these options. It also lets you 
 
 === Incoming and outgoing requests
 
-Incoming requests go through a connection that flows through the internet gateway, Network Load Balancer, and FortiGate Auto Scaling group before reaching the protected instances in the private subnets in your existing VPC. The protected instances return a response using the same connection.
+Incoming requests go through a connection that flows through the internet gateway, Network Load Balancer, and FortiGate EC2 Auto Scaling group before reaching the protected instances in the private subnets in your existing VPC. The protected instances return a response using the same connection.
 
-Outgoing requests from the protected instances go through one FortiGate instance in an Auto Scaling group and the internet gateway to the public network. The public network returns the response using the same path.
+Outgoing requests from the protected instances go through one FortiGate instance in an Amazon EC2 Auto Scaling group and the internet gateway to the public network. The public network returns the response using the same path.
 
 NOTE: Remove any existing NAT device routes from existing route tables associated with the private subnets. The Quick Start automatically attaches a proper route (as described earlier) to the route table.

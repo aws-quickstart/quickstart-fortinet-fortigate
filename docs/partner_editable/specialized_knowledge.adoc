@@ -1,18 +1,5 @@
 // Replace the content in <>
 // Describe or link to specific knowledge requirements; for example: “familiarity with basic concepts in the areas of networking, database operations, and data encryption” or “familiarity with <software>.”
 
-This Quick Start assumes familiarity with Fortinet FortiGate next-generation firewall technology, including configuration of a FortiGate using the command-line interface (CLI).
-
-This deployment also requires a moderate level of familiarity with the following AWS services:
-
-*	https://aws.amazon.com/documentation/ec2/[Amazon Elastic Cloud Compute (Amazon EC2)^]
-*	https://aws.amazon.com/documentation/autoscaling/[Amazon EC2 Auto Scaling^] 
-*	https://aws.amazon.com/documentation/vpc/[Amazon VPC^]
-*	https://aws.amazon.com/documentation/cloudformation/[AWS CloudFormation^]
-*	https://aws.amazon.com/documentation/lambda/[AWS Lambda^]
-*	https://aws.amazon.com/documentation/dynamodb/[Amazon DynamoDB^]
-
-If you’re new to AWS, visit https://aws.amazon.com/getting-started/[Getting Started with AWS^] and https://aws.amazon.com/training/[Training and Certification^]. These sites provide materials for learning how to design, deploy, and operate your infrastructure and applications on the AWS Cloud.
-
-
+This Quick Start also assumes familiarity with Fortinet FortiGate next-generation firewall technology, including configuration of a FortiGate using the command-line interface (CLI).
 
