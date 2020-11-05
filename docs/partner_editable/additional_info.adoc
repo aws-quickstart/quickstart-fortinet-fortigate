@@ -22,7 +22,7 @@ image::../images/test_deployment_1.png[test_deployment_1,width=648,height=439]
 [link=images/test_deployment_2.png]
 image::../images/test_deployment_2.png[test_deployment_2,width=648,height=439]
 +
-.	Confirm that a primary instance was elected.
+.	Confirm that a main instance was elected.
 Look up the DynamoDB table `<ResourceTagPrefix>-FortiGateMasterElection`. Select the Items tab and open the master record (the only item listed). A master has been elected when the voteState is done.
 +
 :xrefstyle: short
@@ -37,7 +37,7 @@ image::../images/test_deployment_3.png[test_deployment_3,width=648,height=439]
 == Post-deployment steps
 // If Post-deployment steps are required, add them here. If not, remove the heading
 
-=== Connect to the Primary FortiGate instance
+=== Connect to the main FortiGate instance
 
 To connect to the main FortiGate instance, you need a login URL, a user name, and a password.
 
