@@ -1,0 +1,86 @@
+
+.Resource tagging configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Resource tag prefix
+(`ResourceTagPrefix`)|`**__Requires input__**`|The ResourceGroup Tag Key used on all resources and as the name prefix of all applicable resources. It can only contain numbers, lowercase letters, uppercase letters, ampersat(@), hyphens (-), period (.), and hash (#). Max length is 50.|Resource name prefix
+(`CustomIdentifier`)|`fgtASG`|An alternative name prefix to be used on a resource that the 'Resource tag prefix' cannot apply to. It can only contain numbers, lowercase letters, and uppercase letters. Max length is 10.
+|===
+.VPC network configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Availability Zones
+(`AvailabilityZones`)|`**__Requires input__**`|The list of Availability Zones to use for the subnets in the VPC. The Quick Start uses two Availability Zones from your list and preserves the logical order you specify.|VPC CIDR
+(`VPCCIDR`)|`192.168.0.0/16`|CIDR block for the FortiGate Auto Scaling VPC.|Public subnet 1 CIDR
+(`PublicSubnet1CIDR`)|`192.168.0.0/24`|CIDR block for the public subnet located in Availability Zone 1 where the Fortinet FortiGate Auto Scaling instances will be deployed to.|Public subnet 2 CIDR
+(`PublicSubnet2CIDR`)|`192.168.1.0/24`|CIDR block for the public subnet located in Availability Zone 2 where the Fortinet FortiGate Auto Scaling instances will be deployed to.|Private subnet 1 CIDR
+(`PrivateSubnet1CIDR`)|`192.168.2.0/24`|CIDR block for the private subnet located in Availability Zone 1 where it is protected by the FortiGates in the public subnet of the same Availability Zone.|Private subnet 2 CIDR
+(`PrivateSubnet2CIDR`)|`192.168.3.0/24`|CIDR block for the private subnet located in Availability Zone 2 where it is protected by the FortiGates in the public subnet of the same Availability Zone.|Integrated NAT Gateway
+(`IntegratedNATGatewayOptions`)|`yes`|Choose 'yes' to set the primary FortiGate in the Auto Scaling group as the NAT gateway for egress traffic from the protected private subnets.
+|===
+.FortiGate configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Instance type
+(`FortiGateInstanceType`)|`c5.xlarge`|Instance type for the FortiGates in the Auto Scaling group. There are t2.small and compute-optimized instances such as c4 and c5 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/.|FortiOS version
+(`FortiOSVersion`)|`6.2.3`|The FortiOS version supported by Fortinet FortiGate Auto Scaling. **IMPORTANT!** Requires a subscription to the Fortinet FortiGate on-demand and/or BYOL AMI(s).|FortiGate PSK secret
+(`FortiGatePskSecret`)|`**__Requires input__**`|The secret key used by the FortiGate instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Max length is 128.|Admin port
+(`FortiGateAdminPort`)|`8443`|Port number for FortiGate administration. Minimum is 1. Maximum is 65535. Do not use the FortiGate reserved ports 443, 541, 514, or 703.|Admin CIDR block
+(`FortiGateAdminCIDR`)|`**__Requires input__**`|CIDR block for external admin management access. **WARNING!** 0.0.0.0/0 accepts connections from any IP address. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses.|Key-pair name
+(`KeyPairName`)|`**__Requires input__**`|Amazon EC2 Key Pair for admin access.
+|===
+.FortiGate Auto Scaling group configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Desired capacity (BYOL)
+(`FgtAsgDesiredCapacityByol`)|`2`|Number of FortiGate instances the BYOL Auto Scaling group should have at any time. For High Availability in BYOL-only and Hybrid use cases, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing.|Minimum group size (BYOL)
+(`FgtAsgMinSizeByol`)|`2`|Minimum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing.|Maximum group size (BYOL)
+(`FgtAsgMaxSizeByol`)|`2`|Maximum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing. This number must be greater than or equal to the Minimum group size (BYOL).|Desired capacity (On-Demand)
+(`FgtAsgDesiredCapacityPayg`)|`0`|Number of FortiGate instances the on-demand Auto Scaling group should have at any time. For High Availability in an on-demand-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing.|Minimum group size (On-Demand)
+(`FgtAsgMinSizePayg`)|`0`|Minimum number of FortiGate instances in the on-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing.|Maximum group size (On-Demand)
+(`FgtAsgMaxSizePayg`)|`6`|Maximum number of FortiGate instances in the on-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid licensing. This number must be greater than or equal to the Minimum group size (on-demand).|Scale-out threshold
+(`FgtAsgScaleOutThreshold`)|`80`|Threshold (in percentage) for the FortiGate Auto Scaling group to scale-out (add) 1 instance. Minimum is 1. Maximum is 100.|Scale-in threshold
+(`FgtAsgScaleInThreshold`)|`25`|Threshold (in percentage) for the FortiGate Auto Scaling group to scale-in (remove) 1 instance. Minimum is 1. Maximum is 100.|Primary election timeout
+(`PrimaryElectionTimeout`)|`300`|Maximum time (in seconds) to wait for the primary election to complete. Minimum is 30. Maximum is 3600.|Get license grace period
+(`GetLicenseGracePeriod`)|`600`|Minimum time (in seconds) permitted before a distributed license can be revoked from a non-responsive FortiGate and re-distributed. Minimum is 300.|Health-check grace period
+(`FgtAsgHealthCheckGracePeriod`)|`300`|Length of time (in seconds) that Auto Scaling waits before checking an instance's health status. Minimum is 60.|Scaling cooldown period
+(`FgtAsgCooldown`)|`300`|Auto Scaling group waits for the cooldown period (in seconds) to complete before resuming scaling activities. Minimum is 60. Maximum is 3600.|Instance lifecycle timeout
+(`LifecycleHookTimeout`)|`480`|Amount of time (in seconds) that can elapse before the FortiGate Auto Scaling lifecycle hook times out. Minimum is 60. Maximum is 3600.
+|===
+.Load-balancing configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Traffic protocol
+(`LoadBalancingTrafficProtocol`)|`HTTPS`|Protocol used to load balance traffic.|Traffic port
+(`LoadBalancingTrafficPort`)|`443`|Port number used to balance web service traffic if the internal web service load balancer is enabled. Minimum is 1. Maximum is 65535.|Health check threshold
+(`LoadBalancingHealthCheckThreshold`)|`3`|Number of consecutive health check failures required before considering a FortiGate instance unhealthy. Minimum is 3.|Internal ELB options
+(`InternalLoadBalancingOptions`)|`add a new internal load balancer`|(Optional) Pre-defined load balancer to route traffic to targets in the private subnets.|Health-check path
+(`InternalTargetGroupHealthCheckPath`)|`/`|(Optional) Destination path for health checks. This path must begin with a '/' character, and can be at most 1024 characters in length.|Internal ELB DNS name
+(`InternalLoadBalancerDNSName`)|`**__Blank string__**`|(Optional) DNS name of an existing internal load balancer used to route traffic from a FortiGate to targets in a specified target group. Leave it blank if you don't use an existing load balancer.
+|===
+.Failover management configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Heart beat interval
+(`HeartBeatInterval`)|`30`|Length of time (in seconds) that a FortiGate instance waits between sending heartbeat requests to the FortiGate Auto Scaling handler. Minimum is 30. Maximum is 90.|Heart beat loss count
+(`HeartBeatLossCount`)|`3`|Number of consecutively lost heartbeats. When the Heartbeat Loss Count has been reached, the FortiGate is deemed unhealthy and fail-over activities will commence.|Heart beat delay allowance
+(`HeartBeatDelayAllowance`)|`2`|Maximum amount of time (in seconds) allowed for network latency of the FortiGate heartbeat arriving at the FortiGate Auto Scaling handler. Minimum is 0.
+|===
+.FortiAnalyzer integration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|FortiAnalyzer integration
+(`FortiAnalyzerIntegrationOptions`)|`yes`|Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer.|FortiAnalyzer instance type
+(`FortiAnalyzerInstanceType`)|`m5.large`|Instance type to launch as FortiAnalyzer on-demand instances. There are t2.small and compute-optimized instances such as m4 and c4 available with different vCPU sizes and bandwidths. For more information about instance types, see https://aws.amazon.com/ec2/instance-types/|FortiAnalyzer version
+(`FortiAnalyzerVersion`)|`6.2.5`|FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling. **IMPORTANT!** Requires a subscription to the Fortinet FortiAnalyzer Centralized Logging/Reporting (10 managed devices) AMI.|FortiAnalyzer private IP address
+(`FortiAnalyzerCustomPrivateIPAddress`)|`**__Blank string__**`|Custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored.|Autoscale admin username
+(`FortiAnalyzerAutoscaleAdminUsername`)|`**__Blank string__**`|Name of the secondary administrator level account in the FortiAnalyzer, which Fortinet FortiGate Auto Scaling uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-).|Autoscale admin password
+(`FortiAnalyzerAutoscaleAdminPassword`)|`**__Blank string__**`|Password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation.
+|===
+.AWS Quick Start configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Quick Start S3 bucket name
+(`QSS3BucketName`)|`aws-quickstart`|S3 bucket that you created for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-).|Quick Start S3 key prefix
+(`QSS3KeyPrefix`)|`quickstart-fortinet-fortigate/`|S3 key prefix that is used to simulate a directory for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html.
+|===
