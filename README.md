@@ -1,6 +1,6 @@
 ## Fortinet FortiGate EC2 Auto Scaling on the AWS Cloud—Quick Start
 
-For architectural details, step-by-step instructions, and customization options, see the [deployment guide](https://aws-quickstart.github.io/quickstart-fortinet-fortigate/).
+For architectural details, step-by-step instructions, and customization options, see the [deployment guide](https://fwd.aws/xjzgv).
 
 To post feedback, submit feature ideas, or report bugs, use the **Issues** section of this GitHub repo. 
 
