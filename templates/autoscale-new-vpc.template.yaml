@@ -336,11 +336,11 @@ Parameters:
       considering a FortiGate instance unhealthy. Minimum is 3.
   InternalLoadBalancingOptions:
     Type: String
-    Default: Add a new internal load balancer
+    Default: add a new internal load balancer
     AllowedValues:
-      - Add a new internal load balancer
-      - Use the load balancer specified below
-      - Do not need one
+      - add a new internal load balancer
+      - use the load balancer specified below
+      - do not need one
     ConstraintDescription: Choose from the provided options.
     Description: >-
       (Optional) Predefined load balancer to route traffic to targets in

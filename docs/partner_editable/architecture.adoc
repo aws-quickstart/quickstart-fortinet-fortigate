@@ -14,23 +14,25 @@ As shown in <<architecture1>>, the Quick Start sets up the following:
 * A VPC configured with public and private subnets, according to AWS
 best practices, to provide you with your own virtual network on AWS.*
 
-* In the public subnets:
+* An internet gateway to provide access to the internet.*
 
-** A Network Load Balancer, which distributes inbound traffic across FortiGate instances.
+* In the public subnets:
 
 ** A FortiAnalyzer instance, which consolidates logging and reporting for your FortiGate cluster.
 
-** An Amazon EC2 Auto Scaling group that contains a FortiGate main instance with a BYOL license.
+** Within the FortiGate cluster, Amazon EC2 Auto Scaling groups of FortiGate instances that use Bring Your Own License model (BYOL) licenses or on-demand licenses. This cluster contains the following:
 
-** An Amazon EC2 Auto Scaling group that contains a FortiGate host with an on-demand license. This group complements security groups (not shown). This host provides intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. It also allows VPN access by authorized users.
+*** Two or more FortiGate instances, which complement AWS security groups (not shown). Security groups provide intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. Each instance also provides VPN access for authorized users.
 
-* In the private subnets:
+*** A main FortiGate instance, which acts as a NAT gateway, allowing outbound internet access for resources in the private subnets.*
 
-** (Optional) A Network Load Balancer that distributes inbound traffic across your protected instances.
+* A public Network Load Balancer that distributes inbound traffic across the FortiGate instances.
+
+* (Optional) A private Network Load Balancer that distributes inbound traffic across the workload instances that you want to protect from outside access.
 
 * AWS Lambda, which provides the core Amazon EC2 Auto Scaling functionality between FortiGate instances.
 
-* Amazon S3 to host artifacts for Lambda functions and logs.
+* Amazon Simple Storage Service (Amazon S3) to host artifacts for Lambda functions and logs.
 
 * Amazon DynamoDB to store information about Amazon EC2 Auto Scaling condition states.
 
