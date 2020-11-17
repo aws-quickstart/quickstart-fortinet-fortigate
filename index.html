@@ -812,7 +812,7 @@ p.footer-text a{color:#d7d8d8}
 <li><a href="#_test_the_deployment">Test the deployment</a></li>
 <li><a href="#_post_deployment_steps">Post-deployment steps</a>
 <ul class="sectlevel2">
-<li><a href="#_connect_to_the_primary_fortigate_instance">Connect to the Primary FortiGate instance</a></li>
+<li><a href="#_connect_to_the_main_fortigate_instance">Connect to the main FortiGate instance</a></li>
 </ul>
 </li>
 <li><a href="#_other_useful_information">Other useful information</a>
@@ -847,7 +847,7 @@ p.footer-text a{color:#d7d8d8}
 </div>
 <div class="paragraph text-center">
 <p><strong>November 2020</strong><br>
-<em>Kimberly Lee, Jayden Liang, Daniel Chao, and Jamie Pate, Fortinet, Inc.</em><br>
+<em>Kimberly Lee, Jayden Liang, Daniel Chao, and Jamie Pate, Fortinet</em><br>
 <em>Shivansh Singh and Tony Bulding, AWS Quick Start team</em></p>
 </div>
 <div class="admonitionblock tip text-left">
@@ -864,7 +864,7 @@ report bugs, or submit feature ideas for this Quick Start.
 </table>
 </div>
 <div class="paragraph text-left">
-<p>This Quick Start was created by Fortinet, Inc. in collaboration with Amazon Web Services (AWS). <a href="http://aws.amazon.com/quickstart/" target="_blank" rel="noopener">Quick Starts</a> are automated reference deployments that use AWS CloudFormation templates to deploy key technologies on AWS, following AWS best practices.</p>
+<p>This Quick Start was created by Fortinet in collaboration with Amazon Web Services (AWS). <a href="http://aws.amazon.com/quickstart/" target="_blank" rel="noopener">Quick Starts</a> are automated reference deployments that use AWS CloudFormation templates to deploy key technologies on AWS, following AWS best practices.</p>
 </div>
 </div>
 </div>
@@ -895,13 +895,13 @@ Amazon may share user-deployment information with the AWS Partner that collabora
 <h2 id="_fortigate_ec2_auto_scaling_on_aws">FortiGate EC2 Auto Scaling on AWS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>FortiGate midrange next-generation firewalls (NGFWs) provide high-performance, multilayered advanced security and better visibility to protect against cyberattacks while reducing complexity. FortiGate firewalls are built with security processors to enable threat protection and performance for Secure Sockets Layer (SSL)-encrypted traffic.</p>
+<p>FortiGate midrange next-generation firewalls provide high-performance, multilayered advanced security and better visibility to protect against cyberattacks while reducing complexity. FortiGate firewalls are built with security processors to enable threat protection and performance for Secure Sockets Layer (SSL)–encrypted traffic.</p>
 </div>
 <div class="paragraph">
-<p>Multiple FortiGate instances form an Amazon EC2 Auto Scaling group to provide efficient clustering at times of high workloads. FortiGate instances can be scaled out automatically according to predefined workload levels. When a spike in traffic occurs, FortiGate instances are automatically added to the Amazon EC2 Auto Scaling group. EC2 Auto Scaling is achieved by using FortiGate-native high-availability (HA) features that synchronize operating-system (OS) configurations across multiple FortiGate-VM instances at the time of scale-out events.</p>
+<p>Multiple FortiGate instances form an Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling group to provide efficient clustering at times of high workloads. FortiGate instances can be scaled out automatically according to predefined workload levels. When a spike in traffic occurs, FortiGate instances are automatically added to the Amazon EC2 Auto Scaling group. EC2 Auto Scaling is achieved by using FortiGate-native high-availability features that synchronize operating-system configurations across multiple FortiGate instances at the time of scale-out events.</p>
 </div>
 <div class="paragraph">
-<p>By integrating FortiAnalyzer, this reference architecture provides consolidated logging and reporting for your FortiGate cluster.</p>
+<p>By integrating FortiAnalyzer, this reference architecture consolidates logging and reporting for your FortiGate cluster.</p>
 </div>
 </div>
 </div>
@@ -937,7 +937,7 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <h2 id="_software_licenses">Software licenses</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This Quick Start can deploy FortiGate on-demand or bring-your-own-license (BYOL) instances. You pay an hourly fee based on the Amazon Elastic Compute Cloud (Amazon EC2) instance type. A license is required for each FortiGate BYOL instance you might use. Licenses can be purchased from FortiCare. If your deployment will contain BYOL instances, place the license key in an S3 bucket and provide the bucket name (<code>QSS3BucketName</code>) when you launch the stack. For instructions, see the <a href="#_deployment_steps">Deployment steps</a> section of this guide.</p>
+<p>This Quick Start can deploy FortiGate on-demand or Bring Your Own License (BYOL) instances. You pay an hourly fee based on the EC2 instance type. A license is required for each FortiGate BYOL instance you might use. Licenses can be purchased from FortiCare. If your deployment will contain BYOL instances, place the license key in an S3 bucket and provide the bucket name (<code>QSS3BucketName</code>) when you launch the stack. For instructions, see the <a href="#_deployment_steps">Deployment steps</a> section of this guide.</p>
 </div>
 <div class="paragraph">
 <p>This Quick Start requires a subscription to one or more of the following AMIs available in AWS Marketplace:</p>
@@ -984,39 +984,42 @@ AWS Cloud.</p>
 best practices, to provide you with your own virtual network on AWS.*</p>
 </li>
 <li>
+<p>An internet gateway to provide access to the internet.*</p>
+</li>
+<li>
 <p>In the public subnets:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>A Network Load Balancer, which distributes inbound traffic across FortiGate instances.</p>
-</li>
-<li>
 <p>A FortiAnalyzer instance, which consolidates logging and reporting for your FortiGate cluster.</p>
 </li>
 <li>
-<p>An Amazon EC2 Auto Scaling group that contains a FortiGate main instance of the BYOL licensing model.</p>
-</li>
-<li>
-<p>An Amazon EC2 Auto Scaling group that contains a FortiGate host of the on-demand licensing model. This group complements security groups (not shown). This host provides intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. It also allows VPN access by authorized users.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>In the private subnets:</p>
+<p>Within the FortiGate cluster, Amazon EC2 Auto Scaling groups of FortiGate instances that use Bring Your Own License model (BYOL) licenses or on-demand licenses. This cluster contains the following:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>(Optional) A Network Load Balancer that distributes inbound traffic across your protected instances.</p>
+<p>Two or more FortiGate instances, which complement AWS security groups (not shown). Security groups provide intrusion protection, web filtering, and threat detection to help protect your services from cyberattacks. Each instance also provides VPN access for authorized users.</p>
+</li>
+<li>
+<p>A main FortiGate instance, which acts as a NAT gateway, allowing outbound internet access for resources in the private subnets.*</p>
 </li>
 </ul>
 </div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>A public Network Load Balancer that distributes inbound traffic across the FortiGate instances.</p>
+</li>
+<li>
+<p>(Optional) A private Network Load Balancer that distributes inbound traffic across the workload instances that you want to protect from outside access.</p>
 </li>
 <li>
 <p>AWS Lambda, which provides the core Amazon EC2 Auto Scaling functionality between FortiGate instances.</p>
 </li>
 <li>
-<p>Amazon S3 to host artifacts for Lambda functions and logs.</p>
+<p>Amazon Simple Storage Service (Amazon S3) to host artifacts for Lambda functions and logs.</p>
 </li>
 <li>
 <p>Amazon DynamoDB to store information about Amazon EC2 Auto Scaling condition states.</p>
@@ -1082,7 +1085,7 @@ Cloud.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Elastic IP addresses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Elastic IP address (only if FortiAnalyzer is used)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
@@ -1098,15 +1101,19 @@ Cloud.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Network Load Balancers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Network Load Balancer, public</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">c5.large instances (FortiGate)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Network Load Balancer, private</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">m4.large instances (FortiAnalyzer)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FortiGate instances, c5.large</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2 or more</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) FortiAnalyzer instance, m4.large</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 </tbody>
@@ -1283,7 +1290,7 @@ A confirmation page loads, and an email confirmation is sent to the account owne
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-If you’re deploying FortiGate EC2 Auto Scaling into an existing VPC, make sure that your VPC has two private subnets in different Availability Zones for the workload instances, and that the subnets aren’t shared. This Quick Start doesn’t support <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html" target="_blank" rel="noopener">shared subnets</a>. These subnets require <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html" target="_blank" rel="noopener">NAT gateways</a> in their route tables, to allow the instances to download packages and software without exposing them to the internet. Also make sure that the domain name option in the DHCP options is configured as explained in the <a href="http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_DHCP_Options.html" target="_blank" rel="noopener">Amazon VPC documentation</a>. You provide your VPC settings when you launch the Quick Start.
+If you’re deploying FortiGate EC2 Auto Scaling into an existing VPC, make sure that your VPC has two private subnets in different Availability Zones for the workload instances and that the subnets aren’t shared. This Quick Start doesn’t support <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html" target="_blank" rel="noopener">shared subnets</a>. These subnets require <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html" target="_blank" rel="noopener">NAT gateways</a> in their route tables to allow the instances to download packages and software without exposing them to the internet. Also make sure that the domain name option in the DHCP options is configured as explained in <a href="http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_DHCP_Options.html" target="_blank" rel="noopener">DHCP options sets</a>. You provide your VPC settings when you launch the Quick Start.
 </td>
 </tr>
 </table>
@@ -1403,7 +1410,7 @@ The name of each group starts with the prefix you specified in <strong>Resource 
 </div>
 </li>
 <li>
-<p>Confirm that a primary instance was elected.
+<p>Confirm that a main instance was elected.
 Look up the DynamoDB table <code>&lt;ResourceTagPrefix&gt;-FortiGateMasterElection</code>. Select the Items tab and open the master record (the only item listed). A master has been elected when the voteState is done.</p>
 <div id="test_deployment_3" class="imageblock">
 <div class="content">
@@ -1423,7 +1430,7 @@ Look up the DynamoDB table <code>&lt;ResourceTagPrefix&gt;-FortiGateMasterElecti
 <h2 id="_post_deployment_steps">Post-deployment steps</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_connect_to_the_primary_fortigate_instance">Connect to the Primary FortiGate instance</h3>
+<h3 id="_connect_to_the_main_fortigate_instance">Connect to the main FortiGate instance</h3>
 <div class="paragraph">
 <p>To connect to the main FortiGate instance, you need a login URL, a user name, and a password.</p>
 </div>
@@ -1717,7 +1724,7 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <div class="sect2">
 <h3 id="_parameters_for_deploying_into_an_existing_vpc">Parameters for deploying into an existing VPC</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Resource tagging configuration</caption>
+<caption class="title">Table 1. Resource-tagging configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1732,16 +1739,16 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Resource tag prefix
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resource-tag prefix
 (<code>ResourceTagPrefix</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ResourceGroup Tag Key used on all resources and as the name prefix of all applicable resources. It can only contain numbers, lowercase letters, uppercase letters, ampersat(@), hyphens (-), period (.), and hash (#). Max length is 50.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">"ResourceGroup" tag key used on all resources and used as the prefix of all applicable resource names. It can contain only numbers, lowercase letters, uppercase letters, ampersand (@), hyphens (-), period (.), and hash (#). Maximum length is 50.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Resource name prefix
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resource-name prefix
 (<code>CustomIdentifier</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>fgtASG</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alternative name prefix to be used on a resource that the 'Resource tag prefix' cannot apply to. It can only contain numbers, lowercase letters, and uppercase letters. Max length is 10.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternative prefix to be used on a resource name that "Resource-tag prefix" cannot apply to. It can contain only numbers, lowercase letters, and uppercase letters. Maximum length is 10.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1764,7 +1771,7 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">VPC ID
 (<code>VPCID</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the existing VPC where Fortinet FortiGate Auto Scaling will be deployed. The VPC must have the option 'DNS hostnames' enabled and each of the two Availability Zones in the VPC must have at least 1 public subnet and at least 1 private subnet.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the existing VPC where Fortinet FortiGate EC2 Auto Scaling will be deployed. The VPC must have the option "DNS hostnames" enabled, and each of the two Availability Zones in the VPC must have at least 1 public subnet and at least 1 private subnet.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VPC CIDR
@@ -1776,13 +1783,13 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet 1 ID
 (<code>PublicSubnet1</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the public subnet 1 located in Availability Zone 1 of the selected existing VPC. The Fortinet FortiGate Auto Scaling instances will be deployed here.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the public subnet 1 located in Availability Zone 1 of the selected existing VPC. The Fortinet FortiGate EC2 Auto Scaling instances will be deployed here.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet 2 ID
 (<code>PublicSubnet2</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the public subnet 2 located in Availability Zone 2 of the selected existing VPC. The Fortinet FortiGate Auto Scaling instances will be deployed here.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the public subnet 2 located in Availability Zone 2 of the selected existing VPC. The Fortinet FortiGate EC2 Auto Scaling instances will be deployed here.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet 1 ID
@@ -1806,7 +1813,7 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Integrated NAT Gateway
 (<code>IntegratedNATGatewayOptions</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>yes</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Choose 'yes' to set the primary FortiGate in the Auto Scaling group as the NAT gateway for egress traffic from the protected private subnets.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose "no" if you do not want to set the main FortiGate in the Auto Scaling group as the NAT gateway for egress traffic from the protected private subnets.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1829,19 +1836,19 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Instance type
 (<code>FortiGateInstanceType</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>c5.xlarge</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Instance type for the FortiGates in the Auto Scaling group. There are t2.small and compute-optimized instances such as c4 and c5 available with different vCPU sizes and bandwidths. For more information about instance types, see <a href="https://aws.amazon.com/ec2/instance-types/" class="bare">https://aws.amazon.com/ec2/instance-types/</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Instance type for the FortiGates in the Auto Scaling group. There are t2.small and compute-optimized instances, such as c4 and c5, available with different vCPU sizes and bandwidths. For more information about instance types, see <a href="https://aws.amazon.com/ec2/instance-types/" class="bare">https://aws.amazon.com/ec2/instance-types/</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">FortiOS version
 (<code>FortiOSVersion</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>6.2.3</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">FortiOS version supported by Fortinet FortiGate Auto Scaling. <strong>IMPORTANT!</strong> Requires a subscription to the Fortinet FortiGate on-demand and/or BYOL AMI(s).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FortiOS version supported by Fortinet FortiGate EC2 Auto Scaling. <strong>IMPORTANT!</strong> Requires one or more subscriptions to Fortinet FortiGate on-demand or BYOL AMIs.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">FortiGate PSK secret
+<td class="tableblock halign-left valign-top"><p class="tableblock">FortiGate PSK secret key
 (<code>FortiGatePskSecret</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Secret key used by the FortiGate instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Max length is 128.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secret preshared key used by the FortiGate instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Maximum length is 128.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Admin port
@@ -1853,18 +1860,18 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Admin CIDR block
 (<code>FortiGateAdminCIDR</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for external admin management access. <strong>WARNING!</strong> 0.0.0.0/0 accepts connections from any IP address. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for external administrator-management access. <strong>WARNING!</strong> 0.0.0.0/0 accepts connections from any IP address.  Use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Key-pair name
 (<code>KeyPairName</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon EC2 Key Pair for admin access.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon EC2 key pair for administrator access.</p></td>
 </tr>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. FortiGate Auto Scaling group configuration</caption>
+<caption class="title">Table 4. FortiGate EC2 Auto Scaling group configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1882,7 +1889,7 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Desired capacity (BYOL)
 (<code>FgtAsgDesiredCapacityByol</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of FortiGate instances the BYOL Auto Scaling group should have at any time. For High Availability in BYOL-only and Hybrid use cases, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for on-demand-only, and &gt;= 2 for BYOL-only or hybrid licensing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of FortiGate instances the BYOL Auto Scaling group should have at any time. For high availability in BYOL-only and hybrid use cases, make sure that at least 2 FortiGate instances are in the group. For specific  use cases, set to 0 for on-demand-only, and &gt;= 2 for BYOL-only or hybrid licensing.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Minimum group size (BYOL)
@@ -1894,43 +1901,43 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Maximum group size (BYOL)
 (<code>FgtAsgMaxSizeByol</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for on-demand-only, and &gt;= 2 for BYOL-only or hybrid licensing. This number must be greater than or equal to the Minimum group size (BYOL).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for on-demand-only and &gt;= 2 for BYOL-only or hybrid licensing. This number must be greater than or equal to the minimum group size (BYOL).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Desired capacity (On-Demand)
+<td class="tableblock halign-left valign-top"><p class="tableblock">Desired capacity (on-demand)
 (<code>FgtAsgDesiredCapacityPayg</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of FortiGate instances the on-demand Auto Scaling group should have at any time. For High Availability in a on-demand-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for on-demand-only, and &gt;= 0 for hybrid licensing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of FortiGate instances the on-demand Auto Scaling group should have at any time. For high availability in an on-demand-only use case, make sure that at least 2 FortiGate instances are in the group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for on-demand-only, and &gt;= 0 for hybrid licensing.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum group size (On-Demand)
+<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum group size (on-demand)
 (<code>FgtAsgMinSizePayg</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Minimum number of FortiGate instances in the on-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for on-demand-only, and &gt;= 0 for hybrid licensing.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum group size (On-Demand)
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum group size (on-demand)
 (<code>FgtAsgMaxSizePayg</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>6</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum number of FortiGate instances in the on-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for on-demand-only, and &gt;= 0 for hybrid licensing. This number must be greater than or equal to the Minimum group size (on-demand).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum number of FortiGate instances in the on-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for on-demand-only, and &gt;= 0 for hybrid licensing. This number must be greater than or equal to the minimum group size (on-demand).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scale-out threshold
 (<code>FgtAsgScaleOutThreshold</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>80</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Threshold (in percentage) for the FortiGate Auto Scaling group to scale-out (add) 1 instance. Minimum is 1. Maximum is 100.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Threshold (in percentage) for the FortiGate Auto Scaling group to scale out (add) 1 instance. Minimum is 1. Maximum is 100.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scale-in threshold
 (<code>FgtAsgScaleInThreshold</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>25</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Threshold (in percentage) for the FortiGate Auto Scaling group to scale-in (remove) 1 instance. Minimum is 1. Maximum is 100.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Threshold (in percentage) for the FortiGate Auto Scaling group to scale in (remove) 1 instance. Minimum is 1. Maximum is 100.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Primary election timeout
 (<code>PrimaryElectionTimeout</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>300</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum time (in seconds) to wait for the primary election to complete. Minimum is 30. Maximum is 3600.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum time (in seconds) to wait for the main election to complete. Minimum is 30. Maximum is 3600.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Get license grace period
@@ -1989,22 +1996,22 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Health-check threshold
 (<code>LoadBalancingHealthCheckThreshold</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>3</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of consecutive health check failures required before considering a FortiGate instance unhealthy. Minimum is 3.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of consecutive health-check failures required before considering a FortiGate instance unhealthy. Minimum is 3.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Internal ELB options
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal load-balancing options
 (<code>InternalLoadBalancingOptions</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>add a new internal load balancer</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Pre-defined load balancer to route traffic to targets in the private subnets.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Predefined load balancer to route traffic to targets in the private subnets.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Health check path
+<td class="tableblock halign-left valign-top"><p class="tableblock">Health-check path
 (<code>InternalTargetGroupHealthCheckPath</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>/</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Destination path for health checks. This path must begin with a '/' character, and can be at most 1024 characters in length.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Destination path for health checks. This path must begin with a forward slash (/) and can be at most 1024 characters in length.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Internal ELB DNS name
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal load-balancer DNS name
 (<code>InternalLoadBalancerDNSName</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) DNS name of an existing internal load balancer used to route traffic from a FortiGate to targets in a specified target group. Leave it blank if you don&#8217;t use an existing load balancer.</p></td>
@@ -2027,19 +2034,19 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Heart beat interval
+<td class="tableblock halign-left valign-top"><p class="tableblock">Heartbeat interval
 (<code>HeartBeatInterval</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>30</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Length of time (in seconds) that a FortiGate instance waits between sending heartbeat requests to the FortiGate Auto Scaling handler. Minimum is 30. Maximum is 90.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Heart beat loss count
+<td class="tableblock halign-left valign-top"><p class="tableblock">Heartbeat loss count
 (<code>HeartBeatLossCount</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>3</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of consecutively lost heartbeats. When the Heartbeat Loss Count has been reached, the FortiGate is deemed unhealthy and fail-over activities will commence.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of consecutively lost heartbeats. When this number has been reached, the FortiGate is deemed unhealthy, and failover activities commence.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Heart beat delay allowance
+<td class="tableblock halign-left valign-top"><p class="tableblock">Heartbeat delay allowance
 (<code>HeartBeatDelayAllowance</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Maximum amount of time (in seconds) allowed for network latency of the FortiGate heartbeat arriving at the FortiGate Auto Scaling handler. Minimum is 0.</p></td>
@@ -2065,37 +2072,37 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer integration
 (<code>FortiAnalyzerIntegrationOptions</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>yes</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose "no" if you do not want to incorporate FortiAnalyzer into Fortinet FortiGate EC2 Auto Scaling to use extended features that include storing logs into FortiAnalyzer.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer instance type
 (<code>FortiAnalyzerInstanceType</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>m5.large</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Instance type to launch as FortiAnalyzer On-Demand instances. There are compute-optimized instances such as m4 and c4 available with different vCPU sizes and bandwidths. For more information about instance types, see <a href="https://aws.amazon.com/ec2/instance-types/" class="bare">https://aws.amazon.com/ec2/instance-types/</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Instance type to launch as FortiAnalyzer on-demand instances. There are compute-optimized instances, such as m4 and c4, available with different vCPU sizes and bandwidths. For more information about instance types, see <a href="https://aws.amazon.com/ec2/instance-types/" class="bare">https://aws.amazon.com/ec2/instance-types/</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer version
 (<code>FortiAnalyzerVersion</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>6.2.5</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling. <strong>IMPORTANT!</strong> Requires a subscription to the Fortinet FortiAnalyzer Centralized Logging/Reporting (10 managed devices) AMI.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer version supported by Fortinet FortiGate EC2 Auto Scaling. <strong>IMPORTANT!</strong> Requires a subscription to the "Fortinet FortiAnalyzer Centralized Logging/Reporting (10 managed devices)" AMI.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer private IP address
 (<code>FortiAnalyzerCustomPrivateIPAddress</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Custom private IP address to be used by the FortiAnalyzer. Must be within the public subnet 1 CIDR range. Required if "FortiAnalyzer integration" is set to "yes." If "FortiAnalyzer integration" is set to "no," any input will be ignored.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Autoscale admin username
+<td class="tableblock halign-left valign-top"><p class="tableblock">Autoscale admin user name
 (<code>FortiAnalyzerAutoscaleAdminUsername</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the secondary administrator level account in the FortiAnalyzer, which Fortinet FortiGate Auto Scaling uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the secondary administrator-level account in the FortiAnalyzer, which Fortinet FortiGate EC2 Auto Scaling uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the user name can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Autoscale admin password
 (<code>FortiAnalyzerAutoscaleAdminPassword</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Password for the "Autoscale admin user name." The password must conform to the FortiAnalyzer password policy and have a minimum length of 8 and a maximum length of 128. If you need to enable KMS encryption, refer to the documentation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2118,13 +2125,13 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket name
 (<code>QSS3BucketName</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>aws-quickstart</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">S3 bucket that you created for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">S3 bucket that you created for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-). Unless you are customizing the template, keep the default setting. Changing this setting updates code references to point to a new Quick Start location. See <a href="https://aws-quickstart.github.io/option1.html" class="bare">https://aws-quickstart.github.io/option1.html</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 key prefix
 (<code>QSS3KeyPrefix</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>quickstart-fortinet-fortigate/</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">S3 key prefix that is used to simulate a directory for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). See <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html" class="bare">https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">S3 key prefix that is used to simulate a directory for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). See <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html" class="bare">https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html</a>. Unless you are customizing the template, keep the default setting. Changing this setting updates code references to point to a new Quick Start location. See <a href="https://aws-quickstart.github.io/option1.html" class="bare">https://aws-quickstart.github.io/option1.html</a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2132,7 +2139,7 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <div class="sect2">
 <h3 id="_parameters_for_deploying_into_a_new_vpc">Parameters for deploying into a new VPC</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 9. Resource tagging configuration</caption>
+<caption class="title">Table 9. Resource-tagging configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2147,16 +2154,16 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Resource tag prefix
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resource-tag prefix
 (<code>ResourceTagPrefix</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The ResourceGroup Tag Key used on all resources and as the name prefix of all applicable resources. It can only contain numbers, lowercase letters, uppercase letters, ampersat(@), hyphens (-), period (.), and hash (#). Max length is 50.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">"ResourceGroup" tag key used on all resources and used as the prefix of all applicable resource names. It can contain only numbers, lowercase letters, uppercase letters, ampersand (@), hyphens (-), period (.), and hash (#). Maximum length is 50.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Resource name prefix
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resource-name prefix
 (<code>CustomIdentifier</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>fgtASG</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">An alternative name prefix to be used on a resource that the 'Resource tag prefix' cannot apply to. It can only contain numbers, lowercase letters, and uppercase letters. Max length is 10.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternative prefix to be used on a resource name that "Resource-tag prefix" cannot apply to. It can only contain numbers, lowercase letters, and uppercase letters. Maximum length is 10.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2179,25 +2186,25 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Availability Zones
 (<code>AvailabilityZones</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The list of Availability Zones to use for the subnets in the VPC. The Quick Start uses two Availability Zones from your list and preserves the logical order you specify.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of Availability Zones to use for the subnets in the VPC. The Quick Start uses two Availability Zones from your list and preserves the logical order you specify.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VPC CIDR
 (<code>VPCCIDR</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>192.168.0.0/16</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for the FortiGate Auto Scaling VPC.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for the FortiGate EC2 Auto Scaling VPC.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet 1 CIDR
 (<code>PublicSubnet1CIDR</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>192.168.0.0/24</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for the public subnet located in Availability Zone 1 where the Fortinet FortiGate Auto Scaling instances will be deployed to.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for the public subnet located in Availability Zone 1 where the Fortinet FortiGate EC2 Auto Scaling instances will be deployed to.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet 2 CIDR
 (<code>PublicSubnet2CIDR</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>192.168.1.0/24</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for the public subnet located in Availability Zone 2 where the Fortinet FortiGate Auto Scaling instances will be deployed to.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for the public subnet located in Availability Zone 2 where the Fortinet FortiGate EC2 Auto Scaling instances will be deployed to.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet 1 CIDR
@@ -2215,7 +2222,7 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Integrated NAT Gateway
 (<code>IntegratedNATGatewayOptions</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>yes</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Choose 'yes' to set the primary FortiGate in the Auto Scaling group as the NAT gateway for egress traffic from the protected private subnets.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose "no" if you do not want to set the main FortiGate in the Auto Scaling group as the NAT gateway for egress traffic from the protected private subnets.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2238,19 +2245,19 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Instance type
 (<code>FortiGateInstanceType</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>c5.xlarge</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Instance type for the FortiGates in the Auto Scaling group. There are t2.small and compute-optimized instances such as c4 and c5 available with different vCPU sizes and bandwidths. For more information about instance types, see <a href="https://aws.amazon.com/ec2/instance-types/" class="bare">https://aws.amazon.com/ec2/instance-types/</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Instance type for the FortiGates in the Auto Scaling group. There are t2.small and compute-optimized instances, such as c4 and c5, available with different vCPU sizes and bandwidths. For more information about instance types, see <a href="https://aws.amazon.com/ec2/instance-types/" class="bare">https://aws.amazon.com/ec2/instance-types/</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">FortiOS version
 (<code>FortiOSVersion</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>6.2.3</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The FortiOS version supported by Fortinet FortiGate Auto Scaling. <strong>IMPORTANT!</strong> Requires a subscription to the Fortinet FortiGate on-demand and/or BYOL AMI(s).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FortiOS version supported by Fortinet FortiGate EC2 Auto Scaling. <strong>IMPORTANT!</strong> Requires one or more subscriptions to Fortinet FortiGate on-demand or BYOL AMIs.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">FortiGate PSK secret
+<td class="tableblock halign-left valign-top"><p class="tableblock">FortiGate PSK secret key
 (<code>FortiGatePskSecret</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The secret key used by the FortiGate instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Max length is 128.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secret preshared key used by the FortiGate instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Maximum length is 128.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Admin port
@@ -2262,18 +2269,18 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Admin CIDR block
 (<code>FortiGateAdminCIDR</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for external admin management access. <strong>WARNING!</strong> 0.0.0.0/0 accepts connections from any IP address. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for external administrator-management access. <strong>WARNING!</strong> 0.0.0.0/0 accepts connections from any IP address.  Use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Key-pair name
 (<code>KeyPairName</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon EC2 Key Pair for admin access.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon EC2 key pair for administrator access.</p></td>
 </tr>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 12. FortiGate Auto Scaling group configuration</caption>
+<caption class="title">Table 12. FortiGate EC2 Auto Scaling group configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2291,55 +2298,55 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Desired capacity (BYOL)
 (<code>FgtAsgDesiredCapacityByol</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of FortiGate instances the BYOL Auto Scaling group should have at any time. For High Availability in BYOL-only and Hybrid use cases, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for On-Demand-only, and &gt;= 2 for BYOL-only or hybrid licensing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of FortiGate instances the BYOL Auto Scaling group should have at any time. For high availability in BYOL-only and hybrid use cases, ensure at least 2 FortiGate instances are in the group. For specific use cases, set to 0 for on-demand-only, and &gt;= 2 for BYOL-only or hybrid licensing.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Minimum group size (BYOL)
 (<code>FgtAsgMinSizeByol</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-Demand-only, and &gt;= 2 for BYOL-only or hybrid licensing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for on-demand-only, and &gt;= 2 for BYOL-only or hybrid licensing.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Maximum group size (BYOL)
 (<code>FgtAsgMaxSizeByol</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for On-Demand-only, and &gt;= 2 for BYOL-only or hybrid licensing. This number must be greater than or equal to the Minimum group size (BYOL).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum number of FortiGate instances in the BYOL Auto Scaling group. For specific use cases, set to 0 for on-demand-only and &gt;= 2 for BYOL-only or hybrid licensing. This number must be greater than or equal to the minimum group size (BYOL).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Desired capacity (On-Demand)
+<td class="tableblock halign-left valign-top"><p class="tableblock">Desired capacity (on-demand)
 (<code>FgtAsgDesiredCapacityPayg</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of FortiGate instances the on-demand Auto Scaling group should have at any time. For High Availability in an on-demand-only use case, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for On-Demand-only, and &gt;= 0 for hybrid licensing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of FortiGate instances the on-demand Auto Scaling group should have at any time. For high availability in an on-demand-only use case, make sure that at least 2 FortiGate instances are in the group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for on-demand-only, and &gt;= 0 for hybrid licensing.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum group size (On-Demand)
+<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum group size (on-demand)
 (<code>FgtAsgMinSizePayg</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum number of FortiGate instances in the on-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for On-Demand-only, and &gt;= 0 for hybrid licensing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum number of FortiGate instances in the on-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for on-demand-only, and &gt;= 0 for hybrid licensing.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum group size (On-Demand)
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum group size (on-demand)
 (<code>FgtAsgMaxSizePayg</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>6</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum number of FortiGate instances in the on-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for On-Demand-only, and &gt;= 0 for hybrid licensing. This number must be greater than or equal to the Minimum group size (on-demand).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum number of FortiGate instances in the on-demand Auto Scaling group. For specific use cases, set to 0 for BYOL-only, &gt;= 2 for on-demand-only, and &gt;= 0 for hybrid licensing. This number must be greater than or equal to the minimum group size (on-demand).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scale-out threshold
 (<code>FgtAsgScaleOutThreshold</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>80</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Threshold (in percentage) for the FortiGate Auto Scaling group to scale-out (add) 1 instance. Minimum is 1. Maximum is 100.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Threshold (in percentage) for the FortiGate Auto Scaling group to scale out (add) 1 instance. Minimum is 1. Maximum is 100.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scale-in threshold
 (<code>FgtAsgScaleInThreshold</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>25</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Threshold (in percentage) for the FortiGate Auto Scaling group to scale-in (remove) 1 instance. Minimum is 1. Maximum is 100.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Threshold (in percentage) for the FortiGate Auto Scaling group to scale in (remove) 1 instance. Minimum is 1. Maximum is 100.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Primary election timeout
 (<code>PrimaryElectionTimeout</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>300</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum time (in seconds) to wait for the primary election to complete. Minimum is 30. Maximum is 3600.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum time (in seconds) to wait for the main election to complete. Minimum is 30. Maximum is 3600.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Get license grace period
@@ -2395,25 +2402,25 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Port number used to balance web service traffic if the internal web service load balancer is enabled. Minimum is 1. Maximum is 65535.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Health check threshold
+<td class="tableblock halign-left valign-top"><p class="tableblock">Health-check threshold
 (<code>LoadBalancingHealthCheckThreshold</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>3</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of consecutive health check failures required before considering a FortiGate instance unhealthy. Minimum is 3.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of consecutive health-check failures required before considering a FortiGate instance unhealthy. Minimum is 3.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Internal ELB options
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal load-balancing options
 (<code>InternalLoadBalancingOptions</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>add a new internal load balancer</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Pre-defined load balancer to route traffic to targets in the private subnets.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Predefined load balancer to route traffic to targets in the private subnets.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Health-check path
 (<code>InternalTargetGroupHealthCheckPath</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>/</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Destination path for health checks. This path must begin with a '/' character, and can be at most 1024 characters in length.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Destination path for health checks. This path must begin with a forward slash (/) and can be at most 1024 characters in length.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Internal ELB DNS name
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal load-balancer DNS name
 (<code>InternalLoadBalancerDNSName</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) DNS name of an existing internal load balancer used to route traffic from a FortiGate to targets in a specified target group. Leave it blank if you don&#8217;t use an existing load balancer.</p></td>
@@ -2436,19 +2443,19 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Heart beat interval
+<td class="tableblock halign-left valign-top"><p class="tableblock">Heartbeat interval
 (<code>HeartBeatInterval</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>30</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Length of time (in seconds) that a FortiGate instance waits between sending heartbeat requests to the FortiGate Auto Scaling handler. Minimum is 30. Maximum is 90.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Heart beat loss count
+<td class="tableblock halign-left valign-top"><p class="tableblock">Heartbeat loss count
 (<code>HeartBeatLossCount</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>3</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of consecutively lost heartbeats. When the Heartbeat Loss Count has been reached, the FortiGate is deemed unhealthy and fail-over activities will commence.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of consecutively lost heartbeats. When this number has been reached, the FortiGate is deemed unhealthy, and failover activities commence.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Heart beat delay allowance
+<td class="tableblock halign-left valign-top"><p class="tableblock">Heartbeat delay allowance
 (<code>HeartBeatDelayAllowance</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Maximum amount of time (in seconds) allowed for network latency of the FortiGate heartbeat arriving at the FortiGate Auto Scaling handler. Minimum is 0.</p></td>
@@ -2474,37 +2481,37 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer integration
 (<code>FortiAnalyzerIntegrationOptions</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>yes</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose "no" if you do not want to incorporate FortiAnalyzer into Fortinet FortiGate EC2 Auto Scaling to use extended features that include storing logs into FortiAnalyzer.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer instance type
 (<code>FortiAnalyzerInstanceType</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>m5.large</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Instance type to launch as FortiAnalyzer on-demand instances. There are t2.small and compute-optimized instances such as m4 and c4 available with different vCPU sizes and bandwidths. For more information about instance types, see <a href="https://aws.amazon.com/ec2/instance-types/" class="bare">https://aws.amazon.com/ec2/instance-types/</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Instance type to launch as FortiAnalyzer on-demand instances. There are t2.small and compute-optimized instances, such as m4 and c4, available with different vCPU sizes and bandwidths. For more information about instance types, see <a href="https://aws.amazon.com/ec2/instance-types/" class="bare">https://aws.amazon.com/ec2/instance-types/</a></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer version
 (<code>FortiAnalyzerVersion</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>6.2.5</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling. <strong>IMPORTANT!</strong> Requires a subscription to the Fortinet FortiAnalyzer Centralized Logging/Reporting (10 managed devices) AMI.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer version supported by Fortinet FortiGate EC2 Auto Scaling. <strong>IMPORTANT!</strong> Requires a subscription to the "Fortinet FortiAnalyzer Centralized Logging/Reporting (10 managed devices)" AMI.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">FortiAnalyzer private IP address
 (<code>FortiAnalyzerCustomPrivateIPAddress</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Custom private IP address to be used by the FortiAnalyzer. Must be within the public subnet 1 CIDR range. Required if "FortiAnalyzer integration" is set to "yes." If "FortiAnalyzer integration" is set to "no," any input will be ignored.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Autoscale admin username
+<td class="tableblock halign-left valign-top"><p class="tableblock">Autoscale admin user name
 (<code>FortiAnalyzerAutoscaleAdminUsername</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the secondary administrator level account in the FortiAnalyzer, which Fortinet FortiGate Auto Scaling uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the username can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the secondary administrator-level account in the FortiAnalyzer, which Fortinet FortiGate EC2 Auto Scaling uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the user name can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Autoscale admin password
 (<code>FortiAnalyzerAutoscaleAdminPassword</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Password for the "Autoscale admin user name." The password must conform to the FortiAnalyzer password policy and have a minimum length of 8 and a maximum length of 128. If you need to enable KMS encryption, refer to the documentation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2527,13 +2534,13 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket name
 (<code>QSS3BucketName</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>aws-quickstart</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">S3 bucket that you created for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">S3 bucket that you created for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-). Unless you are customizing the template, keep the default setting. Changing this setting updates code references to point to a new Quick Start location. See <a href="https://aws-quickstart.github.io/option1.html" class="bare">https://aws-quickstart.github.io/option1.html</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 key prefix
 (<code>QSS3KeyPrefix</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>quickstart-fortinet-fortigate/</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">S3 key prefix that is used to simulate a directory for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). See <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html" class="bare">https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">S3 key prefix that is used to simulate a directory for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). See <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html" class="bare">https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html</a>. Unless you are customizing the template, keep the default setting. Changing this setting updates code references to point to a new Quick Start location. See <a href="https://aws-quickstart.github.io/option1.html" class="bare">https://aws-quickstart.github.io/option1.html</a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2582,7 +2589,7 @@ and to share your customizations with others.</p>
 <p class="footer-text">
 <!-- We can use document attributes: -->
 <!-- Generated with Asciidoctor v2.0.10. -->
-<a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2020, Amazon Web Services, Inc. or its affiliates and Fortinet, Inc.. All rights reserved.
+<a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2020, Amazon Web Services, Inc. or its affiliates and Fortinet. All rights reserved.
 </p>
 </body>
 </html>
