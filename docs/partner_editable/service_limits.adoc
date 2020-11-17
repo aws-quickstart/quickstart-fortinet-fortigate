@@ -4,11 +4,12 @@
 
 // Space needed to maintain table headers
 |VPCs |1
-|Elastic IP addresses | 1
+|Elastic IP address (only if FortiAnalyzer is used) | 1
 |Security groups | 3
 |IAM roles |7
 |Amazon EC2 Auto Scaling groups | 2
-|Network Load Balancers | 2
-|c5.large instances (FortiGate) | 4
-|m4.large instances (FortiAnalyzer) | 1
+|Network Load Balancer, public | 1
+|(Optional) Network Load Balancer, private | 1
+|FortiGate instances, c5.large | 2 or more
+|(Optional) FortiAnalyzer instance, m4.large | 1
 |===

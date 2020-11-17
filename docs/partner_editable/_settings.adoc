@@ -1,6 +1,6 @@
 :quickstart-project-name: quickstart-fortinet-fortigate
 :partner-product-name: FortiGate EC2 Auto Scaling
-:partner-company-name: Fortinet, Inc.
+:partner-company-name: Fortinet
 :doc-month: November
 :doc-year: 2020
 :partner-contributors: Kimberly Lee, Jayden Liang, Daniel Chao, and Jamie Pate, {partner-company-name}
