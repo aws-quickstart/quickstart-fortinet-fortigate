@@ -2,7 +2,7 @@
 // Briefly describe the software. Use consistent and clear branding. 
 // Include the benefits of using the software on AWS, and provide details on usage scenarios.
 
-FortiGate midrange next-generation firewalls provide high-performance, multilayered advanced security and better visibility to protect against cyberattacks while reducing complexity. FortiGate firewalls are built with security processors to enable threat protection and performance for Secure Sockets Layer (SSL)–encrypted traffic.
+FortiGate midrange next-generation firewalls provide high-performance, multilayered advanced security and visibility to protect against cyberattacks while reducing complexity. FortiGate firewalls are built with security processors to enable threat protection and performance for Secure Sockets Layer (SSL)–encrypted traffic.
 
 Multiple FortiGate instances form an Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling group to provide efficient clustering at times of high workloads. FortiGate instances can be scaled out automatically according to predefined workload levels. When a spike in traffic occurs, FortiGate instances are automatically added to the Amazon EC2 Auto Scaling group. EC2 Auto Scaling is achieved by using FortiGate-native high-availability features that synchronize operating-system configurations across multiple FortiGate instances at the time of scale-out events.
 
