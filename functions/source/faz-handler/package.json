@@ -15,7 +15,7 @@
     "license": "MIT",
     "dependencies": {
         "async-cfn-response": "file:lib/aws_cfn_response",
-        "axios": "^0.19.1",
+        "axios": "^0.21.1",
         "fortigate-autoscale-aws": "file:lib/aws"
     },
     "devDependencies": {
