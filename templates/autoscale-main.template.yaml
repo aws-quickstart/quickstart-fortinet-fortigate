@@ -1,0 +1,1233 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This template does the majority of the work for deploying FortiGate Auto
+  Scaling. It is not for direct use.
+Parameters:
+  ResourceTagPrefix:
+    Type: String
+    AllowedPattern: '[0-9a-zA-Z@.#-]+'
+    MaxLength: 64
+    ConstraintDescription: >-
+      Resource tag prefix can include numbers, lowercase letters, uppercase
+      letters, ampersat(@) , hyphens (-), period (.), and hash (#). Max length
+      is 64.
+    Description: >-
+      The ResourceGroup Tag Key used on all resources and as the name prefix of
+      all applicable resources. Can only contain numbers, lowercase letters,
+      uppercase letters, ampersat(@), hyphens (-), period (.), and hash (#). Max
+      length is 64.
+  CustomIdentifier:
+    Type: String
+    Default: fgtASG
+    MaxLength: '10'
+    AllowedPattern: '[A-Za-z0-9]+'
+    ConstraintDescription: must only contain uppercase and lowercase letters and numbers
+    Description: >-
+      An alternative name prefix to be used on a resource that the 'Resource tag
+      prefix' cannot apply to. Can only contain numbers, lowercase letters, and
+      uppercase letters. Max length is 10.
+  QSS3BucketName:
+    Type: String
+    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
+    ConstraintDescription: >-
+      Quick Start S3 bucket name can include numbers, lowercase letters,
+      uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Description: >-
+      S3 bucket name for the Quick Start assets. Can only contain numbers,
+      lowercase letters, uppercase letters, and hyphens (-). It cannot start or
+      end with a hyphen (-).
+  QSS3KeyPrefix:
+    Type: String
+    AllowedPattern: '^[0-9a-zA-Z-/]*$'
+    ConstraintDescription: >-
+      Quick Start S3 key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and forward slash (/).
+    Description: >-
+      S3 key prefix for the Quick Start assets. Can only contain numbers,
+      lowercase letters, uppercase letters, hyphens (-), and forward slashes
+      (/). If provided, it must end with a forward slash (/).
+  UniqueID:
+    Type: String
+    MaxLength: '8'
+    AllowedPattern: '[A-Za-z0-9]+'
+    ConstraintDescription: must only contain uppercase and lowercase letters and digits
+    Description: >-
+      An automatically generated random string as a unique ID for all resources
+      in the deployment stack and nested stacks.
+  VPCID:
+    Type: 'AWS::EC2::VPC::Id'
+    Description: >-
+      The ID of the existing VPC where Fortinet FortiGate Auto Scaling will be
+      deployed. The VPC must have the option 'DNS hostnames' enabled and each of
+      the two Availability Zones in the VPC must have at least 1 public subnet
+      and at least 1 private subnet.
+  VPCCIDR:
+    Type: String
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\/([0-9]|[1-2][0-9]|3[0-2]))?$
+    ConstraintDescription: must be a valid CIDR block format.
+    Description: >-
+      The CIDR block of the selected existing VPC in which FortiGate Auto
+      Scaling will be deployed. This can be found in parentheses in the VPC ID
+      parameter selection.
+  PublicSubnet1:
+    Type: 'AWS::EC2::Subnet::Id'
+    Description: >-
+      The ID of the public subnet 1 located in Availability Zone 1 of the
+      selected existing VPC. The FortiGate Auto Scaling instances will be
+      deployed here.
+  PublicSubnet2:
+    Type: 'AWS::EC2::Subnet::Id'
+    Description: >-
+      The ID of the public subnet 2 located in Availability Zone 2 of the
+      selected existing VPC. The FortiGate Auto Scaling instances will be
+      deployed here.
+  PrivateSubnet1:
+    Type: 'AWS::EC2::Subnet::Id'
+    Description: >-
+      The ID of the private subnet 1 located in Availability Zone 1 of the
+      selected existing VPC. This subnet will be protected by the FortiGates in
+      the public subnet of the same Availability Zone.
+  PrivateSubnet2:
+    Type: 'AWS::EC2::Subnet::Id'
+    Description: >-
+      The ID of the private subnet 2 located in Availability Zone 2 of the
+      selected existing VPC. This subnet will be protected by the FortiGates in
+      the public subnet of the same Availability Zone.
+  PrivateSubnetRouteTable:
+    Type: String
+    Description: The ID of the route table associated with the two private subnets.
+  FortiGateInstanceType:
+    Type: String
+    Description: >-
+      The instance type for the FortiGates in the Auto Scaling group. There are
+      t2.small and compute-optimized instances such as c4 and c5 available with
+      different vCPU sizes and bandwidths. For more information about instance
+      types, see https://aws.amazon.com/ec2/instance-types/.
+  FortiOSVersion:
+    Type: String
+    Description: The FortiOS version supported by FortiGate Auto Scaling.
+  LifecycleHookTimeout:
+    Type: Number
+    Default: 480
+    MinValue: 60
+    MaxValue: 3600
+    ConstraintDescription: must be a valid number between 60 and 3600.
+    Description: >-
+      The amount of time (in seconds) that can elapse before the Auto Scaling
+      group lifecycle hook times out. Minimum is 60. Maximum is 3600.
+  FgtAsgCooldown:
+    Type: Number
+    Default: 300
+    MinValue: 60
+    MaxValue: 3600
+    ConstraintDescription: must be a valid number between 60 and 3600.
+    Description: >-
+      The Auto Scaling group waits for the cooldown period (in seconds) to
+      complete before resuming scaling activities. Minimum is 60. Maximum is
+      3600.
+  FgtAsgDesiredCapacityByol:
+    Type: Number
+    Default: 2
+    MinValue: 0
+    ConstraintDescription: must be a valid number not less than 0.
+    Description: >-
+      The number of FortiGate instances the BYOL Auto Scaling group should have
+      at any time. For High Availability in BYOL-only and Hybrid use cases,
+      ensure at least 2 FortiGates are in the group. For specific use cases, set
+      to 0 for On-Demand-only, and >= 2 for BYOL-only or hybrid licensing.
+  FgtAsgMinSizeByol:
+    Type: Number
+    Default: 2
+    MinValue: 0
+    ConstraintDescription: must be a valid number not less than 0.
+    Description: >-
+      Minimum number of FortiGate instances in the BYOL Auto Scaling group. For
+      specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or
+      hybrid licensing.
+  FgtAsgMaxSizeByol:
+    Type: Number
+    Default: 2
+    MinValue: 0
+    ConstraintDescription: must be a valid number not less than 0.
+    Description: >-
+      Maximum number of FortiGate instances in the BYOL Auto Scaling group. For
+      specific use cases, set to 0 for On-Demand-only, and >= 2 for BYOL-only or
+      hybrid licensing. This number must be greater than or equal to the Minimum
+      group size (BYOL).
+  FgtAsgDesiredCapacityPayg:
+    Type: Number
+    Default: 0
+    MinValue: 0
+    ConstraintDescription: must be a valid number not less than 0.
+    Description: >-
+      The number of FortiGate instances the On-Demand Auto Scaling group should
+      have at any time. For High Availability in a On-Demand-only use case,
+      ensure at least 2 FortiGates are in the group. For specific use cases, set
+      to 0 for BYOL-only, >= 2 for On-Demand-only, and >= 0 for hybrid
+      licensing.
+  FgtAsgMinSizePayg:
+    Type: Number
+    Default: 0
+    MinValue: 0
+    ConstraintDescription: must be a valid number not less than 0.
+    Description: >-
+      Minimum number of FortiGate instances in the On-Demand Auto Scaling group.
+      For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only,
+      and >= 0 for hybrid licensing.
+  FgtAsgMaxSizePayg:
+    Type: Number
+    Default: 6
+    MinValue: 0
+    ConstraintDescription: must be a valid number not less than 0.
+    Description: >-
+      Maximum number of FortiGate instances in the On-Demand Auto Scaling group.
+      For specific use cases, set to 0 for BYOL-only, >= 2 for On-Demand-only,
+      and >= 0 for hybrid licensing. This number must be greater than or equal
+      to the Minimum group size (On-Demand).
+  FgtAsgHealthCheckGracePeriod:
+    Type: Number
+    Default: 300
+    MinValue: 60
+    ConstraintDescription: must be a valid number not less than 60.
+    Description: >-
+      The length of time (in seconds) that Auto Scaling waits before checking an
+      instance's health status. Minimum is 60.
+  FgtAsgScaleInThreshold:
+    Type: Number
+    Default: 25
+    MinValue: 1
+    MaxValue: 100
+    ConstraintDescription: must be a valid number between 1 and 100.
+    Description: >-
+      The threshold (in percentage) for the FortiGate Auto Scaling group to
+      scale-in (remove) 1 instance. Minimum is 1. Maximum is 100.
+  FgtAsgScaleOutThreshold:
+    Type: Number
+    Default: 80
+    MinValue: 1
+    MaxValue: 100
+    ConstraintDescription: must be a valid number between 1 and 100.
+    Description: >-
+      The threshold (in percentage) for the FortiGate Auto Scaling group to
+      scale-out (add) 1 instance. Minimum is 1. Maximum is 100.
+  FortiGatePskSecret:
+    Type: String
+    NoEcho: true
+    MaxLength: '128'
+    Description: >-
+      The secret key used by the FortiGate instances to securely communicate
+      with each other. Must contain numbers and letters and may contain special
+      characters. Max length is 128.
+  FortiGateAdminPort:
+    Type: Number
+    Default: 8443
+    MinValue: 1
+    MaxValue: 65535
+    ConstraintDescription: must be a valid port number between 1 and 65535.
+    Description: >-
+      The port number for FortiGate administration. Minimum is 1. Maximum is
+      65535. Do not use the FortiGate reserved ports 443, 541, 514, or 703.
+  FortiGateAdminCIDR:
+    Type: String
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}(\/([0-9]|[1-2][0-9]|3[0-2]))?$
+    ConstraintDescription: must be a valid CIDR block format and 0.0.0.0/0 is not recommended.
+    Description: >-
+      The CIDR block for external admin management access. **WARNING!**
+      0.0.0.0/0 accepts connections from any IP address. We recommend that you
+      use a constrained CIDR range to reduce the potential of inbound attacks
+      from unknown IP addresses.
+  KeyPairName:
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: must specify an admin access key pair for FortiGate instances.
+    Description: The Amazon EC2 Key Pair for admin access.
+  PrimaryElectionTimeout:
+    Type: Number
+    Default: 300
+    MinValue: 90
+    MaxValue: 3600
+    ConstraintDescription: must be a valid number between 90 and 3600.
+    Description: >-
+      The maximum time (in seconds) to wait for the primary election to
+      complete. Minimum is 30. Maximum is 3600.
+  HeartBeatInterval:
+    Type: Number
+    Default: 30
+    MinValue: 30
+    MaxValue: 90
+    ConstraintDescription: must be a valid number between 30 and 90.
+    Description: >-
+      The length of time (in seconds) that a FortiGate instance waits between
+      sending heartbeat requests to the Autoscale handler. Minimum is 30.
+      Maximum is 90.
+  HeartBeatLossCount:
+    Type: Number
+    Default: 3
+    MinValue: 1
+    MaxValue: 65535
+    ConstraintDescription: must be a valid number between 1 and 65535.
+    Description: >-
+      Number of consecutively lost heartbeats. When the Heartbeat Loss Count has
+      been reached, the VM is deemed unhealthy and fail-over activities will
+      commence.
+  HeartBeatDelayAllowance:
+    Type: Number
+    Default: 2
+    MinValue: 0
+    Description: >-
+      The maximum amount of time (in seconds) allowed for network latency of the
+      FortiGate heartbeat arriving at the Autoscale handler. Minimum is 0.
+  LoadBalancingTrafficProtocol:
+    Type: String
+    Default: HTTPS
+    AllowedValues:
+      - HTTP
+      - HTTPS
+      - TCP
+    ConstraintDescription: value must be chosen from the provided options.
+    Description: The protocol used to load balance traffic.
+  LoadBalancingTrafficPort:
+    Type: Number
+    Default: 443
+    MinValue: 1
+    MaxValue: 65535
+    ConstraintDescription: must be a valid port number between 1 and 65535.
+    Description: >-
+      The port number used to balance web service traffic if the internal web
+      service load balancer is enabled. Minimum is 1. Maximum is 65535.
+  LoadBalancingHealthCheckThreshold:
+    Type: Number
+    Default: 3
+    MinValue: 3
+    ConstraintDescription: must be a valid number not less than 3.
+    Description: >-
+      The number of consecutive health check failures required before
+      considering a FortiGate instance unhealthy. Minimum is 3.
+  InternalLoadBalancingOptions:
+    Type: String
+    Default: add a new internal load balancer
+    AllowedValues:
+      - add a new internal load balancer
+      - use the load balancer specified below
+      - do not need one
+    ConstraintDescription: must choose from the provided options.
+    Description: >-
+      (Optional) The pre-defined load balancer to route traffic to web service
+      in the private subnets.
+  InternalTargetGroupHealthCheckPath:
+    Type: String
+    Default: /
+    AllowedPattern: '^/[0-9a-zA-Z-/]*$'
+    MaxLength: 1024
+    ConstraintDescription: >-
+      This path must begin with a '/' character, and can be at most 1024
+      characters in length.
+    Description: >-
+      (Optional) The destination path for health checks. This path must begin
+      with a '/' character, and can be at most 1024 characters in length.
+  InternalLoadBalancerDNSName:
+    Type: String
+    Default: ''
+    Description: >-
+      (Optional) The DNS name of an existing internal load balancer used to
+      route traffic from a FortiGate to targets in a specified target group.
+      Leave it blank if you don't use an existing load balancer.
+  GetLicenseGracePeriod:
+    Type: Number
+    Default: 600
+    MinValue: 300
+    ConstraintDescription: must be a valid number not less than 300.
+    Description: >-
+      The minimum time (in seconds) permitted before a distributed license can
+      be revoked from a non-responsive FortiGate and re-distributed. Minimum is
+      300.
+  FortiAnalyzerIntegrationOptions:
+    Type: String
+    AllowedValues:
+      - 'yes'
+      - 'no'
+    Description: >-
+      Choose 'yes' to incorporate FortiAnalyzer into FortiGate Auto Scaling to
+      use extended features that include storing logs into FortiAnalyzer.
+  FortiAnalyzerInstanceType:
+    Type: String
+    Description: >-
+      The instance type to launch as FortiAnalyzer On-Demand instances. There
+      are t2.small and compute-optimized instances such as m4 and c4 available
+      with different vCPU sizes and bandwidths. For more information about
+      instance types, see https://aws.amazon.com/ec2/instance-types/
+  FortiAnalyzerVersion:
+    Type: String
+    Description: The FortiAnalyzer version supported by FortiGate Auto Scaling.
+  FortiAnalyzerAutoscaleAdminUsername:
+    Type: String
+    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
+    ConstraintDescription: >-
+      This FortiAnalyzer account name can include numbers, lowercase letters,
+      uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Description: >-
+      The name of the secondary administrator level account in the
+      FortiAnalyzer, which FortiGate Auto Scaling uses to connect to the
+      FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group.
+      To conform to the FortiAnalyzer naming policy, the username can only
+      contain numbers, lowercase letters, uppercase letters, and hyphens. It
+      cannot start or end with a hyphen (-).
+  FortiAnalyzerAutoscaleAdminPassword:
+    Type: String
+    NoEcho: true
+    MinLength: 8
+    MaxLength: 128
+    Description: >-
+      The password for the 'Autoscale admin username'. The password must conform
+      to the FortiAnalyzer password policy and have a min length of 8 and a max
+      length 128. If you need to enable KMS encryption, refer to the
+      documentation.
+  FortiAnalyzerCustomPrivateIPAddress:
+    Type: String
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}$
+    ConstraintDescription: must be a valid IPv4 format.
+    Description: >-
+      The static private IP address allocated for the FortiAnalyzer in the
+      designated subnet.
+  IntegratedNATGatewayOptions:
+    Type: String
+    AllowedValues:
+      - 'yes'
+      - 'no'
+    Description: >-
+      Choose 'yes' to set the primary FortiGate in the Auto Scaling group as the
+      NAT gateway for egress traffic from the protected private subnets.
+Conditions:
+  GovCloudCondition: !Equals
+    - !Ref 'AWS::Region'
+    - us-gov-west-1
+  IfNewInternalLoadBalancer: !Equals
+    - !Ref InternalLoadBalancingOptions
+    - add a new internal load balancer
+  IfPAYGOnly: !And
+    - !Equals
+      - !Ref FgtAsgDesiredCapacityByol
+      - 0
+    - !Equals
+      - !Ref FgtAsgMaxSizeByol
+      - 0
+  IfBYOLOnly: !And
+    - !Not
+      - !Equals
+        - !Ref FgtAsgMinSizeByol
+        - 0
+    - !Not
+      - !Equals
+        - !Ref FgtAsgMaxSizeByol
+        - 0
+    - !Equals
+      - !Ref FgtAsgMinSizePayg
+      - 0
+    - !Equals
+      - !Ref FgtAsgMaxSizePayg
+      - 0
+  IfIntegrateFortiAnalyzer: !Equals
+    - !Ref FortiAnalyzerIntegrationOptions
+    - 'yes'
+  IfUseIntegratedEgressNatGw: !Equals
+    - !Ref IntegratedNATGatewayOptions
+    - 'yes'
+Mappings:
+  ProductVersionMap:
+    FortiGateByol:
+      '623': FGTVM64BYOL623
+    FortiGatePayg:
+      '623': FGTVM64PAYG623
+    FortiAnalyzerPayg:
+      '625': FAZVM64PAYG625
+  AWSAMIRegionMap:
+    AMI:
+      FGTVM64BYOL623: >-
+        aws-marketplace/FortiGate-VM64-AWS build8404 (6.2.3)
+        GA-e5936f4a-0d69-479f-919c-d5e158bd4d12-ami-01c5698f7658a8322.4
+      FGTVM64PAYG623: >-
+        aws-marketplace/FortiGate-VM64-AWSONDEMAND build8404 (6.2.3)
+        GA-3124a694-441c-4ff1-8bf7-4d153be424a6-ami-0462507a813be3282.4
+      FAZVM64PAYG625: >-
+        aws-marketplace/FortiAnalyzer VM64-AWSOnDemand build1307 (6.2.5)
+        GA-5bc06b01-2e8b-4205-b84c-8ac24e5925cb-ami-0ad43fcfba0fdf465.4
+    ap-northeast-1:
+      FGTVM64BYOL623: ami-0bc8cacacf3dfcfc8
+      FGTVM64PAYG623: ami-0444162d604179bf6
+      FAZVM64PAYG625: ami-058bb5281554ea853
+    ap-northeast-2:
+      FGTVM64BYOL623: ami-0a2a06f3cbde68482
+      FGTVM64PAYG623: ami-065b67d14c722617a
+      FAZVM64PAYG625: ami-091491ec939b91b4a
+    ap-south-1:
+      FGTVM64BYOL623: ami-053b6c12f13183b41
+      FGTVM64PAYG623: ami-0f6693857523585b8
+      FAZVM64PAYG625: ami-0f9202563d8cf347d
+    ap-southeast-1:
+      FGTVM64BYOL623: ami-039c20a560db91564
+      FGTVM64PAYG623: ami-0155fb808596ae522
+      FAZVM64PAYG625: ami-048f31c63e075d14e
+    ap-southeast-2:
+      FGTVM64BYOL623: ami-0fce8cb38dad71632
+      FGTVM64PAYG623: ami-0b67711c6be07aa0b
+      FAZVM64PAYG625: ami-079ef4c6aca62da73
+    ca-central-1:
+      FGTVM64BYOL623: ami-047aac44951feb9fb
+      FGTVM64PAYG623: ami-099941e57393c2225
+      FAZVM64PAYG625: ami-00f47a3e5f20cafa1
+    eu-central-1:
+      FGTVM64BYOL623: ami-050d93bdbc31fcc64
+      FGTVM64PAYG623: ami-0c380ca68f2b1f6e8
+      FAZVM64PAYG625: ami-0c15ecda03070ed9d
+    eu-north-1:
+      FGTVM64BYOL623: ami-071a868b96c93d6da
+      FGTVM64PAYG623: ami-0d49417aa3a3912e1
+      FAZVM64PAYG625: ami-0663c71f97fc203b6
+    eu-west-1:
+      FGTVM64BYOL623: ami-013de57d4a8680ade
+      FGTVM64PAYG623: ami-0874d1d29263b27ff
+      FAZVM64PAYG625: ami-0b8ea17ab0826a944
+    eu-west-2:
+      FGTVM64BYOL623: ami-0aad5e076fa22e8c4
+      FGTVM64PAYG623: ami-04eba63bb19dbeebe
+      FAZVM64PAYG625: ami-0b4528aca3c1b55bd
+    eu-west-3:
+      FGTVM64BYOL623: ami-092a7d4eb40332b32
+      FGTVM64PAYG623: ami-0c104a0848b644152
+      FAZVM64PAYG625: ami-0f6435b452cf7c82f
+    sa-east-1:
+      FGTVM64BYOL623: ami-0feee4be0b03e070d
+      FGTVM64PAYG623: ami-04de901f24e8532db
+      FAZVM64PAYG625: ami-05bbb60d2960f36a4
+    us-east-1:
+      FGTVM64BYOL623: ami-056b8cbed90f235f7
+      FGTVM64PAYG623: ami-027f258cda3df62de
+      FAZVM64PAYG625: ami-0aec62149ff70fcbf
+    us-east-2:
+      FGTVM64BYOL623: ami-02dfca9796bfaff10
+      FGTVM64PAYG623: ami-05a4ac8312f7911b9
+      FAZVM64PAYG625: ami-0185408b148b00d58
+    us-gov-west-1:
+      FGTVM64BYOL623: ami-23b28442
+      FGTVM64PAYG623: ami-c4d9efa5
+    us-west-1:
+      FGTVM64BYOL623: ami-012fa84a251f3e63f
+      FGTVM64PAYG623: ami-0f54d37e47fa994a0
+      FAZVM64PAYG625: ami-0362a553a3d81e6ab
+    us-west-2:
+      FGTVM64BYOL623: ami-00efdd54f8b4755da
+      FGTVM64PAYG623: ami-02b9cc036cab1071d
+      FAZVM64PAYG625: ami-03babf421c5f09e17
+    ap-east-1:
+      FGTVM64BYOL623: ami-0bfc475f9b1de6da9
+      FGTVM64PAYG623: ami-0437be57fc361c67b
+      FAZVM64PAYG625: ami-02cd3bc5abdee1e2b
+    me-south-1:
+      FGTVM64BYOL623: ami-0063dcdb7c00646a5
+      FGTVM64PAYG623: ami-0fcd028d7d86a0695
+      FAZVM64PAYG625: ami-048340a2b75936111
+  ProtocolPortMap:
+    HTTP:
+      defaultport: '80'
+    HTTPS:
+      defaultport: '443'
+    TCP:
+      defaultport: '443'
+Resources:
+  StackCreateDynamoDBTable:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      Parameters:
+        ResourceTagPrefix: !Ref ResourceTagPrefix
+        EnableSecondNic: 'yes'
+        EnableVmInfoCache: 'no'
+        EnableCustomLog: 'yes'
+        EnableTransitGatewayVpn: 'no'
+        EnableHybridLicensing: 'yes'
+        EnableFortiAnalyzer: 'yes'
+      TemplateURL: !Sub
+        - >-
+          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-db-table.template.yaml
+        - S3Region: !If
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+          QSS3BucketName: !Ref QSS3BucketName
+          QSS3KeyPrefix: !Ref QSS3KeyPrefix
+      TimeoutInMinutes: 10
+  FgtInstanceIamRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
+        - 'arn:aws:iam::aws:policy/AWSLambdaExecute'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 's3:GetObject'
+                Resource: !Sub
+                  - 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
+                  - QSS3BucketName: !Ref QSS3BucketName
+                    QSS3KeyPrefix: !Ref QSS3KeyPrefix
+                Effect: Allow
+          PolicyName: fortigate-autoscale-instance-policy
+  FgtInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Roles:
+        - !Ref FgtInstanceIamRole
+  StackCreateFortiGateAutoScaleHandler:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        ResourceTagPrefix: !Ref ResourceTagPrefix
+        CustomIdentifier: !Ref CustomIdentifier
+        UniqueID: !Ref UniqueID
+        VpcEndPoint: !Ref FgtAsgVPCEndpoint
+        HandlerScriptTimeout: 300
+        ServiceScriptTimeout: 900
+        CreateByolLicenseHandler: 'yes'
+      TemplateURL: !Sub
+        - >-
+          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-autoscale-handler.template.yaml
+        - S3Region: !If
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+          QSS3BucketName: !Ref QSS3BucketName
+          QSS3KeyPrefix: !Ref QSS3KeyPrefix
+      TimeoutInMinutes: 10
+  FgtAsgSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: FortiGate security group
+      VpcId: !Ref VPCID
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref ResourceTagPrefix
+              - fortigate-autoscale-security-group
+        - Key: ResourceGroup
+          Value: !Ref ResourceTagPrefix
+  FgtAsgSecurityGroupIngressInternal:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref FgtAsgSecurityGroup
+      IpProtocol: '-1'
+      CidrIp: !Ref VPCCIDR
+  FgtAsgSecurityGroupIngressSSH:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref FgtAsgSecurityGroup
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: !Ref FortiGateAdminCIDR
+  FgtAsgSecurityGroupIngressSecFabMgmt1:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref FgtAsgSecurityGroup
+      IpProtocol: tcp
+      FromPort: 541
+      ToPort: 541
+      CidrIp: !Ref VPCCIDR
+  FgtAsgSecurityGroupIngressSecFabMgmt2:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref FgtAsgSecurityGroup
+      IpProtocol: tcp
+      FromPort: 514
+      ToPort: 514
+      CidrIp: !Ref VPCCIDR
+  FgtAsgSecurityGroupIngressSecFabMgmt3:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref FgtAsgSecurityGroup
+      IpProtocol: udp
+      FromPort: 514
+      ToPort: 514
+      CidrIp: !Ref VPCCIDR
+  FgtAsgSecurityGroupIngressAdminAccess:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref FgtAsgSecurityGroup
+      IpProtocol: tcp
+      FromPort: !Ref FortiGateAdminPort
+      ToPort: !Ref FortiGateAdminPort
+      CidrIp: !Ref FortiGateAdminCIDR
+  FgtAsgSecurityGroupIngressTraffic:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref FgtAsgSecurityGroup
+      IpProtocol: tcp
+      FromPort: !Ref LoadBalancingTrafficPort
+      ToPort: !Ref LoadBalancingTrafficPort
+      CidrIp: 0.0.0.0/0
+  FgtAsgSecurityGroupEgressInternal:
+    Type: 'AWS::EC2::SecurityGroupEgress'
+    Properties:
+      GroupId: !Ref FgtAsgSecurityGroup
+      IpProtocol: '-1'
+      CidrIp: 0.0.0.0/0
+  FgtAsgVPCEndpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Properties:
+      VpcEndpointType: Interface
+      VpcId: !Ref VPCID
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      PrivateDnsEnabled: true
+      ServiceName: !Sub
+        - 'com.amazonaws.${region}.execute-api'
+        - region: !Ref 'AWS::Region'
+      SecurityGroupIds:
+        - !Ref FgtAsgSecurityGroup
+  StackCreateNicAttachmentService:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        ResourceTagPrefix: !Ref ResourceTagPrefix
+        CustomIdentifier: !Ref CustomIdentifier
+        UniqueID: !Ref UniqueID
+        DbTableArn: !GetAtt
+          - StackCreateDynamoDBTable
+          - Outputs.NicAttachmentTableArn
+      TemplateURL: !Sub
+        - >-
+          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/add-nic-attachment-service.template.yaml
+        - S3Region: !If
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+          QSS3BucketName: !Ref QSS3BucketName
+          QSS3KeyPrefix: !Ref QSS3KeyPrefix
+      TimeoutInMinutes: 10
+  StartNicAttachmentService:
+    Type: 'AWS::CloudFormation::CustomResource'
+    Properties:
+      ServiceToken: !GetAtt
+        - StackCreateNicAttachmentService
+        - Outputs.CfnServiceProvider
+  StackCreateLoadBalancingComponents:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      Parameters:
+        ResourceTagPrefix: !Ref ResourceTagPrefix
+        CustomIdentifier: !Ref CustomIdentifier
+        UniqueID: !Ref UniqueID
+        TrafficProtocol: !Ref LoadBalancingTrafficProtocol
+        TrafficPort: !Ref LoadBalancingTrafficPort
+        HealthCheckPort: !Ref FortiGateAdminPort
+        FgtTargetGroupHealthCheckThreshold: !Ref LoadBalancingHealthCheckThreshold
+        VPCID: !Ref VPCID
+        FgtSubnetIds: !Join
+          - ','
+          - - !Ref PublicSubnet1
+            - !Ref PublicSubnet2
+        NewInternalLoadBalancer: !If
+          - IfNewInternalLoadBalancer
+          - 'yes'
+          - 'no'
+        InternalTargetGroupHealthCheckPath: !Ref InternalTargetGroupHealthCheckPath
+        InternalLoadBalancingSubnetIDs: !Join
+          - ','
+          - - !Ref PrivateSubnet1
+            - !Ref PrivateSubnet2
+      TemplateURL: !Sub
+        - >-
+          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-load-balancer.template.yaml
+        - S3Region: !If
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+          QSS3BucketName: !Ref QSS3BucketName
+          QSS3KeyPrefix: !Ref QSS3KeyPrefix
+      TimeoutInMinutes: 10
+  StackCreateFortiGateAutoScalingGroup:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        ResourceTagPrefix: !Ref ResourceTagPrefix
+        UniqueID: !Ref UniqueID
+        AsgSubnet1ID: !Ref PublicSubnet1
+        AsgSubnet2ID: !Ref PublicSubnet2
+        ELBV2TargetGroupARNs: ''
+        InstanceType: !Ref FortiGateInstanceType
+        InstanceProfileArn: !GetAtt
+          - FgtInstanceProfile
+          - Arn
+        KeyPairName: !Ref KeyPairName
+        SecurityGroupId: !Ref FgtAsgSecurityGroup
+        APIGatewayID: !GetAtt
+          - StackCreateFortiGateAutoScaleHandler
+          - Outputs.ApiGatewayId
+        AsgHandlerFunctionName: !GetAtt
+          - StackCreateFortiGateAutoScaleHandler
+          - Outputs.FgtAsgHandlerFunctionName
+        AsgHandlerFunctionArn: !GetAtt
+          - StackCreateFortiGateAutoScaleHandler
+          - Outputs.FgtAsgHandlerFunctionArn
+        AsgHealthCheckGracePeriod: !Ref FgtAsgHealthCheckGracePeriod
+        AsgScaleInThreshold: !Ref FgtAsgScaleInThreshold
+        AsgScaleOutThreshold: !Ref FgtAsgScaleOutThreshold
+        AsgDesiredCapacityByol: 0
+        AsgMinSizeByol: 0
+        AsgMaxSizeByol: !Ref FgtAsgMaxSizeByol
+        AsgDesiredCapacityPayg: 0
+        AsgMinSizePayg: 0
+        AsgMaxSizePayg: !Ref FgtAsgMaxSizePayg
+        AsgCooldown: !Ref FgtAsgCooldown
+        LifecycleHookTimeout: !Ref LifecycleHookTimeout
+        ProductAMIByol: !FindInMap
+          - AWSAMIRegionMap
+          - !Ref 'AWS::Region'
+          - !FindInMap
+            - ProductVersionMap
+            - FortiGateByol
+            - !Ref FortiOSVersion
+        ProductCodeByol: ''
+        ProductAMIPayg: !FindInMap
+          - AWSAMIRegionMap
+          - !Ref 'AWS::Region'
+          - !FindInMap
+            - ProductVersionMap
+            - FortiGatePayg
+            - !Ref FortiOSVersion
+        ProductCodePayg: ''
+        LicensingModel: !If
+          - IfPAYGOnly
+          - PAYG-Only
+          - !If
+            - IfBYOLOnly
+            - BYOL-Only
+            - Hybrid
+      TemplateURL: !Sub
+        - >-
+          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-hybrid-auto-scaling-group.template.yaml
+        - S3Region: !If
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+          QSS3BucketName: !Ref QSS3BucketName
+          QSS3KeyPrefix: !Ref QSS3KeyPrefix
+      TimeoutInMinutes: 10
+    DependsOn:
+      - StartNicAttachmentService
+  StartFortiGateAutoScalingGroupService:
+    Type: 'AWS::CloudFormation::CustomResource'
+    Properties:
+      ServiceToken: !GetAtt
+        - StackCreateFortiGateAutoScaleHandler
+        - Outputs.FgtAsgHandlerServiceArn
+      ServiceType: initiateAutoscale
+    DependsOn:
+      - StackCreateFortiGateAutoScalingGroup
+      - SaveSettings
+  StopFortiGateAutoScalingGroupService:
+    Type: 'AWS::CloudFormation::CustomResource'
+    Properties:
+      ServiceToken: !GetAtt
+        - StackCreateFortiGateAutoScaleHandler
+        - Outputs.FgtAsgHandlerServiceArn
+      ServiceType: stopAutoscale
+    DependsOn:
+      - StackCreateFortiGateAutoScalingGroup
+      - SaveSettings
+  SaveSettings:
+    Type: 'AWS::CloudFormation::CustomResource'
+    Properties:
+      ServiceToken: !GetAtt
+        - StackCreateFortiGateAutoScaleHandler
+        - Outputs.FgtAsgHandlerServiceArn
+      ServiceType: saveSettings
+      DeploymentSettingsSaved: 'true'
+      ResourceTagPrefix: !Ref ResourceTagPrefix
+      CustomIdentifier: !Ref CustomIdentifier
+      UniqueID: !Ref UniqueID
+      AssetStorageName: !Ref QSS3BucketName
+      AssetStorageKeyPrefix: !Join
+        - ''
+        - - !Ref QSS3KeyPrefix
+          - assets
+      FortiGateAutoscaleVPCID: !Ref VPCID
+      FortiGateAutoscaleSubnet1: !Ref PublicSubnet1
+      FortiGateAutoscaleSubnet2: !Ref PublicSubnet2
+      FortiGateAutoscaleProtectedSubnet1: !Ref PrivateSubnet1
+      FortiGateAutoscaleProtectedSubnet2: !Ref PrivateSubnet2
+      FortiGatePskSecret: !Ref FortiGatePskSecret
+      FortiGateAdminPort: !Ref FortiGateAdminPort
+      FortiGateSyncInterface: port1
+      LifecycleHookTimeout: !Ref LifecycleHookTimeout
+      PrimaryElectionTimeout: !Ref PrimaryElectionTimeout
+      PrimaryElectionNoWait: 'true'
+      HeartBeatInterval: !Ref HeartBeatInterval
+      HeartBeatLossCount: !Ref HeartBeatLossCount
+      HeartBeatDelayAllowance: !Ref HeartBeatDelayAllowance
+      AutoscaleHandlerUrl: !GetAtt
+        - StackCreateFortiGateAutoScaleHandler
+        - Outputs.FgtAsgHandlerApiGatewayUrl
+      PrimaryScalingGroupName: !If
+        - IfPAYGOnly
+        - !GetAtt
+          - StackCreateFortiGateAutoScalingGroup
+          - Outputs.AutoScalingGroupNamePayg
+        - !GetAtt
+          - StackCreateFortiGateAutoScalingGroup
+          - Outputs.AutoScalingGroupNameByol
+      PAYGScalingGroupName: !GetAtt
+        - StackCreateFortiGateAutoScalingGroup
+        - Outputs.AutoScalingGroupNamePayg
+      BYOLScalingGroupName: !GetAtt
+        - StackCreateFortiGateAutoScalingGroup
+        - Outputs.AutoScalingGroupNameByol
+      ByolScalingGroupDesiredCapacity: !Ref FgtAsgDesiredCapacityByol
+      ByolScalingGroupMinSize: !Ref FgtAsgMinSizeByol
+      ByolScalingGroupMaxSize: !Ref FgtAsgMaxSizeByol
+      ScalingGroupDesiredCapacity: !Ref FgtAsgDesiredCapacityPayg
+      ScalingGroupMinSize: !Ref FgtAsgMinSizePayg
+      ScalingGroupMaxSize: !Ref FgtAsgMaxSizePayg
+      RequiredConfigset: !GetAtt
+        - StackCreateFortiGateAutoScaleHandler
+        - Outputs.RequiredConfigsetList
+      RequiredDbTable: !GetAtt
+        - StackCreateDynamoDBTable
+        - Outputs.TableNameList
+      EnableTransitGatewayVpn: 'false'
+      EnableSecondNic: 'true'
+      EnableFortiGateElb: 'true'
+      EnableInternalElb: !If
+        - IfNewInternalLoadBalancer
+        - 'true'
+        - 'false'
+      EnableHybridLicensing: 'true'
+      FortiGateAutoscaleElbDns: !GetAtt
+        - StackCreateLoadBalancingComponents
+        - Outputs.FgtLoadBalancerDNSName
+      FortiGateAutoscaleTargetGroupArn: !GetAtt
+        - StackCreateLoadBalancingComponents
+        - Outputs.FgtTargetGroupArn
+      FortigateProtectedInternalElbDns: !If
+        - IfNewInternalLoadBalancer
+        - !GetAtt
+          - StackCreateLoadBalancingComponents
+          - Outputs.InternalLoadBalancerDNSName
+        - !Ref InternalLoadBalancerDNSName
+      EnableVmInfoCache: 'false'
+      VmInfoCacheTime: 3600
+      FortiGateLicenseStorageKeyPrefix: fgt-asg-license
+      FortiGateTrafficPort: !Ref LoadBalancingTrafficPort
+      GetLicenseGracePeriod: !Ref GetLicenseGracePeriod
+      EnableFortiAnalyzerIntegration: !If
+        - IfIntegrateFortiAnalyzer
+        - 'true'
+        - 'false'
+      FazHandlerName: !If
+        - IfIntegrateFortiAnalyzer
+        - !GetAtt
+          - StackCreateFortiAnalyzer
+          - Outputs.FazHandlerFunctionName
+        - ''
+      EnableIntegratedEgressNatGateway: !If
+        - IfUseIntegratedEgressNatGw
+        - 'true'
+        - 'false'
+      EgressTrafficRouteTable: !Ref PrivateSubnetRouteTable
+  StackCreateFortiAnalyzer:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: IfIntegrateFortiAnalyzer
+    Properties:
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        ResourceTagPrefix: !Ref ResourceTagPrefix
+        CustomIdentifier: !Ref CustomIdentifier
+        UniqueID: !Select
+          - 0
+          - !Split
+            - '-'
+            - !Select
+              - 2
+              - !Split
+                - /
+                - !Ref 'AWS::StackId'
+        DdbTableArnList: !GetAtt
+          - StackCreateDynamoDBTable
+          - Outputs.TableArnList
+        VPCID: !Ref VPCID
+        VPCCIDR: !Ref VPCCIDR
+        VPCEndpoint: !Ref FgtAsgVPCEndpoint
+        SubnetID: !Ref PublicSubnet1
+        InstanceType: !Ref FortiAnalyzerInstanceType
+        FortiAnalyzerVersion: !Ref FortiAnalyzerVersion
+        AdminCIDR: !Ref FortiGateAdminCIDR
+        KeyPairName: !Ref KeyPairName
+        AutoscaleAdminUsername: !If
+          - IfIntegrateFortiAnalyzer
+          - !Ref FortiAnalyzerAutoscaleAdminUsername
+          - ''
+        AutoscaleAdminPassword: !If
+          - IfIntegrateFortiAnalyzer
+          - !Ref FortiAnalyzerAutoscaleAdminPassword
+          - ''
+        ProductAMI: !FindInMap
+          - AWSAMIRegionMap
+          - !Ref 'AWS::Region'
+          - !FindInMap
+            - ProductVersionMap
+            - FortiAnalyzerPayg
+            - !Ref FortiAnalyzerVersion
+        CustomPrivateIPAddress: !If
+          - IfIntegrateFortiAnalyzer
+          - !Ref FortiAnalyzerCustomPrivateIPAddress
+          - ''
+      TemplateURL: !Sub
+        - >-
+          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortianalyzer.template.yaml
+        - S3Region: !If
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+          QSS3BucketName: !Ref QSS3BucketName
+          QSS3KeyPrefix: !Ref QSS3KeyPrefix
+      TimeoutInMinutes: 10
+  FazHandlerSetting:
+    Condition: IfIntegrateFortiAnalyzer
+    Properties:
+      ServiceToken: !GetAtt
+        - StackCreateFortiAnalyzer
+        - Outputs.FazHandlerServiceToken
+      ServiceType: retrieveSetting
+      InstanceId: !Ref 'AWS::NoValue'
+      PrivateIp: !Ref 'AWS::NoValue'
+      CustomIdentifier: !Ref CustomIdentifier
+      UniqueID: !Select
+        - 0
+        - !Split
+          - '-'
+          - !Select
+            - 2
+            - !Split
+              - /
+              - !Ref 'AWS::StackId'
+    Type: 'AWS::CloudFormation::CustomResource'
+  IamPolicyAlterRouteTable:
+    Condition: IfUseIntegratedEgressNatGw
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'ec2:CreateRoute'
+              - 'ec2:ReplaceRoute'
+            Resource: !Sub
+              - >-
+                arn:aws:ec2:${AWS_REGION}:${AWS_ACCOUNT_ID}:route-table/${ROUTE_TABLE_ID}
+              - AWS_REGION: !Ref 'AWS::Region'
+                AWS_ACCOUNT_ID: !Ref 'AWS::AccountId'
+                ROUTE_TABLE_ID: !Ref PrivateSubnetRouteTable
+      PolicyName: fgt-handler-alter-route-table-policy
+      Roles:
+        - !GetAtt
+          - StackCreateFortiGateAutoScaleHandler
+          - Outputs.FgtAsgHandlerIamRoleName
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Resource tagging configuration
+        Parameters:
+          - ResourceTagPrefix
+          - CustomIdentifier
+          - UniqueID
+      - Label:
+          default: VPC network configuration
+        Parameters:
+          - VPCCIDR
+          - VPCID
+          - PublicSubnet1
+          - PublicSubnet2
+          - PrivateSubnet1
+          - PrivateSubnet2
+          - PrivateSubnetRouteTable
+          - IntegratedNATGatewayOptions
+      - Label:
+          default: FortiGate configuration
+        Parameters:
+          - FortiGateInstanceType
+          - FortiOSVersion
+          - FortiGatePskSecret
+          - FortiGateAdminPort
+          - FortiGateAdminCIDR
+          - KeyPairName
+      - Label:
+          default: FortiGate Auto Scaling group configuration
+        Parameters:
+          - FgtAsgDesiredCapacityByol
+          - FgtAsgMinSizeByol
+          - FgtAsgMaxSizeByol
+          - FgtAsgDesiredCapacityPayg
+          - FgtAsgMinSizePayg
+          - FgtAsgMaxSizePayg
+          - FgtAsgScaleOutThreshold
+          - FgtAsgScaleInThreshold
+          - PrimaryElectionTimeout
+          - GetLicenseGracePeriod
+          - FgtAsgHealthCheckGracePeriod
+          - FgtAsgCooldown
+          - LifecycleHookTimeout
+      - Label:
+          default: Load balancing configuration
+        Parameters:
+          - LoadBalancingTrafficProtocol
+          - LoadBalancingTrafficPort
+          - LoadBalancingHealthCheckThreshold
+          - InternalLoadBalancingOptions
+          - InternalTargetGroupHealthCheckPath
+          - InternalLoadBalancerDNSName
+      - Label:
+          default: FortiAnalyzer integration
+        Parameters:
+          - FortiAnalyzerIntegrationOptions
+          - FortiAnalyzerInstanceType
+          - FortiAnalyzerVersion
+          - FortiAnalyzerAutoscaleAdminUsername
+          - FortiAnalyzerAutoscaleAdminPassword
+      - Label:
+          default: Failover management configuration
+        Parameters:
+          - HeartBeatInterval
+          - HeartBeatLossCount
+          - HeartBeatDelayAllowance
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+    ParameterLabels:
+      QSS3BucketName:
+        default: QSS3 bucket name
+      QSS3KeyPrefix:
+        default: QSS3 resource folder
+      ResourceTagPrefix:
+        default: Resource tag prefix
+      CustomIdentifier:
+        default: Resource name prefix
+      UniqueID:
+        default: Unique ID
+      VPCCIDR:
+        default: VPC CIDR
+      PublicSubnet1:
+        default: Public subnet 1 ID
+      PublicSubnet2:
+        default: Public subnet 2 ID
+      PrivateSubnet1:
+        default: Private subnet 1 ID
+      PrivateSubnet2:
+        default: Private subnet 2 ID
+      PrivateSubnetRouteTable:
+        default: Private subnet route table
+      FortiGateInstanceType:
+        default: Instance type
+      FortiOSVersion:
+        default: FortiOS version
+      LifecycleHookTimeout:
+        default: Instance lifecycle timeout
+      FgtAsgCooldown:
+        default: Scaling cooldown period
+      FgtAsgDesiredCapacityByol:
+        default: Desired capacity (BYOL)
+      FgtAsgMinSizeByol:
+        default: Minimum group size (BYOL)
+      FgtAsgMaxSizeByol:
+        default: Maximum group size (BYOL)
+      FgtAsgDesiredCapacityPayg:
+        default: Desired capacity (On-Demand)
+      FgtAsgMinSizePayg:
+        default: Minimum group size (On-Demand)
+      FgtAsgMaxSizePayg:
+        default: Maximum group size (On-Demand)
+      FgtAsgHealthCheckGracePeriod:
+        default: Health check grace period
+      FgtAsgScaleInThreshold:
+        default: Scale-in threshold
+      FgtAsgScaleOutThreshold:
+        default: Scale-out threshold
+      FortiGateAdminPort:
+        default: Admin port
+      FortiGateAdminCIDR:
+        default: Admin CIDR block
+      KeyPairName:
+        default: Key pair name
+      FortiGatePskSecret:
+        default: FortiGate PSK secret
+      PrimaryElectionTimeout:
+        default: Primary election timeout
+      HeartBeatInterval:
+        default: Heart beat interval
+      HeartBeatLossCount:
+        default: Heart beat loss count
+      HeartBeatDelayAllowance:
+        default: Heart beat delay allowance
+      LoadBalancingTrafficProtocol:
+        default: Traffic protocol
+      LoadBalancingTrafficPort:
+        default: Traffic port
+      LoadBalancingHealthCheckThreshold:
+        default: Health check threshold
+      InternalLoadBalancingOptions:
+        default: Internal ELB options
+      InternalTargetGroupHealthCheckPath:
+        default: Health check path
+      InternalLoadBalancerDNSName:
+        default: Internal ELB DNS name
+      GetLicenseGracePeriod:
+        default: Get license grace period
+      FortiAnalyzerIntegrationOptions:
+        default: FortiAnalyzer integration
+      FortiAnalyzerInstanceType:
+        default: FortiAnalyzer instance type
+      FortiAnalyzerVersion:
+        default: FortiAnalyzer version
+      FortiAnalyzerAutoscaleAdminUsername:
+        default: Autoscale admin username
+      FortiAnalyzerAutoscaleAdminPassword:
+        default: Autoscale admin password
+      IntegratedNATGatewayOptions:
+        default: Integrated NAT Gateway
+Outputs:
+  FgtLicensingModel:
+    Description: >-
+      The FortiGate licensing model in the Auto Scaling group(s) for the initial
+      deployment of this stack. (Options: On-Demand-Only, BYOL-Only, Hybrid)
+    Value: !If
+      - IfPAYGOnly
+      - PAYG-Only
+      - !If
+        - IfBYOLOnly
+        - BYOL-Only
+        - Hybrid

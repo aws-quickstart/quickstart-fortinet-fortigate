@@ -1,0 +1,78 @@
+project:
+  name: quickstart-fortinet-fortigate
+  owner: quickstart-eng@amazon.com
+  package_lambda: false
+  regions:
+    - ap-east-1
+    - ap-northeast-1
+    - ap-northeast-2
+    - ap-south-1
+    - ap-southeast-1
+    - ap-southeast-2
+    - ca-central-1
+    - eu-central-1
+    - eu-north-1
+    - eu-west-1
+    - eu-west-2
+    - eu-west-3
+    - me-south-1
+    - sa-east-1
+    - us-east-1
+    - us-east-2
+    - us-west-1
+    - us-west-2
+  s3_object_acl: public-read
+  tags: # [OPTIONAL] Tags to apply to CloudFormation template
+    taskcatReport: quickstart-fortinet-fortigate
+tests:
+  all-commercial-regions:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_2]
+      CustomIdentifier: customId00
+      FgtAsgCooldown: 300
+      FgtAsgDesiredCapacityByol: 1
+      FgtAsgDesiredCapacityPayg: 1
+      FgtAsgHealthCheckGracePeriod: 300
+      FgtAsgMaxSizeByol: 1
+      FgtAsgMaxSizePayg: 6
+      FgtAsgMinSizeByol: 1
+      FgtAsgMinSizePayg: 1
+      FgtAsgScaleInThreshold: 25
+      FgtAsgScaleOutThreshold: 80
+      FortiAnalyzerAutoscaleAdminPassword: $[taskcat_genpass_8]
+      FortiAnalyzerAutoscaleAdminUsername: autoscale-admin
+      FortiAnalyzerCustomPrivateIPAddress: 192.168.1.201
+      FortiAnalyzerIntegrationOptions: 'yes'
+      FortiAnalyzerInstanceType: m5.large
+      FortiAnalyzerVersion: 6.2.5
+      FortiGateAdminCIDR: 0.0.0.0/0
+      FortiGateAdminPort: 8443
+      FortiGateInstanceType: c5.large
+      FortiGatePskSecret: $[taskcat_genpass_8]
+      FortiOSVersion: 6.2.3
+      GetLicenseGracePeriod: 600
+      HeartBeatDelayAllowance: 2
+      HeartBeatInterval: 30
+      HeartBeatLossCount: 3
+      IntegratedNATGatewayOptions: 'yes'
+      InternalLoadBalancerDNSName: ''
+      InternalLoadBalancingOptions: add a new internal load balancer
+      InternalTargetGroupHealthCheckPath: /
+      KeyPairName: taskcat
+      LifecycleHookTimeout: 480
+      LoadBalancingHealthCheckThreshold: 3
+      LoadBalancingTrafficPort: 443
+      LoadBalancingTrafficProtocol: HTTPS
+      PrimaryElectionTimeout: 300
+      PrivateSubnet1CIDR: 192.168.3.0/24
+      PrivateSubnet2CIDR: 192.168.4.0/24
+      PublicSubnet1CIDR: 192.168.1.0/24
+      PublicSubnet2CIDR: 192.168.2.0/24
+      QSS3BucketName: $[taskcat_autobucket]
+      QSS3KeyPrefix: quickstart-fortinet-fortigate/
+      ResourceTagPrefix: fortigate-autoscale-has-a-very-long-res-tag-prefix
+      VPCCIDR: 192.168.0.0/16
+    template: templates/autoscale-new-vpc.template.yaml
+    regions:
+      - us-east-2
+      - us-west-1

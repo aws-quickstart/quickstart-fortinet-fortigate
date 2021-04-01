@@ -45,6 +45,7 @@
 :template_aws_s3_bucket:
 :template_cloudformation:
 :template_cloudwatch:
+:template_deterministic_ec2_instances:
 :template_dynamodb:
 :template_ec2:
 :template_elasticloadbalancingv2:
