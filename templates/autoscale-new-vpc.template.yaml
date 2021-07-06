@@ -30,24 +30,29 @@ Parameters:
       prefix" cannot apply to. It can only contain numbers, lowercase letters,
       and uppercase letters. Maximum length is 10.
   QSS3BucketName:
-    Type: String
-    Default: aws-quickstart
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: >-
-      The Quick Start S3 bucket name can include numbers, lowercase letters,
-      uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
       (-).
-    Description: >-
-      S3 bucket that you created for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-). Unless you are customizing the template, keep the default setting. Changing this setting updates code references to point to a new Quick Start location. See https://aws-quickstart.github.io/option1.html.
-  QSS3KeyPrefix:
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
     Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/.]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), periods (.) and forward slash (/).
     Default: quickstart-fortinet-fortigate/
-    AllowedPattern: '^[0-9a-zA-Z-/]*$'
-    ConstraintDescription: >-
-      The Quick Start S3 key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slash (/).
-    Description: >-
-      S3 key prefix that is used to simulate a directory for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html. Unless you are customizing the template, keep the default setting. Changing this setting updates code references to point to a new Quick Start location. See https://aws-quickstart.github.io/option1.html.
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
+      forward slash (/).
+    Type: String
+  QSS3BucketRegion:
+    Default: us-east-1
+    Description: Region where the Quick Start S3 bucket (QSS3BucketName) is
+      hosted. When using your own bucket, you must specify this value.
+    Type: String
   AvailabilityZones:
     Description: >-
       List of Availability Zones to use for the subnets in the VPC. The
@@ -345,17 +350,6 @@ Parameters:
     Description: >-
       (Optional) Predefined load balancer to route traffic to targets in
       the private subnets.
-  InternalTargetGroupHealthCheckPath:
-    Type: String
-    Default: /
-    AllowedPattern: '^/[0-9a-zA-Z-/]*$'
-    MaxLength: 1024
-    ConstraintDescription: >-
-      Path must begin with a forward slash (/), and can be at most 1024
-      characters in length.
-    Description: >-
-      (Optional) Destination path for health checks. This path must begin
-      with a forward slash (/) and can be at most 1024 characters in length.
   InternalLoadBalancerDNSName:
     Type: String
     Default: ''
@@ -458,9 +452,7 @@ Parameters:
     Description: >-
       Choose "no" if you do not want to set the main FortiGate in the Auto Scaling group as the NAT gateway for egress traffic from the protected private subnets.
 Conditions:
-  GovCloudCondition: !Equals
-    - !Ref 'AWS::Region'
-    - us-gov-west-1
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   HasResourceTagPrefix: !Not
     - !Equals
       - !Ref ResourceTagPrefix
@@ -506,21 +498,18 @@ Resources:
                   - /
                   - !Ref 'AWS::StackId'
       TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-new-vpc.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-          QSS3BucketName: !Ref QSS3BucketName
-          QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-new-vpc.template.yaml
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       TimeoutInMinutes: 5
   StackMainWorkload:
+    DependsOn: StackCreateNewVPC
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       Parameters:
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        QSS3BucketRegion: !Ref QSS3BucketRegion
         ResourceTagPrefix: !If
           - HasResourceTagPrefix
           - !Join
@@ -608,7 +597,6 @@ Resources:
         LoadBalancingTrafficPort: !Ref LoadBalancingTrafficPort
         LoadBalancingHealthCheckThreshold: !Ref LoadBalancingHealthCheckThreshold
         InternalLoadBalancingOptions: !Ref InternalLoadBalancingOptions
-        InternalTargetGroupHealthCheckPath: !Ref InternalTargetGroupHealthCheckPath
         InternalLoadBalancerDNSName: !Ref InternalLoadBalancerDNSName
         GetLicenseGracePeriod: !Ref GetLicenseGracePeriod
         FortiAnalyzerIntegrationOptions: !Ref FortiAnalyzerIntegrationOptions
@@ -636,12 +624,9 @@ Resources:
           - 0.0.0.0
         IntegratedNATGatewayOptions: !Ref IntegratedNATGatewayOptions
       TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/autoscale-main.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/autoscale-main.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       TimeoutInMinutes: 30
 Metadata:
   QuickStartDocumentation:
@@ -717,6 +702,7 @@ Metadata:
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
+          - QSS3BucketRegion
     ParameterLabels:
       ResourceTagPrefix:
         default: Resource-tag prefix
@@ -742,6 +728,8 @@ Metadata:
         default: Quick Start S3 bucket name
       QSS3KeyPrefix:
         default: Quick Start S3 key prefix
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket Region
       LifecycleHookTimeout:
         default: Instance lifecycle timeout
       FgtAsgCooldown:

@@ -4,7 +4,7 @@ Description: >-
   Deploys a FortiGate EC2 instance to a subnet using a given FortiGate AMI,
   security group, and instance profile. **WARNING!** This template is designed
   for being called within FortiGate AutoScale Solution only but not compatible
-  with any other Cloud Formation template. Do not directly use it anywhere else.
+  with any other Cloud Formation template. Do not directly use it anywhere else. (qs-1s1re618k)
 Parameters:
   CustomTagValue:
     AllowedPattern: '^([a-zA-Z0-9+\-.,_:/@ *\\"''\[\]\{\}]*)?$'
@@ -29,10 +29,10 @@ Parameters:
   FortiGateSecurityGroupId:
     Type: String
     Description: The security group ID which is attached to this FortiGate instance.
-  SubnetId1:
+  SubnetIdA:
     Type: 'AWS::EC2::Subnet::Id'
     Description: 'The subnet ID for the network interface #1'
-  SubnetId2:
+  SubnetIdB:
     Type: 'AWS::EC2::Subnet::Id'
     Description: 'The subnet ID for the network interface #2'
   FortiGateImageId:
@@ -62,8 +62,8 @@ Resources:
       Description: 'FortiGate NIC: port2'
       GroupSet:
         - !Ref FortiGateSecurityGroupId
-      SourceDestCheck: 'false'
-      SubnetId: !Ref SubnetId2
+      SourceDestCheck: false
+      SubnetId: !Ref SubnetIdB
       Tags:
         - Key: Name
           Value: !Join
@@ -81,14 +81,14 @@ Resources:
       KeyName: !Ref KeyPairName
       IamInstanceProfile: !Ref InstanceProfile
       NetworkInterfaces:
-        - DeviceIndex: 0
+        - DeviceIndex: '0'
           AssociatePublicIpAddress: true
-          SubnetId: !Ref SubnetId1
+          SubnetId: !Ref SubnetIdA
           GroupSet:
             - !Ref FortiGateSecurityGroupId
       ImageId: !Ref FortiGateImageId
       InstanceType: !Ref FortiGateInstanceType
-      Monitoring: 'true'
+      Monitoring: true
       Tags:
         - Key: Name
           Value: !If
@@ -145,12 +145,12 @@ Resources:
                   - '    set pdf-report disable'
                   - end
               - ''
-    DependsOn:
-      - eipAssociation
+  #  DependsOn:
+  #    - eipAssociation
   Nic1Attachment:
     Type: 'AWS::EC2::NetworkInterfaceAttachment'
     Properties:
-      DeviceIndex: 1
+      DeviceIndex: '1'
       InstanceId: !Ref ec2InstanceFortiGate
       NetworkInterfaceId: !Ref nic1
 Outputs:

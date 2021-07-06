@@ -2,7 +2,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   Deploy Network traffic Load Balancers and components for FortiGate Auto
-  Scaling.
+  Scaling. (qs-1s1rf1jgd)
 Parameters:
   ResourceTagPrefix:
     Type: String
@@ -89,17 +89,6 @@ Parameters:
     Description: >-
       Create an internal load balancer to route traffic from FortiGate to
       targets in a specified target group.
-  InternalTargetGroupHealthCheckPath:
-    Type: String
-    Default: /
-    AllowedPattern: '^/[0-9a-zA-Z-/]*$'
-    MaxLength: 1024
-    ConstraintDescription: >-
-      This path must begin with a '/' character, and can be at most 1024
-      characters in length.
-    Description: >-
-      Optional. The destination path for health checks. This path must begin
-      with a '/' character, and can be at most 1024 characters in length.
   InternalLoadBalancingSubnetIDs:
     Type: String
     Description: >-
@@ -277,7 +266,6 @@ Metadata:
         Parameters:
           - NewInternalLoadBalancer
           - InternalLoadBalancingSubnetIDs
-          - InternalTargetGroupHealthCheckPath
     ParameterLabels:
       ResourceTagPrefix:
         default: Resource tag prefix
@@ -295,8 +283,6 @@ Metadata:
         default: Subnet ID list
       NewInternalLoadBalancer:
         default: Create new load balancer
-      InternalTargetGroupHealthCheckPath:
-        default: Health check path
       InternalLoadBalancingSubnetIDs:
         default: Subnet ID list
 Outputs:

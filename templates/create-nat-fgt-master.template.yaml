@@ -1,29 +1,31 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Deploys and configures FortiGates to the selected subnets in a VPC
+Description: Deploys and configures FortiGates to the selected subnets in a VPC (qs-1s1rf57s6)
 Parameters:
   QSS3BucketName:
-    Type: String
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: >-
-      Deployment resource S3 bucket name can include numbers, lowercase letters,
-      uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
       (-).
-    Description: >-
-      Name of the S3 bucket that contains the FortiGate Auto Scaling deployment
-      package. Can only contain numbers, lowercase letters, uppercase letters,
-      and hyphens (-). It cannot start or end with a hyphen (-).
-  QSS3KeyPrefix:
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
     Type: String
-    AllowedPattern: '^[0-9a-zA-Z-/]*$'
-    ConstraintDescription: >-
-      Deployment package S3 key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slash (/).
-    Description: >-
-      Name of the S3 folder that stores the FortiGate Auto Scaling deployment
-      resources. Can only contain numbers, lowercase letters, uppercase letters,
-      hyphens (-), and forward slashes (/). If provided, it must end with a
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/.]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), periods (.) and forward slash (/).
+    Default: quickstart-fortinet-fortigate/
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
       forward slash (/).
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: Region where the Quick Start S3 bucket (QSS3BucketName) is
+      hosted. When using your own bucket, you must specify this value.
+    Type: String
   CustomIdentifier:
     Type: String
     MaxLength: '10'
@@ -88,9 +90,7 @@ Parameters:
     Type: String
     Description: The IP of FortiAnalyzer to send logs to.
 Conditions:
-  GovCloudCondition: !Equals
-    - !Ref 'AWS::Region'
-    - us-gov-west-1
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 Resources:
   sgFortiGateInstance:
     Type: 'AWS::EC2::SecurityGroup'
@@ -115,8 +115,8 @@ Resources:
     Type: 'AWS::IAM::Role'
     Properties:
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
-        - 'arn:aws:iam::aws:policy/AWSLambdaExecute'
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSLambdaExecute
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -132,7 +132,7 @@ Resources:
               - Action:
                   - 's3:GetObject'
                 Resource: !Sub
-                  - 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
+                  - arn:${AWS::Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*
                   - QSS3BucketName: !Ref QSS3BucketName
                     QSS3KeyPrefix: !Ref QSS3KeyPrefix
                 Effect: Allow
@@ -151,19 +151,16 @@ Resources:
         KeyPairName: !Ref KeyPairName
         FortiGateAdminPort: !Ref FortiGateAdminPort
         FortiGateSecurityGroupId: !Ref sgFortiGateInstance
-        SubnetId1: !Ref SubnetId1
-        SubnetId2: !Ref SubnetId2
+        SubnetIdA: !Ref SubnetId1
+        SubnetIdB: !Ref SubnetId2
         FortiGateImageId: !Ref FortiGateImageId
         InstanceProfile: !Ref IamInstanceProfileFgt
         FortiAnalyzerIp: !Ref FortiAnalyzerIp
       TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-      TimeoutInMinutes: '10'
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-fortigate.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
+      TimeoutInMinutes: 10
   StackCreateFortiGateInstance2:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -173,19 +170,16 @@ Resources:
         KeyPairName: !Ref KeyPairName
         FortiGateAdminPort: !Ref FortiGateAdminPort
         FortiGateSecurityGroupId: !Ref sgFortiGateInstance
-        SubnetId1: !Ref SubnetId3
-        SubnetId2: !Ref SubnetId4
+        SubnetIdA: !Ref SubnetId3
+        SubnetIdB: !Ref SubnetId4
         FortiGateImageId: !Ref FortiGateImageId
         InstanceProfile: !Ref IamInstanceProfileFgt
         FortiAnalyzerIp: !Ref FortiAnalyzerIp
       TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortigate.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-      TimeoutInMinutes: '5'
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-fortigate.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
+      TimeoutInMinutes: 5
 Outputs:
   InstanceId1:
     Description: 'The instance ID of the FortiGate NAT Gateway #1.'

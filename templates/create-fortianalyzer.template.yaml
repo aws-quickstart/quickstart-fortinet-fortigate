@@ -2,28 +2,32 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   Deploys a FortiAnalyzer to a selected subnet and configures all FortiGates to
-  connect to it.
+  connect to it. (qs-1s1ib1oja)
 Parameters:
   QSS3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
     Type: String
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: >-
-      Quick Start bucket name can include numbers, lowercase letters, uppercase
-      letters, and hyphens (-). It cannot start or end with a hyphen (-).
-    Description: >-
-      S3 bucket name for the Quick Start assets. Can only contain numbers,
-      lowercase letters, uppercase letters, and hyphens (-). It cannot start or
-      end with a hyphen (-).
   QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/.]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), periods (.) and forward slash (/).
+    Default: quickstart-fortinet-fortigate/
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
+      forward slash (/).
     Type: String
-    AllowedPattern: '^[0-9a-zA-Z-/]*$'
-    ConstraintDescription: >-
-      Quick Start S3 key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slash (/).
-    Description: >-
-      S3 key prefix for the Quick Start assets. Can only contain numbers,
-      lowercase letters, uppercase letters, hyphens (-), and forward slashes
-      (/). If provided, it must end with a forward slash (/).
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: Region where the Quick Start S3 bucket (QSS3BucketName) is
+      hosted. When using your own bucket, you must specify this value.
+    Type: String
   ResourceTagPrefix:
     Type: String
     AllowedPattern: '[0-9a-zA-Z@.#-]+'
@@ -51,11 +55,6 @@ Parameters:
     Description: >-
       The unique ID assigned to DynamoDB table in this solution. This parameter
       should be passed down from the caller stack for consistency.
-  DdbTableArnList:
-    Type: String
-    Description: >-
-      The DynamoDB table ARN list that this stack needs to access to. This
-      parameter should be passed down from the caller stack for consistency.
   VPCID:
     Type: 'AWS::EC2::VPC::Id'
     Description: >-
@@ -80,13 +79,6 @@ Parameters:
     Description: >-
       Instance type. This parameter should be passed down from the caller stack
       for consistency.
-  FortiAnalyzerVersion:
-    Type: String
-    AllowedPattern: '[A-Za-z0-9]+'
-    Description: >-
-      FortiAnalyzer version. This parameter should be passed down from the
-      caller stack for consistency. Should contain characters and digits only,
-      and should not include dot (.) or hyphen (-).
   AdminCIDR:
     Type: String
     AllowedPattern: >-
@@ -145,11 +137,8 @@ Parameters:
     Description: >-
       Use an Elastic IP address as the public IP address of each created
       FortiAnalyzer.
-Mappings: {}
 Conditions:
-  GovCloudCondition: !Equals
-    - !Ref 'AWS::Region'
-    - us-gov-west-1
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   IfAddCustomTag: !Not
     - !Equals
       - !Ref CustomIdentifier
@@ -194,8 +183,8 @@ Resources:
     Type: 'AWS::IAM::Role'
     Properties:
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
-        - 'arn:aws:iam::aws:policy/AWSLambdaExecute'
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSLambdaExecute
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -211,7 +200,7 @@ Resources:
               - Action:
                   - 's3:GetObject'
                 Resource: !Sub
-                  - 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
+                  - arn:${AWS::Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*
                   - QSS3BucketName: !Ref QSS3BucketName
                     QSS3KeyPrefix: !Ref QSS3KeyPrefix
                 Effect: Allow
@@ -321,12 +310,9 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         ObjectPaths: functions/packages/faz-handler.zip
       TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/copy-objects.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/copy-objects.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       TimeoutInMinutes: 10
   LambdaFunctionFazHandler:
     Properties:
@@ -336,14 +322,10 @@ Resources:
           - !Ref UniqueID
           - fortianalyzer-handler
       Code:
-        S3Bucket: !GetAtt
-          - StackCopyLambda
-          - Outputs.DestinationBucket
+        S3Bucket: !GetAtt StackCopyLambda.Outputs.DestinationBucket
         S3Key: !Sub
-          - '${QSS3KeyPrefix}functions/packages/faz-handler.zip'
-          - QSS3KeyPrefix: !GetAtt
-              - StackCopyLambda
-              - Outputs.KeyPrefix
+          - '${KeyPrefix}functions/packages/faz-handler.zip'
+          - KeyPrefix: !Ref QSS3KeyPrefix
       Description: Register a FortiAnalyzer in the DB for FortiGate Auto Scaling.
       Handler: index.handler
       Role: !GetAtt
@@ -379,7 +361,7 @@ Resources:
               Service: lambda.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole'
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
       Path: /
       Policies:
         - PolicyName: faz-handler-inline-policy
@@ -396,8 +378,7 @@ Resources:
                   - 'dynamodb:PutItem'
                   - 'dynamodb:UpdateItem'
                 Resource: !Sub
-                  - >-
-                    arn:aws:dynamodb:${AWS_REGION}:${AWS_ACCOUNT_ID}:table/${TABLE_NAME_PREFIX}*
+                  - arn:${AWS::Partition}:dynamodb:${AWS_REGION}:${AWS_ACCOUNT_ID}:table/${TABLE_NAME_PREFIX}*
                   - AWS_REGION: !Ref 'AWS::Region'
                     AWS_ACCOUNT_ID: !Ref 'AWS::AccountId'
                     TABLE_NAME_PREFIX: !Ref ResourceTagPrefix
@@ -418,7 +399,7 @@ Resources:
           - Effect: Allow
             Action:
               - 'kms:Decrypt'
-            Resource: 'arn:aws:kms:*:*:key/*'
+            Resource: !Sub arn:${AWS::Partition}:kms:*:*:key/*
           - Effect: Allow
             Action:
               - 'lambda:GetFunction'
@@ -432,6 +413,11 @@ Resources:
         - !Ref IamRoleFazHandler
   ApiGatewayFazService:
     Type: 'AWS::ApiGateway::RestApi'
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - E9101
     Properties:
       Name: !Join
         - '-'

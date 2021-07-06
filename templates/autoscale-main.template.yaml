@@ -2,7 +2,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   This template does the majority of the work for deploying FortiGate Auto
-  Scaling. It is not for direct use.
+  Scaling. It is not for direct use. (qs-1s1i94qog)
 Parameters:
   ResourceTagPrefix:
     Type: String
@@ -28,26 +28,29 @@ Parameters:
       prefix' cannot apply to. Can only contain numbers, lowercase letters, and
       uppercase letters. Max length is 10.
   QSS3BucketName:
-    Type: String
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: >-
-      Quick Start S3 bucket name can include numbers, lowercase letters,
-      uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
       (-).
-    Description: >-
-      S3 bucket name for the Quick Start assets. Can only contain numbers,
-      lowercase letters, uppercase letters, and hyphens (-). It cannot start or
-      end with a hyphen (-).
-  QSS3KeyPrefix:
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
     Type: String
-    AllowedPattern: '^[0-9a-zA-Z-/]*$'
-    ConstraintDescription: >-
-      Quick Start S3 key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slash (/).
-    Description: >-
-      S3 key prefix for the Quick Start assets. Can only contain numbers,
-      lowercase letters, uppercase letters, hyphens (-), and forward slashes
-      (/). If provided, it must end with a forward slash (/).
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/.]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), periods (.) and forward slash (/).
+    Default: quickstart-fortinet-fortigate/
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
+      forward slash (/).
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: Region where the Quick Start S3 bucket (QSS3BucketName) is
+      hosted. When using your own bucket, you must specify this value.
+    Type: String
   UniqueID:
     Type: String
     MaxLength: '8'
@@ -317,17 +320,6 @@ Parameters:
     Description: >-
       (Optional) The pre-defined load balancer to route traffic to web service
       in the private subnets.
-  InternalTargetGroupHealthCheckPath:
-    Type: String
-    Default: /
-    AllowedPattern: '^/[0-9a-zA-Z-/]*$'
-    MaxLength: 1024
-    ConstraintDescription: >-
-      This path must begin with a '/' character, and can be at most 1024
-      characters in length.
-    Description: >-
-      (Optional) The destination path for health checks. This path must begin
-      with a '/' character, and can be at most 1024 characters in length.
   InternalLoadBalancerDNSName:
     Type: String
     Default: ''
@@ -403,9 +395,6 @@ Parameters:
       Choose 'yes' to set the primary FortiGate in the Auto Scaling group as the
       NAT gateway for egress traffic from the protected private subnets.
 Conditions:
-  GovCloudCondition: !Equals
-    - !Ref 'AWS::Region'
-    - us-gov-west-1
   IfNewInternalLoadBalancer: !Equals
     - !Ref InternalLoadBalancingOptions
     - add a new internal load balancer
@@ -437,6 +426,7 @@ Conditions:
   IfUseIntegratedEgressNatGw: !Equals
     - !Ref IntegratedNATGatewayOptions
     - 'yes'
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 Mappings:
   ProductVersionMap:
     FortiGateByol:
@@ -542,6 +532,10 @@ Resources:
   StackCreateDynamoDBTable:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-db-table.template.yaml'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         ResourceTagPrefix: !Ref ResourceTagPrefix
         EnableSecondNic: 'yes'
@@ -550,22 +544,13 @@ Resources:
         EnableTransitGatewayVpn: 'no'
         EnableHybridLicensing: 'yes'
         EnableFortiAnalyzer: 'yes'
-      TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-db-table.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-          QSS3BucketName: !Ref QSS3BucketName
-          QSS3KeyPrefix: !Ref QSS3KeyPrefix
       TimeoutInMinutes: 10
   FgtInstanceIamRole:
     Type: 'AWS::IAM::Role'
     Properties:
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
-        - 'arn:aws:iam::aws:policy/AWSLambdaExecute'
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSLambdaExecute
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -581,7 +566,7 @@ Resources:
               - Action:
                   - 's3:GetObject'
                 Resource: !Sub
-                  - 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
+                  - arn:${AWS::Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*
                   - QSS3BucketName: !Ref QSS3BucketName
                     QSS3KeyPrefix: !Ref QSS3KeyPrefix
                 Effect: Allow
@@ -594,9 +579,14 @@ Resources:
   StackCreateFortiGateAutoScaleHandler:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-autoscale-handler.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        QSS3BucketRegion: !Ref QSS3BucketRegion
         ResourceTagPrefix: !Ref ResourceTagPrefix
         CustomIdentifier: !Ref CustomIdentifier
         UniqueID: !Ref UniqueID
@@ -604,15 +594,6 @@ Resources:
         HandlerScriptTimeout: 300
         ServiceScriptTimeout: 900
         CreateByolLicenseHandler: 'yes'
-      TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-autoscale-handler.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-          QSS3BucketName: !Ref QSS3BucketName
-          QSS3KeyPrefix: !Ref QSS3KeyPrefix
       TimeoutInMinutes: 10
   FgtAsgSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
@@ -688,6 +669,13 @@ Resources:
       IpProtocol: '-1'
       CidrIp: 0.0.0.0/0
   FgtAsgVPCEndpoint:
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - E9101
+          ignore_reason:
+            E9101: Done by design
     Type: 'AWS::EC2::VPCEndpoint'
     Properties:
       VpcEndpointType: Interface
@@ -697,31 +685,27 @@ Resources:
         - !Ref PublicSubnet2
       PrivateDnsEnabled: true
       ServiceName: !Sub
-        - 'com.amazonaws.${region}.execute-api'
+        - com.amazonaws.${region}.execute-api
         - region: !Ref 'AWS::Region'
       SecurityGroupIds:
         - !Ref FgtAsgSecurityGroup
   StackCreateNicAttachmentService:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/add-nic-attachment-service.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        QSS3BucketRegion: !Ref QSS3BucketRegion
         ResourceTagPrefix: !Ref ResourceTagPrefix
         CustomIdentifier: !Ref CustomIdentifier
         UniqueID: !Ref UniqueID
         DbTableArn: !GetAtt
           - StackCreateDynamoDBTable
           - Outputs.NicAttachmentTableArn
-      TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/add-nic-attachment-service.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-          QSS3BucketName: !Ref QSS3BucketName
-          QSS3KeyPrefix: !Ref QSS3KeyPrefix
       TimeoutInMinutes: 10
   StartNicAttachmentService:
     Type: 'AWS::CloudFormation::CustomResource'
@@ -732,6 +716,10 @@ Resources:
   StackCreateLoadBalancingComponents:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-load-balancer.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
         ResourceTagPrefix: !Ref ResourceTagPrefix
         CustomIdentifier: !Ref CustomIdentifier
@@ -749,24 +737,18 @@ Resources:
           - IfNewInternalLoadBalancer
           - 'yes'
           - 'no'
-        InternalTargetGroupHealthCheckPath: !Ref InternalTargetGroupHealthCheckPath
         InternalLoadBalancingSubnetIDs: !Join
           - ','
           - - !Ref PrivateSubnet1
             - !Ref PrivateSubnet2
-      TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-load-balancer.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-          QSS3BucketName: !Ref QSS3BucketName
-          QSS3KeyPrefix: !Ref QSS3KeyPrefix
       TimeoutInMinutes: 10
   StackCreateFortiGateAutoScalingGroup:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-hybrid-auto-scaling-group.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
@@ -824,15 +806,6 @@ Resources:
             - IfBYOLOnly
             - BYOL-Only
             - Hybrid
-      TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-hybrid-auto-scaling-group.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-          QSS3BucketName: !Ref QSS3BucketName
-          QSS3KeyPrefix: !Ref QSS3KeyPrefix
       TimeoutInMinutes: 10
     DependsOn:
       - StartNicAttachmentService
@@ -957,11 +930,21 @@ Resources:
       EgressTrafficRouteTable: !Ref PrivateSubnetRouteTable
   StackCreateFortiAnalyzer:
     Type: 'AWS::CloudFormation::Stack'
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - E9902
     Condition: IfIntegrateFortiAnalyzer
     Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/create-fortianalyzer.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        QSS3BucketRegion: !Ref QSS3BucketRegion
         ResourceTagPrefix: !Ref ResourceTagPrefix
         CustomIdentifier: !Ref CustomIdentifier
         UniqueID: !Select
@@ -973,15 +956,11 @@ Resources:
               - !Split
                 - /
                 - !Ref 'AWS::StackId'
-        DdbTableArnList: !GetAtt
-          - StackCreateDynamoDBTable
-          - Outputs.TableArnList
         VPCID: !Ref VPCID
         VPCCIDR: !Ref VPCCIDR
         VPCEndpoint: !Ref FgtAsgVPCEndpoint
         SubnetID: !Ref PublicSubnet1
         InstanceType: !Ref FortiAnalyzerInstanceType
-        FortiAnalyzerVersion: !Ref FortiAnalyzerVersion
         AdminCIDR: !Ref FortiGateAdminCIDR
         KeyPairName: !Ref KeyPairName
         AutoscaleAdminUsername: !If
@@ -1003,15 +982,6 @@ Resources:
           - IfIntegrateFortiAnalyzer
           - !Ref FortiAnalyzerCustomPrivateIPAddress
           - ''
-      TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/create-fortianalyzer.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-          QSS3BucketName: !Ref QSS3BucketName
-          QSS3KeyPrefix: !Ref QSS3KeyPrefix
       TimeoutInMinutes: 10
   FazHandlerSetting:
     Condition: IfIntegrateFortiAnalyzer
@@ -1046,7 +1016,7 @@ Resources:
               - 'ec2:ReplaceRoute'
             Resource: !Sub
               - >-
-                arn:aws:ec2:${AWS_REGION}:${AWS_ACCOUNT_ID}:route-table/${ROUTE_TABLE_ID}
+                arn:${AWS::Partition}:ec2:${AWS_REGION}:${AWS_ACCOUNT_ID}:route-table/${ROUTE_TABLE_ID}
               - AWS_REGION: !Ref 'AWS::Region'
                 AWS_ACCOUNT_ID: !Ref 'AWS::AccountId'
                 ROUTE_TABLE_ID: !Ref PrivateSubnetRouteTable
@@ -1107,7 +1077,6 @@ Metadata:
           - LoadBalancingTrafficPort
           - LoadBalancingHealthCheckThreshold
           - InternalLoadBalancingOptions
-          - InternalTargetGroupHealthCheckPath
           - InternalLoadBalancerDNSName
       - Label:
           default: FortiAnalyzer integration
@@ -1128,11 +1097,14 @@ Metadata:
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
+          - QSS3BucketRegion
     ParameterLabels:
       QSS3BucketName:
         default: QSS3 bucket name
       QSS3KeyPrefix:
         default: QSS3 resource folder
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket Region
       ResourceTagPrefix:
         default: Resource tag prefix
       CustomIdentifier:
@@ -1201,8 +1173,6 @@ Metadata:
         default: Health check threshold
       InternalLoadBalancingOptions:
         default: Internal ELB options
-      InternalTargetGroupHealthCheckPath:
-        default: Health check path
       InternalLoadBalancerDNSName:
         default: Internal ELB DNS name
       GetLicenseGracePeriod:
@@ -1231,3 +1201,5 @@ Outputs:
         - IfBYOLOnly
         - BYOL-Only
         - Hybrid
+  QSS3BucketRegion:
+    Value: !Ref QSS3BucketRegion

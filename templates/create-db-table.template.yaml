@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Create all necessary DynamoDB tables for FortiGate Auto Scaling Solution.
+Description: Create all necessary DynamoDB tables for FortiGate Auto Scaling Solution. (qs-1s1ib1oja)
 Parameters:
   ResourceTagPrefix:
     Type: String

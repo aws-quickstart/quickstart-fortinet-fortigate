@@ -1,31 +1,31 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: This template creates a FortiGate auto scaling group and related components.
+Description: This template creates a FortiGate auto scaling group and related components. (qs-1s1i9k8kf)
 Parameters:
   QSS3BucketName:
-    Type: String
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: >-
-      Deployment resource S3 bucket name can include numbers, lowercase letters,
-      uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
       (-).
-    Description: >-
-      The name of the S3 bucket you created for your copy of Quick Start assets
-      if you decide to customize the Quick Start for your own use. It can only
-      contain numbers, lowercase letters, uppercase letters, and hyphens (-),
-      but should not start or end with a hyphen (-).
-  QSS3KeyPrefix:
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
     Type: String
-    AllowedPattern: '^[0-9a-zA-Z-/]*$'
-    ConstraintDescription: >-
-      Deployment package S3 key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slash (/).
-    Description: >-
-      The S3 key name prefix used to simulate a folder for your copy of Quick
-      Start assets. You need to use this if you want to customize the Quick
-      Start for your own use. It can only contain numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slashes (/). If provided, it
-      must end with a forward slash (/).
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/.]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), periods (.) and forward slash (/).
+    Default: quickstart-fortinet-fortigate/
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
+      forward slash (/).
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: Region where the Quick Start S3 bucket (QSS3BucketName) is
+      hosted. When using your own bucket, you must specify this value.
+    Type: String
   ResourceTagPrefix:
     Type: String
     AllowedPattern: '[0-9a-zA-Z@.#-]+'
@@ -125,14 +125,6 @@ Parameters:
       The number of FortiGate instances the group should have at any time, also
       called desired capacity. Must keep at least 2 FortiGates in the group for
       High Availability. Minimum is 2.
-  AsgMinSize:
-    Type: Number
-    Default: 0
-    MinValue: 0
-    ConstraintDescription: must be a valid number not less than 1.
-    Description: >-
-      The minimum number of FortiGate instances in the Auto Scaling group.
-      Minimum is 2.
   AsgMaxSize:
     Type: Number
     Default: 0
@@ -160,12 +152,6 @@ Parameters:
     Description: >-
       The amount of time (in seconds) that can elapse before the FortiGate Auto
       Scaling lifecycle hook times out. Minimum is 60. Maximum is 3600.
-  DependOnCondition:
-    Type: String
-    Description: >-
-      A parameter for the parent CloudFormation stack to be able to create
-      dependencies for the current stack on another resource. Not intended to be
-      used in this stack.
   ProductAMI:
     Type: String
     Default: ''
@@ -191,8 +177,8 @@ Resources:
     Condition: InstanceProfileIsNotDefined
     Properties:
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
-        - 'arn:aws:iam::aws:policy/AWSLambdaExecute'
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSLambdaExecute
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -208,7 +194,7 @@ Resources:
               - Action:
                   - 's3:GetObject'
                 Resource: !Sub
-                  - 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
+                  - !Sub arn:${AWS::Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*
                   - QSS3BucketName: !Ref QSS3BucketName
                     QSS3KeyPrefix: !Ref QSS3KeyPrefix
                 Effect: Allow
@@ -270,7 +256,7 @@ Resources:
       HealthCheckGracePeriod: !Ref AsgHealthCheckGracePeriod
       HealthCheckType: EC2
       MaxSize: !Ref AsgMaxSize
-      MinSize: 0
+      MinSize: '0'
       VPCZoneIdentifier:
         - !Ref AsgSubnet1ID
         - !Ref AsgSubnet2ID
@@ -299,7 +285,7 @@ Resources:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref FgtAutoScalingGroup
-      ScalingAdjustment: '-1'
+      ScalingAdjustment: -1
     DependsOn:
       - FgtAutoScalingGroup
   AsgScaleOutPolicy:
@@ -307,13 +293,13 @@ Resources:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref FgtAutoScalingGroup
-      ScalingAdjustment: '1'
+      ScalingAdjustment: 1
     DependsOn:
       - FgtAutoScalingGroup
   AlarmScaleInThresholdCpuUtil:
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
-      EvaluationPeriods: '1'
+      EvaluationPeriods: 1
       Statistic: Average
       Threshold: !Ref AsgScaleInThreshold
       AlarmDescription: Alarm if CPU too low or metric disappears indicating instance is down
@@ -329,7 +315,7 @@ Resources:
   AlarmScaleOutThresholdCpuUtil:
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
-      EvaluationPeriods: '1'
+      EvaluationPeriods: 1
       Statistic: Average
       Threshold: !Ref AsgScaleOutThreshold
       AlarmDescription: Alarm if CPU too high or metric disappears indicating instance is down
@@ -404,7 +390,6 @@ Metadata:
           default: Basic configuration
         Parameters:
           - ResourceTagPrefix
-          - CustomIdentifier
           - AsgSubnet1ID
           - AsgSubnet2ID
           - APIGatewayID
@@ -421,13 +406,11 @@ Metadata:
         Parameters:
           - LifecycleHookTimeout
           - AsgDesiredCapacity
-          - AsgMinSize
           - AsgMaxSize
           - AsgHealthCheckGracePeriod
           - AsgCooldown
           - AsgScaleOutThreshold
           - AsgScaleInThreshold
-          - FortiGateElbTgHealthyThreshold
       - Label:
           default: Deployment package configuration
         Parameters:

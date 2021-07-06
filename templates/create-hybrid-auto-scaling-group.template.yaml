@@ -1,27 +1,26 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Deploy the hybrid licensing FortiGate auto scaling groups.
+Description: Deploy the hybrid licensing FortiGate auto scaling groups. (qs-1s1red3b6)
 Parameters:
   QSS3BucketName:
-    Type: String
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: >-
-      Deployment resource S3 bucket name can include numbers, lowercase letters,
-      uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
       (-).
-    Description: >-
-      S3 bucket name for the Deployment package. Bucket name can include
-      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot
-      start or end with a hyphen (-).
-  QSS3KeyPrefix:
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
     Type: String
-    AllowedPattern: '^[0-9a-zA-Z-/]*$'
-    ConstraintDescription: >-
-      Deployment package S3 key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slash (/).
-    Description: >-
-      S3 key prefix for the deployment package. Key prefix can include numbers,
-      lowercase letters, uppercase letters, hyphens (-), and forward slash (/).
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/.]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), periods (.) and forward slash (/).
+    Default: quickstart-fortinet-fortigate/
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
+      forward slash (/).
+    Type: String
   ResourceTagPrefix:
     Type: String
     AllowedPattern: '[0-9a-zA-Z@.#-]+'
@@ -207,9 +206,6 @@ Parameters:
       Licensing model that affects the Auto Scaling Groups deployment and
       configuration.
 Conditions:
-  GovCloudCondition: !Equals
-    - !Ref 'AWS::Region'
-    - us-gov-west-1
   ELBV2TargetGroupIsDefined: !Not
     - !Equals
       - !Ref ELBV2TargetGroupARNs
@@ -237,8 +233,8 @@ Resources:
     Condition: InstanceProfileIsNotDefined
     Properties:
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
-        - 'arn:aws:iam::aws:policy/AWSLambdaExecute'
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSLambdaExecute
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -254,7 +250,7 @@ Resources:
               - Action:
                   - 's3:GetObject'
                 Resource: !Sub
-                  - 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
+                  - arn:${AWS::Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*
                   - QSS3BucketName: !Ref QSS3BucketName
                     QSS3KeyPrefix: !Ref QSS3KeyPrefix
                 Effect: Allow

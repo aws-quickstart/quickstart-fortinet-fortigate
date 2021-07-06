@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: This template creates a new VPC to deploy the FortiGate Auto Scaling Solution.
+Description: This template creates a new VPC to deploy the FortiGate Auto Scaling Solution. (qs-1s1i93o5j)
 Parameters:
   AvailabilityZones:
     Description: >-

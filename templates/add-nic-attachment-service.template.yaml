@@ -1,29 +1,31 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: >-
-  A service to handle additional network interface attachment / detachment to an
-  EC2 instance in a given VPC.
+Description:  A service to handle additional network interface attachment / detachment to a EC2 instance in a given VPC. (qs-1s1i8bh4h)
 Parameters:
   QSS3BucketName:
-    Type: String
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: >-
-      Deployment resource S3 bucket name can include numbers, lowercase letters,
-      uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
       (-).
-    Description: >-
-      S3 bucket name for the Deployment package. Bucket name can include
-      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot
-      start or end with a hyphen (-).
-  QSS3KeyPrefix:
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
     Type: String
-    AllowedPattern: '^[0-9a-zA-Z-/]*$'
-    ConstraintDescription: >-
-      Deployment package S3 key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slash (/).
-    Description: >-
-      S3 key prefix for the deployment package. Key prefix can include numbers,
-      lowercase letters, uppercase letters, hyphens (-), and forward slash (/).
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/.]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), periods (.) and forward slash (/).
+    Default: quickstart-fortinet-fortigate/
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
+      forward slash (/).
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: Region where the Quick Start S3 bucket (QSS3BucketName) is
+      hosted. When using your own bucket, you must specify this value.
+    Type: String
   ResourceTagPrefix:
     Type: String
     AllowedPattern: '[0-9a-zA-Z@.#-]+'
@@ -62,9 +64,7 @@ Parameters:
       The ARN of the DynamoDB table which is used to keep tracks of nic
       attachment records.
 Conditions:
-  GovCloudCondition: !Equals
-    - !Ref 'AWS::Region'
-    - us-gov-west-1
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 Resources:
   StackCopyLambdaSource:
     Type: 'AWS::CloudFormation::Stack'
@@ -74,14 +74,9 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         ObjectPaths: functions/packages/nic-attachment.zip
       TemplateURL: !Sub
-        - >-
-          https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/copy-objects.template.yaml
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-          QSS3BucketName: !Ref QSS3BucketName
-          QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/copy-objects.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       TimeoutInMinutes: 5
   NicAttachmentCfnServiceProvider:
     Properties:
@@ -109,14 +104,10 @@ Resources:
       Handler: cfn-service.handler
       Timeout: 300
       Code:
-        S3Bucket: !GetAtt
-          - StackCopyLambdaSource
-          - Outputs.DestinationBucket
+        S3Bucket: !GetAtt StackCopyLambdaSource.Outputs.DestinationBucket
         S3Key: !Sub
           - '${KeyPrefix}functions/packages/nic-attachment.zip'
-          - KeyPrefix: !GetAtt
-              - StackCopyLambdaSource
-              - Outputs.KeyPrefix
+          - KeyPrefix: !Ref QSS3KeyPrefix
       Environment:
         Variables:
           UNIQUE_ID: ''
@@ -140,14 +131,10 @@ Resources:
       Handler: index.handler
       Timeout: 300
       Code:
-        S3Bucket: !GetAtt
-          - StackCopyLambdaSource
-          - Outputs.DestinationBucket
+        S3Bucket: !GetAtt StackCopyLambdaSource.Outputs.DestinationBucket
         S3Key: !Sub
           - '${KeyPrefix}functions/packages/nic-attachment.zip'
-          - KeyPrefix: !GetAtt
-              - StackCopyLambdaSource
-              - Outputs.KeyPrefix
+          - KeyPrefix: !Ref QSS3KeyPrefix
       Environment:
         Variables:
           UNIQUE_ID: ''
@@ -165,7 +152,7 @@ Resources:
               Service: lambda.amazonaws.com
         Version: 2012-10-17
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Path: /
       Policies:
         - PolicyName: nic-attachment-service-lambda-policy
@@ -180,7 +167,9 @@ Resources:
                   - 'ec2:DescribeNetworkInterfaces'
                   - 'ec2:DeleteNetworkInterface'
                   - 'ec2:AttachNetworkInterface'
-                Resource: '*'
+                Resource:
+                  - !Sub arn:${AWS::Partition}:lambda:::::*
+                  - !Sub arn:${AWS::Partition}:ec2:::::*
               - Effect: Allow
                 Action:
                   - 'dynamodb:DescribeTable'
